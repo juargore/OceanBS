@@ -4,8 +4,9 @@
     <color name="colorPrimaryDark">#f07622</color>
     <color name="colorAccent">#ffb164</color>
 
-    <color name="colorDarkGray">#808080</color>
-    <color name="colorLightGray">#c3c3c3</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorDarkGray">#636363</color>
+    <color name="colorLightGray">#C3C3C3</color>
 
     <color name="colorIncidenceBlue">#99d9ea</color>
     <color name="colorIncidenceOrange">#ff7f27</color>
