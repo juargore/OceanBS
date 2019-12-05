@@ -10,4 +10,7 @@
     <string name="log_in">Iniciar sesión</string>
     <string name="ocean_software">©2018 OceanSlide Software</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
