@@ -12,22 +12,22 @@
         android:id="@+id/carouselView"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:layout_margin="1dp"
-        app:fillColor="#FFFFFFFF"
+        app:fillColor="@color/colorPrimaryDark"
         app:pageColor="#00000000"
         app:radius="6dp"
-        app:slideInterval="3000"
-        app:strokeColor="#FF777777"
-        app:strokeWidth="1dp" />
+        app:slideInterval="4000"
+        app:strokeColor="@android:color/white"
+        app:strokeWidth="1.5dp" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabsParent"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:tabGravity="fill" app:tabMode="fixed"
+        android:layout_height="45dp"
         android:background="@android:color/white"
+        app:tabGravity="fill"
         app:tabIndicatorColor="@color/colorPrimary"
-        app:tabTextColor="@android:color/black"/>
+        app:tabMode="fixed"
+        app:tabTextColor="@android:color/black" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPagerParent"
