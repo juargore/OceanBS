@@ -1,4 +1,4 @@
-package com.glass.oceanbs.Activities
+package com.glass.oceanbs.activities
 
 import android.content.Context
 import android.content.Intent

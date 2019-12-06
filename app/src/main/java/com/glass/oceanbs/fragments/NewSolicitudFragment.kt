@@ -1,4 +1,4 @@
-package com.glass.oceanbs.Fragments
+package com.glass.oceanbs.fragments
 
 
 import android.os.Bundle

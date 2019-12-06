@@ -1,4 +1,4 @@
-package com.glass.oceanbs.Adapters
+package com.glass.oceanbs.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.glass.oceanbs.R
 
-class SolicitudAdapter(private val context: Context,
-                           private val eventClick: InterfaceOnClick,
-                       private val eventLongClick: InterfaceOnLongClick)
-    : androidx.recyclerview.widget.RecyclerView.Adapter<SolicitudAdapter.ItemViewHolder>() {
+class IncidenciaAdapter(private val context: Context,
+                        private val eventClick: InterfaceOnClick,
+                        private val eventLongClick: InterfaceOnLongClick)
+    : androidx.recyclerview.widget.RecyclerView.Adapter<IncidenciaAdapter.ItemViewHolder>() {
 
     interface InterfaceOnClick {
         fun onItemClick(pos: Int)
@@ -21,12 +21,12 @@ class SolicitudAdapter(private val context: Context,
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ItemViewHolder {
-        val view: View = LayoutInflater.from(context).inflate(R.layout.card_solicitudes, p0, false)
+        val view: View = LayoutInflater.from(context).inflate(R.layout.card_incidencias, p0, false)
         return ItemViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return 8
+        return 10
     }
 
     override fun onBindViewHolder(p0: ItemViewHolder, pos: Int) {

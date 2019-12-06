@@ -1,11 +1,11 @@
-package com.glass.oceanbs.Activities
+package com.glass.oceanbs.activities
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager.widget.ViewPager
-import com.glass.oceanbs.Adapters.ParentPagerAdapter
+import com.glass.oceanbs.adapters.ParentPagerAdapter
 import com.glass.oceanbs.R
 import com.google.android.material.tabs.TabLayout
 import com.synnapps.carouselview.CarouselView
