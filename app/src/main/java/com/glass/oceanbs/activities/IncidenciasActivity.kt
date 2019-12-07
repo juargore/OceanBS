@@ -10,12 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.IncidenciaAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.textColor
 
 class IncidenciasActivity : AppCompatActivity() {
 
     private lateinit var rvIncidencias: RecyclerView
+    private lateinit var fabNewIncidencia: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +26,7 @@ class IncidenciasActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         rvIncidencias = findViewById(R.id.rvIncidencias)
+        fabNewIncidencia = findViewById(R.id.fabNewIncidencia)
 
         rvIncidencias.layoutManager = LinearLayoutManager(this)
         val adapter = IncidenciaAdapter(this, object : IncidenciaAdapter.InterfaceOnClick{
@@ -38,6 +41,11 @@ class IncidenciasActivity : AppCompatActivity() {
         })
 
         rvIncidencias.adapter = adapter
+
+        fabNewIncidencia.setOnClickListener {
+            val intent = Intent(applicationContext, RegistroIncidenciaActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun showDeleteDialog(){
