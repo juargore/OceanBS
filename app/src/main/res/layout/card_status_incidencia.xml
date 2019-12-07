@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    app:cardElevation="0dp"
+    app:cardMaxElevation="0dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,6 +30,7 @@
                 android:paddingLeft="5dp"
                 android:text="TextView"
                 android:textColor="@color/colorBlack"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -35,17 +43,18 @@
                 android:text="TextView"
                 android:textAlignment="textEnd"
                 android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="20dp"
             android:background="@drawable/progress_base">
 
             <RelativeLayout
                 android:layout_width="200dp"
-                android:layout_height="26dp"
+                android:layout_height="16dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"

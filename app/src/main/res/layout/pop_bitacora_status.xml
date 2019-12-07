@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/white"
         android:orientation="vertical"
         android:paddingLeft="15dp"
         android:paddingTop="15dp"
@@ -42,13 +43,14 @@
         <Button
             android:id="@+id/button3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp"
             android:background="@drawable/rectangle_blue_button"
             android:drawableLeft="@drawable/ic_add_small"
             android:drawablePadding="-15dp"
-            android:paddingLeft="20dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="-4dp"
             android:text="Incidencias"
             android:textColor="@android:color/white" />
 
