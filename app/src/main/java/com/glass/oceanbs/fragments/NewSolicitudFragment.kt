@@ -11,11 +11,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import com.glass.oceanbs.R
@@ -74,6 +72,8 @@ class NewSolicitudFragment : Fragment() {
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
         }
     }
+
+
 
     private fun showResumeDialog(context: Context){
         val dialog = Dialog(context, R.style.FullDialogTheme)

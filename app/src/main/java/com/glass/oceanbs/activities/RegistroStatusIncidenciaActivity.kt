@@ -8,6 +8,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -19,7 +20,9 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
+import android.view.MotionEvent
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -184,6 +187,14 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outUri)
         startActivityForResult(intent, CAMERA)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (currentFocus != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {

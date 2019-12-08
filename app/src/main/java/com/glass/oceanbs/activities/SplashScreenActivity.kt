@@ -13,7 +13,7 @@ import com.glass.oceanbs.R
 
 class SplashScreenActivity : AppCompatActivity() {
 
-    private val DISPLAY_LENGTH = 3000
+    private val DISPLAY_LENGTH = 2000
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
