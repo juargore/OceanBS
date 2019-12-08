@@ -33,6 +33,7 @@ dependencies {
     //Third party libaries
     implementation 'com.synnapps:carouselview:0.1.4'
     implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'

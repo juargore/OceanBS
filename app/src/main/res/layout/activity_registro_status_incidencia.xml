@@ -122,7 +122,10 @@
                         android:layout_marginTop="1dp"
                         android:layout_marginRight="1dp"
                         android:layout_marginBottom="2dp"
-                        app:cardCornerRadius="4dp">
+                        app:cardCornerRadius="4dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
 
                         <ImageView
                             android:id="@+id/imageView5"
@@ -159,7 +162,10 @@
                         android:layout_marginTop="1dp"
                         android:layout_marginRight="1dp"
                         android:layout_marginBottom="2dp"
-                        app:cardCornerRadius="4dp">
+                        app:cardCornerRadius="4dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
 
                         <ImageView
                             android:id="@+id/imageView6"
@@ -194,7 +200,10 @@
                         android:layout_marginTop="1dp"
                         android:layout_marginRight="1dp"
                         android:layout_marginBottom="2dp"
-                        app:cardCornerRadius="4dp">
+                        app:cardCornerRadius="4dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
 
                         <ImageView
                             android:id="@+id/imageView7"
