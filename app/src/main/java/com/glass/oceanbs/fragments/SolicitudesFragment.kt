@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.adapters.SolicitudAdapter
 import com.glass.oceanbs.R
+import com.glass.oceanbs.activities.EditarIncidenciaActivity
 import com.glass.oceanbs.activities.IncidenciasActivity
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.textColor
@@ -38,7 +39,6 @@ class SolicitudesFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_solicitudes, container, false)
 
         rvSolicitudes = rootView.findViewById(R.id.rvSolicitudes)
-
         rvSolicitudes.layoutManager = LinearLayoutManager(context)
 
         val adapter = SolicitudAdapter(context!!, object : SolicitudAdapter.InterfaceOnClick{
@@ -75,6 +75,12 @@ class SolicitudesFragment : Fragment() {
 
         cancel.setOnClickListener { dialog.dismiss() }
         delete.setOnClickListener { showDeleteDialog(); dialog.dismiss() }
+        edit.setOnClickListener {
+            dialog.dismiss()
+            val intent = Intent(activity, EditarIncidenciaActivity::class.java)
+            intent.putExtra("solicitudId","1")
+            startActivity(intent)
+        }
 
         dialog.show()
     }

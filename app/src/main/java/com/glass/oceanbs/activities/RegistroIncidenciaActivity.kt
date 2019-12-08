@@ -20,6 +20,7 @@ import android.os.StrictMode
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Window
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -43,6 +44,7 @@ import java.util.*
 
 class RegistroIncidenciaActivity : AppCompatActivity() {
 
+    private lateinit var imgBackRegistroIncidencia: ImageView
     private lateinit var txtBitacoraStatus: TextView
 
     private lateinit var txtShowPhoto: TextView
@@ -74,12 +76,14 @@ class RegistroIncidenciaActivity : AppCompatActivity() {
     }
 
     private fun initComponents(){
+        imgBackRegistroIncidencia = findViewById(R.id.imgBackRegistroIncidencia)
         txtBitacoraStatus = findViewById(R.id.txtBitacoraStatus)
 
         txtShowPhoto = findViewById(R.id.txtShowPhoto)
         cardPhoto = findViewById(R.id.cardPhoto)
         imgPhoto = findViewById(R.id.imgPhoto)
 
+        imgBackRegistroIncidencia.setOnClickListener { this.finish() }
         txtBitacoraStatus.setOnClickListener { showPopBitacoraStatus() }
         cardPhoto.setOnClickListener { showPictureDialog() }
         txtShowPhoto.setOnClickListener { showPopPhoto() }
@@ -101,9 +105,9 @@ class RegistroIncidenciaActivity : AppCompatActivity() {
 
     private fun showPictureDialog() {
         val pictureDialog = AlertDialog.Builder(this)
-        pictureDialog.setTitle("Select Action")
+        pictureDialog.setTitle("Obtener fotografía")
 
-        val pictureDialogItems = arrayOf("Select photo from gallery", "Capture photo from camera")
+        val pictureDialogItems = arrayOf("Seleccionar foto de la galería", "Capturar foto con la cámara")
         pictureDialog.setItems(pictureDialogItems) { dialog, which ->
             when (which) {
                 0 -> choosePhotoFromGallary()
@@ -164,8 +168,8 @@ class RegistroIncidenciaActivity : AppCompatActivity() {
                 val uriImage = Uri.fromFile(File(mCameraFileName))
                 imgPhoto.setImageURI(uriImage)
 
-                val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
-                mCameraFileName = saveImage(bitmap)
+                //val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
+                //mCameraFileName = saveImage(bitmap)
             }
         }
     }
@@ -211,6 +215,12 @@ class RegistroIncidenciaActivity : AppCompatActivity() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.pop_bitacora_status)
+
+        val btnAdd = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
+        btnAdd.setOnClickListener {
+            val intent = Intent(applicationContext, RegistroStatusIncidenciaActivity::class.java)
+            startActivity(intent)
+        }
 
         val rvBitacoraStatusIncidencia = dialog.findViewById<RecyclerView>(R.id.rvBitacoraStatusIncidencia)
         rvBitacoraStatusIncidencia.layoutManager = LinearLayoutManager(this)

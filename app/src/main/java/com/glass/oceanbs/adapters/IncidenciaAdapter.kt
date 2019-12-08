@@ -26,7 +26,7 @@ class IncidenciaAdapter(private val context: Context,
     }
 
     override fun getItemCount(): Int {
-        return 10
+        return 4
     }
 
     override fun onBindViewHolder(p0: ItemViewHolder, pos: Int) {

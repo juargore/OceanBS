@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".activities.IncidenciasActivity">
+    tools:context=".activities.EditarIncidenciaActivity">
 
     <LinearLayout
         android:id="@+id/layTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical">
 
@@ -28,14 +28,14 @@
                 android:layout_weight=".15">
 
                 <ImageView
-                    android:id="@+id/imgBackIncidencias"
+                    android:id="@+id/imgBackEdit"
+                    app:srcCompat="@drawable/ic_back_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_back_arrow"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
-                    tools:ignore="UnusedAttribute" />
+                    tools:ignore="UnusedAttribute"/>
             </RelativeLayout>
 
             <LinearLayout
@@ -74,39 +74,10 @@
             android:background="@color/colorDarkGray" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtTitleIncidencias"
+    <RelativeLayout
+        android:id="@+id/layFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layTop"
-        android:layout_marginBottom="4dp"
-        android:text="Incidencias"
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvIncidencias"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/txtTitleIncidencias"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:background="@android:color/white"
-        android:paddingBottom="10dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabNewIncidencia"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="12dp"
-        android:clickable="true"
-        app:backgroundTint="@color/colorPrimaryDark"
-        app:srcCompat="@drawable/ic_add" />
-</RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

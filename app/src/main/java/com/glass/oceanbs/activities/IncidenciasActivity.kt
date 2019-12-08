@@ -5,6 +5,7 @@ package com.glass.oceanbs.activities
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,7 @@ import org.jetbrains.anko.textColor
 
 class IncidenciasActivity : AppCompatActivity() {
 
+    private lateinit var imgBackIncidencias: ImageView
     private lateinit var rvIncidencias: RecyclerView
     private lateinit var fabNewIncidencia: FloatingActionButton
 
@@ -24,10 +26,25 @@ class IncidenciasActivity : AppCompatActivity() {
         setContentView(R.layout.activity_incidencias)
 
         supportActionBar?.hide()
+        initComponents()
+    }
 
+    private fun initComponents(){
+        imgBackIncidencias = findViewById(R.id.imgBackIncidencias)
         rvIncidencias = findViewById(R.id.rvIncidencias)
         fabNewIncidencia = findViewById(R.id.fabNewIncidencia)
 
+        fabNewIncidencia.setOnClickListener {
+            val intent = Intent(applicationContext, RegistroIncidenciaActivity::class.java)
+            startActivity(intent)
+        }
+
+        imgBackIncidencias.setOnClickListener { this.finish() }
+
+        setUpRecyclerView()
+    }
+
+    private fun setUpRecyclerView(){
         rvIncidencias.layoutManager = LinearLayoutManager(this)
         val adapter = IncidenciaAdapter(this, object : IncidenciaAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
@@ -41,11 +58,6 @@ class IncidenciasActivity : AppCompatActivity() {
         })
 
         rvIncidencias.adapter = adapter
-
-        fabNewIncidencia.setOnClickListener {
-            val intent = Intent(applicationContext, RegistroIncidenciaActivity::class.java)
-            startActivity(intent)
-        }
     }
 
     private fun showDeleteDialog(){

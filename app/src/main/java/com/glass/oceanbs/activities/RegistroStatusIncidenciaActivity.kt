@@ -1,4 +1,6 @@
-@file:Suppress("SpellCheckingInspection", "PrivatePropertyName", "DEPRECATION")
+@file:Suppress("SpellCheckingInspection", "PrivatePropertyName", "DEPRECATION",
+    "UNUSED_ANONYMOUS_PARAMETER"
+)
 
 package com.glass.oceanbs.activities
 
@@ -33,6 +35,8 @@ import java.util.*
 
 class RegistroStatusIncidenciaActivity : AppCompatActivity() {
 
+    private lateinit var imgBackStatus: ImageView
+
     private lateinit var txtShowPhoto1: TextView
     private lateinit var cardPhoto1: CardView
     private lateinit var imgPhoto1: ImageView
@@ -54,7 +58,7 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
     private var mCameraFileName3 = ""
 
     companion object {
-        private val IMAGE_DIRECTORY = "/demonuts"
+        private const val IMAGE_DIRECTORY = "/demonuts"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +78,8 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
     }
 
     private fun initComponents(){
+        imgBackStatus = findViewById(R.id.imgBackStatus)
+
         txtShowPhoto1 = findViewById(R.id.txtShowPhoto1)
         cardPhoto1 = findViewById(R.id.cardPhoto1)
         imgPhoto1 = findViewById(R.id.imgPhoto1)
@@ -90,6 +96,8 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
     }
 
     private fun setListeners(){
+        imgBackStatus.setOnClickListener { this.finish() }
+
         cardPhoto1.setOnClickListener { showPictureDialog(1); SELECTED = 1 }
         cardPhoto2.setOnClickListener { showPictureDialog(2); SELECTED = 2 }
         cardPhoto3.setOnClickListener { showPictureDialog(3); SELECTED = 3 }
@@ -101,9 +109,9 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
 
     private fun showPictureDialog(photo: Int) {
         val pictureDialog = AlertDialog.Builder(this)
-        pictureDialog.setTitle("Select Action")
+        pictureDialog.setTitle("Obtener fotografía")
 
-        val pictureDialogItems = arrayOf("Select photo from gallery", "Capture photo from camera")
+        val pictureDialogItems = arrayOf("Seleccionar foto de la galería", "Capturar foto con la cámara")
         pictureDialog.setItems(pictureDialogItems) { dialog, which ->
             when (which) {
                 0 -> choosePhotoFromGallary()
@@ -157,7 +165,8 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
                 mCameraFileName1 = outfile.toString()
                 outUri = Uri.fromFile(outfile)
             }
-            2->{val newPicFile = df.format(date) + ".jpg"
+            2->{
+                val newPicFile = df.format(date) + ".jpg"
                 val outPath = "/sdcard/$newPicFile"
                 val outfile = File(outPath)
 
@@ -201,15 +210,38 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
         }
         else if (requestCode == CAMERA)
         {
-            /*val file = File(mCameraFileName)
+            when(SELECTED){
+                1->{
+                    val file = File(mCameraFileName1)
+                    if (file.exists()) {
+                        val uriImage = Uri.fromFile(File(mCameraFileName1))
+                        imgPhoto1.setImageURI(uriImage)
 
-            if (file.exists()) {
-                val uriImage = Uri.fromFile(File(mCameraFileName))
-                imgPhoto.setImageURI(uriImage)
+                        //val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
+                        //mCameraFileName1 = saveImage(bitmap)
+                    }
+                }
+                2->{
+                    val file = File(mCameraFileName2)
+                    if (file.exists()) {
+                        val uriImage = Uri.fromFile(File(mCameraFileName2))
+                        imgPhoto2.setImageURI(uriImage)
 
-                val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
-                mCameraFileName = saveImage(bitmap)
-            }*/
+                        //val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
+                        //mCameraFileName1 = saveImage(bitmap)
+                    }
+                }
+                else->{
+                    val file = File(mCameraFileName3)
+                    if (file.exists()) {
+                        val uriImage = Uri.fromFile(File(mCameraFileName3))
+                        imgPhoto3.setImageURI(uriImage)
+
+                        //val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
+                        //mCameraFileName1 = saveImage(bitmap)
+                    }
+                }
+            }
         }
     }
 

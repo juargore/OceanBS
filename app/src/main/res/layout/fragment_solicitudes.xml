@@ -14,7 +14,7 @@
         android:background="@color/colorDarkGray" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/txtInstructionTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorLighterGray"

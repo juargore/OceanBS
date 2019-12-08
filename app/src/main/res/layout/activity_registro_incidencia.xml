@@ -29,10 +29,14 @@
                 android:layout_weight=".15">
 
                 <ImageView
-                    android:id="@+id/imageView"
+                    android:id="@+id/imgBackRegistroIncidencia"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_back_arrow" />
+                    app:srcCompat="@drawable/ic_back_arrow"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    tools:ignore="UnusedAttribute"/>
             </RelativeLayout>
 
             <LinearLayout

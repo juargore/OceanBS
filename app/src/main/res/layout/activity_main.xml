@@ -15,7 +15,7 @@
         app:fillColor="@color/colorPrimaryDark"
         app:pageColor="#00000000"
         app:radius="6dp"
-        app:slideInterval="4000"
+        app:slideInterval="5000"
         app:strokeColor="@android:color/white"
         app:strokeWidth="1.5dp" />
 
