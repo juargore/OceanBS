@@ -44,8 +44,8 @@ import java.util.*
 class RegistroIncidenciaActivity : AppCompatActivity() {
 
     private lateinit var txtBitacoraStatus: TextView
-    private lateinit var txtShowPhoto: TextView
 
+    private lateinit var txtShowPhoto: TextView
     private lateinit var cardPhoto: CardView
     private lateinit var imgPhoto: ImageView
 
@@ -149,7 +149,6 @@ class RegistroIncidenciaActivity : AppCompatActivity() {
                 val contentURI = data.data
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-                    //val path = saveImage(bitmap)
                     imgPhoto.setImageBitmap(bitmap)
 
                 } catch (e: IOException) {
