@@ -1,22 +1,36 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.glass.oceanbs.activities
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
+import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.glass.oceanbs.Constants
+import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import okhttp3.*
+import org.json.JSONObject
 import java.io.IOException
+import java.lang.Error
 
 class LoginActivity : AppCompatActivity()  {
 
-    private lateinit var parentLayoutLogin: LinearLayout
+    private lateinit var progress : AlertDialog
+    private lateinit var etCode: EditText
+    private lateinit var etPhone: EditText
+
+    private lateinit var parentLayout: LinearLayout
     private lateinit var btnLogIn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,44 +41,88 @@ class LoginActivity : AppCompatActivity()  {
         initComponents()
     }
 
+    @SuppressLint("InflateParams")
     private fun initComponents(){
-        parentLayoutLogin = findViewById(R.id.parentLayoutLogin)
+        parentLayout = findViewById(R.id.parentLayoutLogin)
+        etCode = findViewById(R.id.etCode)
+        etPhone = findViewById(R.id.etPhone)
         btnLogIn = findViewById(R.id.btnLogIn)
+
+        val builder = AlertDialog.Builder(this, R.style.HalfDialogTheme)
+        val inflater = this.layoutInflater
+        val dialogView = inflater.inflate(R.layout.progress, null)
+
+        builder.setView(dialogView)
+        progress = builder.create()
 
         setListeners()
     }
 
     private fun setListeners(){
         btnLogIn.setOnClickListener {
-            //sendCredentialsToServer()
-            startActivity(Intent(this, MainActivity::class.java))
+
+            if(Constants.internetConnected(this)){
+                if(validateFullFields())
+                    sendCredentialsToServer()
+            } else
+                Constants.showPopUpNoInternet(this)
         }
     }
 
     private fun sendCredentialsToServer(){
+        progress.show()
+
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
         val client = OkHttpClient()
-        val url = "https://elsalto.gob.mx/RH/login"
-
         val builder = FormBody.Builder()
-        .add("codigo","9615")
-        .add("password","12345") //krzan
+        .add("WebService","InicioSesion")
+        .add("Codigo", etCode.text.toString().replace(" ",""))
+        .add("TelMovil", etPhone.text.toString().replace(" ",""))
         .build()
 
         val request = Request.Builder()
-            .url(url).post(builder).build()
+            .url(Constants.URL_PARENT).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback{
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("FAIL","${e.message}")
+            override fun onResponse(call: Call, response: Response) {
+                try{
+                    val jsonRes = JSONObject(response.body()!!.string())
+                    Log.e("--","$jsonRes")
+
+                    if(jsonRes.getInt("Error") > 0)
+                        runOnUiThread{ snackbar(applicationContext, parentLayout, jsonRes.getString("Mensaje"))}
+                    else
+                        startActivity(Intent(applicationContext, MainActivity::class.java))
+
+                } catch (e: Error){
+                    snackbar(applicationContext, parentLayout, e.message.toString())
+                }
+
+                progress.dismiss()
             }
 
-            override fun onResponse(call: Call, response: Response) {
-                Log.e("SUCCESS","${response.body()?.string()}")
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("--","${e.message}")
+                snackbar(applicationContext, parentLayout, e.message.toString())
+                progress.dismiss()
             }
         })
+    }
+
+    private fun validateFullFields(): Boolean {
+        return when {
+            TextUtils.isEmpty(etCode.text.toString()) -> {
+                etCode.error = "El código no puede estar vacío"
+                false
+            }
+            TextUtils.isEmpty(etPhone.text.toString()) -> {
+                etPhone.error = "El teléfono no puede estar vacío"
+                false
+            }
+            else -> true
+        }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {

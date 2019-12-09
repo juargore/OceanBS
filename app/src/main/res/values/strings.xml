@@ -4,11 +4,11 @@
 
     <!-- Strings for Login Activity -->
     <string name="welcome">Bienvenido</string>
-    <string name="user_code">Código del Usuario</string>
-    <string name="phone_number">Número de teléfono</string>
+    <string name="user_code">Código del Colaborador / Propietario</string>
+    <string name="phone_number">Número de celular</string>
     <string name="remember_credentials">Recordar credenciales</string>
     <string name="log_in">Iniciar sesión</string>
-    <string name="ocean_software">©2018 OceanSlide Software</string>
+    <string name="ocean_software">Ocean Business Software | México</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -16,6 +16,10 @@
     <string name="msg_confirm_creation">¿Confirma que desea guardar el registo actual?</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
+
+    <string name="title_no_internet">Sin internet</string>
+    <string name="desc_no_internet">La App necesita conectarse a internet para poder descargar la última información del
+        Servidor.\n\nPor favor connecte el dispositivo a una red e intente de nuevo</string>
 
 
 </resources>
