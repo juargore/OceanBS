@@ -2,11 +2,11 @@ package com.glass.oceanbs.activities
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
-import com.glass.oceanbs.adapters.ParentPagerAdapter
 import com.glass.oceanbs.R
+import com.glass.oceanbs.adapters.ParentPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.synnapps.carouselview.CarouselView
 import com.synnapps.carouselview.ImageListener
@@ -37,17 +37,13 @@ class MainActivity : AppCompatActivity() {
         viewPagerParent = findViewById(R.id.viewPagerParent)
 
         bitmapList.add(BitmapFactory.decodeResource(resources,
-            R.drawable.photo1
-        ))
+            R.drawable.photo1))
         bitmapList.add(BitmapFactory.decodeResource(resources,
-            R.drawable.photo2
-        ))
+            R.drawable.photo2))
         bitmapList.add(BitmapFactory.decodeResource(resources,
-            R.drawable.photo3
-        ))
+            R.drawable.photo3))
         bitmapList.add(BitmapFactory.decodeResource(resources,
-            R.drawable.photo4
-        ))
+            R.drawable.photo4))
     }
 
     private fun setUpTabs(){

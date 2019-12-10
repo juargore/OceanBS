@@ -19,7 +19,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
+import com.glass.oceanbs.database.TableUser
+import com.glass.oceanbs.models.User
 import okhttp3.*
+import org.jetbrains.anko.toast
 import org.json.JSONObject
 import java.io.IOException
 import java.lang.Error
@@ -93,8 +96,28 @@ class LoginActivity : AppCompatActivity()  {
 
                     if(jsonRes.getInt("Error") > 0)
                         runOnUiThread{ snackbar(applicationContext, parentLayout, jsonRes.getString("Mensaje"))}
-                    else
+                    else{
+
+                        // create object User and save it in SQLite DB
+                        val user = User(
+                            jsonRes.getString("Id"),
+                            jsonRes.getBoolean("Colaborador"),
+                            jsonRes.getString("Codigo"),
+                            jsonRes.getString("Nombre"),
+                            jsonRes.getString("ApellidoP"),
+                            jsonRes.getString("ApellidoM")
+                        )
+
+                        TableUser(applicationContext).insertNewOrExistingUser(user)
+                        Constants.setUserId(applicationContext, user.id)
+
+                        // show a welcome message to the user
+                        runOnUiThread { toast("Bienvenido") }
+                        this@LoginActivity.finish()
+
+                        //start new activity main
                         startActivity(Intent(applicationContext, MainActivity::class.java))
+                    }
 
                 } catch (e: Error){
                     snackbar(applicationContext, parentLayout, e.message.toString())

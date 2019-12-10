@@ -1,10 +1,11 @@
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION", "SpellCheckingInspection")
 
 package com.glass.oceanbs
 
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.view.View
@@ -17,29 +18,56 @@ import org.jetbrains.anko.backgroundColor
 object Constants {
 
     const val URL_PARENT = "http://oceanbs04.com/models/catalogos/CCatColaborador.php"
+    private const val DATABASE_SP = "oceanbs"
 
-
-    fun snackbar(context: Context, view: View, message: String, type: types = types.GENERAL){
+    fun snackbar(context: Context, view: View, message: String, type: Types = Types.GENERAL){
         val snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
-        val view = snack.view
+        val sview = snack.view
 
         when(type){
-            types.GENERAL ->{ }
-            types.ERROR ->{ view.backgroundColor = context.resources.getColor(R.color.colorAccent) }
-            types.SUCCESS ->{  view.backgroundColor = context.resources.getColor(R.color.colorAccent)}
-            types.INFO ->{ view.backgroundColor = context.resources.getColor(R.color.colorAccent)}
+            Types.GENERAL ->{ }
+            Types.ERROR ->{ sview.backgroundColor = context.resources.getColor(R.color.colorAccent) }
+            Types.SUCCESS ->{  sview.backgroundColor = context.resources.getColor(R.color.colorAccent)}
+            Types.INFO ->{ sview.backgroundColor = context.resources.getColor(R.color.colorAccent)}
         }
         snack.show()
     }
 
-    enum class types{
+    enum class Types{
         GENERAL,
         ERROR,
         SUCCESS,
         INFO
     }
 
-    /*Functions to check if user has active internet connection or not*/
+
+    /* functions to get and set the User ID */
+
+    fun setUserId(context: Context, userId: String){
+        val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
+        editor.putString("userId", userId)
+        editor.apply()
+    }
+
+    fun getUserId(context: Context): String{
+        val prefs = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE)
+        return prefs.getString("userId", "")!!
+    }
+
+    fun setKeepLogin(context: Context, value: Boolean){
+        val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
+        editor.putBoolean("remember", value)
+        editor.apply()
+    }
+
+    fun getKeepLogin(context: Context) : Boolean{
+        val prefs = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE)
+        return prefs.getBoolean("remember", false)
+    }
+
+
+    /* functions to check if User has active internet connection or not */
+
     fun internetConnected(activity: Activity) : Boolean{
         return isNetworkConnected(activity)
     }
@@ -57,7 +85,8 @@ object Constants {
         }.show().setCancelable(true)
     }
 
-    private val PERMISSION_ID = 42
+    /* functions to check the permissions for the general App */
+    private const val PERMISSION_ID = 42
 
     fun checkPermission(activity: Activity, vararg perm: String) : Boolean {
         val havePermissions = perm.toList().all {

@@ -1,8 +1,13 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.glass.oceanbs.database
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
+import com.glass.oceanbs.models.User
 
 class TableUser(context: Context) {
 
@@ -41,67 +46,45 @@ class TableUser(context: Context) {
         return values
     }
 
-    /*
-    * fun insertNewOrExistingUser(user: User){
+    @SuppressLint("DefaultLocale")
+    fun insertNewOrExistingUser(user: User){
 
-        //First, delete all data linked to current user
-        val res = deleteUserById(user.userId)
-        //Log.e("--", "User deleted: $res")
+        // first, delete all data linked to current User
+        val res = deleteUserById(user.id)
+        Log.e("--", res.toString())
 
-        //Now, add the current user to Database
-        db.insert(TABLE_USER, null, generateCV(user.userId, user.firstName, user.lastName, user.uniqueName, user.groupId, user.groupName,
-            user.email, user.password, user.ttContext, user.scopeFlow, user.canAddSubs, user.accessToken, user.gcmToken, user.expires_in, user.dateTokenSaved, user.refreshToken, user.kid))
+        // now, add the current User to database
+        db.insert(TABLE_USER, null, generateCV(
+            user.id, user.colaborador.toString().toLowerCase(), user.codigo, user.nombre, user.apellidoP, user.apellidoM))
     }
 
     private fun deleteUserById(userId: String) : Int{
         return db.delete(TABLE_USER, "$USER_ID =? ", arrayOf(userId))
     }
 
-    fun updateTokensByUserId(user:User, userId: String){
-        val cv = ContentValues()
-        cv.put(ACCESS_TOKEN, user.accessToken)
-        cv.put(EXPIRES_IN, user.expires_in)
-        cv.put(REFRESH_TOKEN, user.refreshToken)
-
-        db.update(TABLE_USER, cv, "$USER_ID=${user.userId}", null)
-    }
-
-    fun getCurrentUserById(userId: String) : User{
+    fun getCurrentUserById(userId: String) : User {
         val cursor = db.query(TABLE_USER, allColumns, "$USER_ID =? ", arrayOf(userId), null, null, null)
-        lateinit var currentUser : User
+        lateinit var cUser: User
 
         if(cursor.count > 0){
-            cursor.use {c->
+            cursor.use { c->
                 if(c.moveToFirst()){
                     do{
-                        currentUser = User(
+                        cUser = User(
                             c.getString(c.getColumnIndex(USER_ID)),
-                            c.getString(c.getColumnIndex(FIRST_NAME)),
-                            c.getString(c.getColumnIndex(LAST_NAME)),
-                            c.getString(c.getColumnIndex(UNIQUE_NAME)),
-                            c.getString(c.getColumnIndex(GROUP_ID)),
-                            c.getString(c.getColumnIndex(GROUP_NAME)),
-                            c.getString(c.getColumnIndex(EMAIL)),
-                            c.getString(c.getColumnIndex(PASSWORD)),
-                            c.getString(c.getColumnIndex(TRACK_TRACE_CONTEXT)),
-                            c.getString(c.getColumnIndex(SCOPE_FLOW)),
-                            c.getString(c.getColumnIndex(CAN_ADD_SUBS)),
-                            c.getString(c.getColumnIndex(ACCESS_TOKEN)),
-                            c.getString(c.getColumnIndex(GCM_TOKEN)),
-                            c.getString(c.getColumnIndex(EXPIRES_IN)),
-                            c.getString(c.getColumnIndex(DATE_TOKEN_SAVED)),
-                            c.getString(c.getColumnIndex(REFRESH_TOKEN)),
-                            c.getString(c.getColumnIndex(KID))
+                            c.getString(c.getColumnIndex(COLABORADOR))!!.toBoolean(),
+                            c.getString(c.getColumnIndex(CODIGO)),
+                            c.getString(c.getColumnIndex(NOMBRE)),
+                            c.getString(c.getColumnIndex(APELLIDO_P)),
+                            c.getString(c.getColumnIndex(APELLIDO_M))
                         )
                     } while (c.moveToNext())
                 }
             }
         } else{
-            return User("","","","","","","", "","", "",
-            "","","","","","","")
+            return User("", false, "", "", "", "")
         }
-        cursor.close()
 
-        return currentUser
-    }*/
+        return cUser
+    }
 }
