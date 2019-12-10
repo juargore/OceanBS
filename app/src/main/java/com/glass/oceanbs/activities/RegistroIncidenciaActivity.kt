@@ -222,8 +222,10 @@ class RegistroIncidenciaActivity : AppCompatActivity() {
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
         btnAdd.setOnClickListener {
             val intent = Intent(applicationContext, RegistroStatusIncidenciaActivity::class.java)
-            startActivity(intent)
-        }
+            startActivity(intent) }
+
+        val btnExit = dialog.findViewById<TextView>(R.id.txtCancelP)
+        btnExit.setOnClickListener { dialog.dismiss() }
 
         val rvBitacoraStatusIncidencia = dialog.findViewById<RecyclerView>(R.id.rvBitacoraStatusIncidencia)
         rvBitacoraStatusIncidencia.layoutManager = LinearLayoutManager(this)

@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +36,7 @@ class LoginActivity : AppCompatActivity()  {
 
     private lateinit var parentLayout: LinearLayout
     private lateinit var btnLogIn: Button
+    private lateinit var chckBoxLogin: CheckBox
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +52,7 @@ class LoginActivity : AppCompatActivity()  {
         etCode = findViewById(R.id.etCode)
         etPhone = findViewById(R.id.etPhone)
         btnLogIn = findViewById(R.id.btnLogIn)
+        chckBoxLogin = findViewById(R.id.chckBoxLogin)
 
         val builder = AlertDialog.Builder(this, R.style.HalfDialogTheme)
         val inflater = this.layoutInflater
@@ -111,11 +114,14 @@ class LoginActivity : AppCompatActivity()  {
                         TableUser(applicationContext).insertNewOrExistingUser(user)
                         Constants.setUserId(applicationContext, user.id)
 
+                        if(chckBoxLogin.isChecked)
+                            Constants.setKeepLogin(applicationContext, true)
+
                         // show a welcome message to the user
                         runOnUiThread { toast("Bienvenido") }
                         this@LoginActivity.finish()
 
-                        //start new activity main
+                        // start new activity main
                         startActivity(Intent(applicationContext, MainActivity::class.java))
                     }
 

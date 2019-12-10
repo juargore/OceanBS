@@ -11,13 +11,18 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.StrictMode
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import android.widget.Button
 import android.widget.TextView
+import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.IncidenciasActivity
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.textColor
 
@@ -52,11 +57,33 @@ class NewSolicitudFragment : Fragment() {
         val isEdit = arguments?.getBoolean("isEdit")
         solicitudId = arguments?.getString("solicitudId")
 
+        // is editing the current solicitud
         if(isEdit != null && isEdit){
             txtInstructionN.text = "Llene los campos para actualizar la solicitud"
+        } else{
+            //is creating a new solicitud
+            getCurrentId()
         }
 
         btnSaveSolicitud.setOnClickListener { showConfirmDialog(context!!) }
+    }
+
+    private fun getCurrentId(){
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","")
+            .build()
+
+        val request = Request.Builder()
+            .url(Constants.URL_PARENT)
+            .post(builder)
+            .build()
+
+        val response = client.newCall(request).execute()
+        solicitudId = response.body()?.string()
     }
 
     private fun showConfirmDialog(context: Context){
@@ -72,8 +99,6 @@ class NewSolicitudFragment : Fragment() {
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
         }
     }
-
-
 
     private fun showResumeDialog(context: Context){
         val dialog = Dialog(context, R.style.FullDialogTheme)

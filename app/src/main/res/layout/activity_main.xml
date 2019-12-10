@@ -8,16 +8,38 @@
     tools:context=".activities.MainActivity">
 
 
-    <com.synnapps.carouselview.CarouselView
-        android:id="@+id/carouselView"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        app:fillColor="@color/colorPrimaryDark"
-        app:pageColor="#00000000"
-        app:radius="6dp"
-        app:slideInterval="5000"
-        app:strokeColor="@android:color/white"
-        app:strokeWidth="1.5dp" />
+        android:layout_height="180dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:clickable="true"
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:fabCustomSize="32dp"
+            app:fabSize="auto"
+            app:maxImageSize="16dp"
+            app:srcCompat="@drawable/ic_exit" />
+
+        <com.synnapps.carouselview.CarouselView
+            android:id="@+id/carouselView"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            app:fillColor="@color/colorPrimaryDark"
+            app:pageColor="#00000000"
+            app:radius="6dp"
+            app:slideInterval="5000"
+            app:strokeColor="@android:color/white"
+            app:strokeWidth="1.5dp" />
+
+    </RelativeLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabsParent"
