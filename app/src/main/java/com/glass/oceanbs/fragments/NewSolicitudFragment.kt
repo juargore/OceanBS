@@ -13,10 +13,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
 import android.view.*
-import android.view.inputmethod.InputMethodManager
+import android.widget.*
 import androidx.fragment.app.Fragment
-import android.widget.Button
-import android.widget.TextView
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.IncidenciasActivity
@@ -29,8 +27,22 @@ import org.jetbrains.anko.textColor
 
 class NewSolicitudFragment : Fragment() {
 
-    private lateinit var btnSaveSolicitud: Button
     private lateinit var txtInstructionN: TextView
+
+    private lateinit var etCodigoS: EditText
+    private lateinit var spinDesarrolloS: Spinner
+    private lateinit var spinUnidadS: Spinner
+    private lateinit var etPropietarioS: EditText
+    private lateinit var chckBoxReporta: CheckBox
+
+    private lateinit var etReportaS: EditText
+    private lateinit var spinRelacionS: Spinner
+    private lateinit var etTelMovilS: EditText
+    private lateinit var etTelParticularS: EditText
+
+    private lateinit var etEmailS: EditText
+    private lateinit var etObservacionesS: EditText
+    private lateinit var btnSaveSolicitud: Button
 
     private var solicitudId: String? = "0"
 
@@ -45,6 +57,7 @@ class NewSolicitudFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_new_solicitud, container, false)
 
         initComponents(rootView)
+        setUpSpinners()
 
         return rootView
     }
@@ -52,6 +65,20 @@ class NewSolicitudFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun initComponents(view: View){
         txtInstructionN = view.findViewById(R.id.txtInstructionN)
+
+        etCodigoS = view.findViewById(R.id.etCodigoS)
+        spinDesarrolloS = view.findViewById(R.id.spinDesarrolloS)
+        spinUnidadS = view.findViewById(R.id.spinUnidadS)
+        etPropietarioS = view.findViewById(R.id.etPropietarioS)
+        chckBoxReporta = view.findViewById(R.id.chckBoxReporta)
+
+        etReportaS = view.findViewById(R.id.etReportaS)
+        spinRelacionS = view.findViewById(R.id.spinRelacionS)
+        etTelMovilS = view.findViewById(R.id.etTelMovilS)
+        etTelParticularS = view.findViewById(R.id.etTelParticularS)
+
+        etEmailS = view.findViewById(R.id.etEmailS)
+        etObservacionesS = view.findViewById(R.id.etObservacionesS)
         btnSaveSolicitud = view.findViewById(R.id.btnSaveSolicitud)
 
         val isEdit = arguments?.getBoolean("isEdit")
@@ -61,8 +88,8 @@ class NewSolicitudFragment : Fragment() {
         if(isEdit != null && isEdit){
             txtInstructionN.text = "Llene los campos para actualizar la solicitud"
         } else{
-            //is creating a new solicitud
-            getCurrentId()
+            //its creating a new solicitud
+            //getCurrentId()
         }
 
         btnSaveSolicitud.setOnClickListener { showConfirmDialog(context!!) }
@@ -84,6 +111,14 @@ class NewSolicitudFragment : Fragment() {
 
         val response = client.newCall(request).execute()
         solicitudId = response.body()?.string()
+    }
+
+    private fun setUpSpinners(){
+        val itemList = arrayOf("Item 1 dffdgd dfg df f", "Item 2", "Item 3 dfdfgdfgd")
+        val adapter = ArrayAdapter(context!!, R.layout.spinner_text, itemList)
+        spinDesarrolloS.adapter = adapter
+        spinRelacionS.adapter = adapter
+        spinUnidadS.adapter = adapter
     }
 
     private fun showConfirmDialog(context: Context){
