@@ -12,22 +12,24 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.IncidenciasActivity
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.glass.oceanbs.database.TableUser
+import okhttp3.*
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.runOnUiThread
 import org.jetbrains.anko.textColor
+import org.json.JSONObject
+import java.io.IOException
+import java.lang.Error
 
 
 class NewSolicitudFragment : Fragment() {
-
-    private lateinit var txtInstructionN: TextView
 
     private lateinit var etCodigoS: EditText
     private lateinit var spinDesarrolloS: Spinner
@@ -43,8 +45,6 @@ class NewSolicitudFragment : Fragment() {
     private lateinit var etEmailS: EditText
     private lateinit var etObservacionesS: EditText
     private lateinit var btnSaveSolicitud: Button
-
-    private var solicitudId: String? = "0"
 
     companion object{
         fun newInstance(): NewSolicitudFragment {
@@ -64,53 +64,23 @@ class NewSolicitudFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun initComponents(view: View){
-        txtInstructionN = view.findViewById(R.id.txtInstructionN)
 
-        etCodigoS = view.findViewById(R.id.etCodigoS)
-        spinDesarrolloS = view.findViewById(R.id.spinDesarrolloS)
-        spinUnidadS = view.findViewById(R.id.spinUnidadS)
-        etPropietarioS = view.findViewById(R.id.etPropietarioS)
+        etCodigoS = view.findViewById(R.id.etCodigoN)
+        spinDesarrolloS = view.findViewById(R.id.spinDesarrolloN)
+        spinUnidadS = view.findViewById(R.id.spinUnidadN)
+        etPropietarioS = view.findViewById(R.id.etPropietarioN)
         chckBoxReporta = view.findViewById(R.id.chckBoxReporta)
 
-        etReportaS = view.findViewById(R.id.etReportaS)
-        spinRelacionS = view.findViewById(R.id.spinRelacionS)
-        etTelMovilS = view.findViewById(R.id.etTelMovilS)
-        etTelParticularS = view.findViewById(R.id.etTelParticularS)
+        etReportaS = view.findViewById(R.id.etReportaN)
+        spinRelacionS = view.findViewById(R.id.spinRelacionN)
+        etTelMovilS = view.findViewById(R.id.etTelMovilN)
+        etTelParticularS = view.findViewById(R.id.etTelParticularN)
 
-        etEmailS = view.findViewById(R.id.etEmailS)
-        etObservacionesS = view.findViewById(R.id.etObservacionesS)
+        etEmailS = view.findViewById(R.id.etEmailN)
+        etObservacionesS = view.findViewById(R.id.etObservacionesN)
         btnSaveSolicitud = view.findViewById(R.id.btnSaveSolicitud)
 
-        val isEdit = arguments?.getBoolean("isEdit")
-        solicitudId = arguments?.getString("solicitudId")
-
-        // is editing the current solicitud
-        if(isEdit != null && isEdit){
-            txtInstructionN.text = "Llene los campos para actualizar la solicitud"
-        } else{
-            //its creating a new solicitud
-            //getCurrentId()
-        }
-
         btnSaveSolicitud.setOnClickListener { showConfirmDialog(context!!) }
-    }
-
-    private fun getCurrentId(){
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
-
-        val client = OkHttpClient()
-        val builder = FormBody.Builder()
-            .add("WebService","")
-            .build()
-
-        val request = Request.Builder()
-            .url(Constants.URL_SOLICITUDES)
-            .post(builder)
-            .build()
-
-        val response = client.newCall(request).execute()
-        solicitudId = response.body()?.string()
     }
 
     private fun setUpSpinners(){

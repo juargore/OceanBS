@@ -155,7 +155,7 @@ class SolicitudesFragment : Fragment() {
         edit.setOnClickListener {
             dialog.dismiss()
             val intent = Intent(activity, EditarIncidenciaActivity::class.java)
-            intent.putExtra("solicitudId","1")
+            intent.putExtra("solicitudId","255")
             startActivity(intent)
         }
 

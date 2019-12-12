@@ -67,7 +67,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/etCodigoS"
+                        android:id="@+id/etCodigoN"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner"
@@ -96,7 +96,7 @@
                         android:layout_height="match_parent">
 
                         <Spinner
-                            android:id="@+id/spinDesarrolloS"
+                            android:id="@+id/spinDesarrolloN"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@drawable/rectangle_round_corner" />
@@ -143,7 +143,7 @@
                         android:layout_height="match_parent">
 
                         <Spinner
-                            android:id="@+id/spinUnidadS"
+                            android:id="@+id/spinUnidadN"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@drawable/rectangle_round_corner" />
@@ -178,7 +178,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/etPropietarioS"
+                        android:id="@+id/etPropietarioN"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner"
@@ -219,7 +219,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/etReportaS"
+                        android:id="@+id/etReportaN"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner"
@@ -247,7 +247,7 @@
                         android:layout_height="match_parent">
 
                         <Spinner
-                            android:id="@+id/spinRelacionS"
+                            android:id="@+id/spinRelacionN"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@drawable/rectangle_round_corner" />
@@ -290,7 +290,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/etTelMovilS"
+                        android:id="@+id/etTelMovilN"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner"
@@ -312,7 +312,7 @@
                         android:text="Tel. Particular" />
 
                     <EditText
-                        android:id="@+id/etTelParticularS"
+                        android:id="@+id/etTelParticularN"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner"
@@ -331,7 +331,7 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/etEmailS"
+                android:id="@+id/etEmailN"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -346,7 +346,7 @@
                 android:text="Observaciones" />
 
             <EditText
-                android:id="@+id/etObservacionesS"
+                android:id="@+id/etObservacionesN"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
