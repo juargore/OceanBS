@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.IncidenciasActivity
-import com.glass.oceanbs.database.TableUser
 import okhttp3.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.runOnUiThread
@@ -31,6 +30,7 @@ import java.lang.Error
 
 class NewSolicitudFragment : Fragment() {
 
+    private lateinit var layParentN: LinearLayout
     private lateinit var etCodigoS: EditText
     private lateinit var spinDesarrolloS: Spinner
     private lateinit var spinUnidadS: Spinner
@@ -45,6 +45,8 @@ class NewSolicitudFragment : Fragment() {
     private lateinit var etEmailS: EditText
     private lateinit var etObservacionesS: EditText
     private lateinit var btnSaveSolicitud: Button
+
+    private var userId = ""
 
     companion object{
         fun newInstance(): NewSolicitudFragment {
@@ -65,6 +67,7 @@ class NewSolicitudFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun initComponents(view: View){
 
+        layParentN = view.findViewById(R.id.layParentN)
         etCodigoS = view.findViewById(R.id.etCodigoN)
         spinDesarrolloS = view.findViewById(R.id.spinDesarrolloN)
         spinUnidadS = view.findViewById(R.id.spinUnidadN)
@@ -96,13 +99,63 @@ class NewSolicitudFragment : Fragment() {
             "Confirmar Solicitud")
         {
             positiveButton(resources.getString(R.string.accept)) {
-                showResumeDialog(context)
+                //sendDataToServer()
             }
             negativeButton(resources.getString(R.string.cancel)){}
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
         }
+    }
+
+    private fun sendDataToServer(){
+        //progress.show()
+
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
+        userId = Constants.getUserId(context!!)
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","GuardarSolicitudAG")
+            .add("Id", "") // empty if new
+            .add("Codigo", "") //desarrollo
+            .add("IdProducto", "") // unidad
+            .add("ReportaPropietario", "") // 0 || 1
+            .add("NombrePR", "") //nombre del propietario
+            .add("TipoRelacionPropietario", "") // 0,1,2,3,4,5,6
+            .add("TelCelularPR", "")
+            .add("TelParticularPR", "")
+            .add("CorreoElectronicoPR", "")
+            .add("Observaciones", "")
+            .add("IdColaborador1", userId)
+            .add("Status", "1") // active / inactive
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    val jsonRes = JSONObject(response.body()!!.string())
+                    Log.e("--","$jsonRes")
+
+                    runOnUiThread { showResumeDialog(context!!) }
+
+                    //runOnUiThread { progress.dismiss() }
+                } catch (e: Error){
+                    Constants.snackbar(context!!, layParentN, e.message.toString())
+                    //runOnUiThread { progress.dismiss() }
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("--","${e.message}")
+                Constants.snackbar(context!!, layParentN, e.message.toString())
+                //progress.dismiss()
+            }
+        })
     }
 
     private fun showResumeDialog(context: Context){
@@ -114,7 +167,7 @@ class NewSolicitudFragment : Fragment() {
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddIncidencias)
         btnAdd.setOnClickListener {
             dialog.dismiss()
-            
+
             val intent = Intent(activity, IncidenciasActivity::class.java)
             startActivity(intent)
         }

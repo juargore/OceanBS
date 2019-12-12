@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.EditarIncidenciaActivity">
+        <activity android:name=".activities.EditarSolicitudActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

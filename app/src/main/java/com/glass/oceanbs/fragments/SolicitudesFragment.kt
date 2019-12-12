@@ -24,7 +24,7 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.adapters.SolicitudAdapter
 import com.glass.oceanbs.R
-import com.glass.oceanbs.activities.EditarIncidenciaActivity
+import com.glass.oceanbs.activities.EditarSolicitudActivity
 import com.glass.oceanbs.activities.IncidenciasActivity
 import com.glass.oceanbs.database.TableUser
 import okhttp3.*
@@ -154,7 +154,7 @@ class SolicitudesFragment : Fragment() {
         delete.setOnClickListener { showDeleteDialog(); dialog.dismiss() }
         edit.setOnClickListener {
             dialog.dismiss()
-            val intent = Intent(activity, EditarIncidenciaActivity::class.java)
+            val intent = Intent(activity, EditarSolicitudActivity::class.java)
             intent.putExtra("solicitudId","255")
             startActivity(intent)
         }
