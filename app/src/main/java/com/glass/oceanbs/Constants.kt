@@ -17,7 +17,10 @@ import org.jetbrains.anko.backgroundColor
 
 object Constants {
 
-    const val URL_PARENT = "http://oceanbs04.com/models/catalogos/CCatColaborador.php"
+    private const val URL_PARENT = "http://oceanbs01.com/models/"
+    const val URL_USER = "${URL_PARENT}catalogos/CCatColaborador.php"
+    const val URL_SOLICITUDES = "${URL_PARENT}registros/CRegSolicitudAG.php"
+
     private const val DATABASE_SP = "oceanbs"
 
     fun snackbar(context: Context, view: View, message: String, type: Types = Types.GENERAL){

@@ -26,8 +26,10 @@ import com.glass.oceanbs.adapters.SolicitudAdapter
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.EditarIncidenciaActivity
 import com.glass.oceanbs.activities.IncidenciasActivity
+import com.glass.oceanbs.database.TableUser
 import okhttp3.*
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.runOnUiThread
 import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
@@ -64,6 +66,8 @@ class SolicitudesFragment : Fragment() {
         builder.setView(dialogView)
         progress = builder.create()
 
+        getSolicitudes()
+
         return rootView
     }
 
@@ -74,14 +78,16 @@ class SolicitudesFragment : Fragment() {
         StrictMode.setThreadPolicy(policy)
 
         userId = Constants.getUserId(context!!)
+        val cUser = TableUser(context!!).getCurrentUserById(userId)
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
-            .add("WebService","")
-            .add("userId", userId)
+            .add("WebService","ConsultaSolicitudesAGIdUsuario")
+            .add("IdUsuario", userId)
+            .add("EsColaborador", cUser.colaborador.toString())
             .build()
 
-        val request = Request.Builder().url(Constants.URL_PARENT).post(builder).build()
+        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
@@ -89,9 +95,17 @@ class SolicitudesFragment : Fragment() {
                     val jsonRes = JSONObject(response.body()!!.string())
                     Log.e("--","$jsonRes")
 
-                    setUpRecyclerView()
+                    if(jsonRes.getInt("Error") > 0)
+                        runOnUiThread{ snackbar(context!!, layParentS, jsonRes.getString("Mensaje"))}
+                    else{
+
+                        // create solicitud object and iterate json array
+
+                    }
+                    runOnUiThread { progress.dismiss() }
                 } catch (e: Error){
                     snackbar(context!!, layParentS, e.message.toString())
+                    runOnUiThread { progress.dismiss() }
                 }
             }
 

@@ -105,7 +105,7 @@ class NewSolicitudFragment : Fragment() {
             .build()
 
         val request = Request.Builder()
-            .url(Constants.URL_PARENT)
+            .url(Constants.URL_SOLICITUDES)
             .post(builder)
             .build()
 

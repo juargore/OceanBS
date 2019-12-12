@@ -89,7 +89,7 @@ class LoginActivity : AppCompatActivity()  {
         .build()
 
         val request = Request.Builder()
-            .url(Constants.URL_PARENT).post(builder).build()
+            .url(Constants.URL_USER).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback{
             override fun onResponse(call: Call, response: Response) {
