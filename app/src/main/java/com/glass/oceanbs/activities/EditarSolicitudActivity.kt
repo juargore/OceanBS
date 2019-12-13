@@ -63,7 +63,7 @@ class EditarSolicitudActivity : AppCompatActivity() {
         spinDesarrolloE = findViewById(R.id.spinDesarrolloE)
         spinUnidadE = findViewById(R.id.spinUnidadE)
         etPropietarioE = findViewById(R.id.etPropietarioE)
-        chckBoxReporta = findViewById(R.id.chckBoxReporta)
+        chckBoxReporta = findViewById(R.id.chckBoxReportaE)
 
         etReportaE = findViewById(R.id.etReportaE)
         spinRelacionE = findViewById(R.id.spinRelacionE)
@@ -72,7 +72,7 @@ class EditarSolicitudActivity : AppCompatActivity() {
 
         etEmailE = findViewById(R.id.etEmailE)
         etObservacionesE = findViewById(R.id.etObservacionesE)
-        btnSaveSolicitud = findViewById(R.id.btnSaveSolicitud)
+        btnSaveSolicitud = findViewById(R.id.btnUpdateSolicitudE)
 
         btnSaveSolicitud.setOnClickListener { showConfirmDialog() }
     }

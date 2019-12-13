@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layParentS"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,36 +9,81 @@
     android:orientation="vertical"
     tools:context=".fragments.SolicitudesFragment">
 
-    <View
-        android:id="@+id/view2"
-        android:layout_width="match_parent"
-        android:layout_height=".5dp"
-        android:background="@color/colorDarkGray" />
-
-    <TextView
-        android:id="@+id/txtInstructionTop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorLighterGray"
-        android:padding="5dp"
-        android:text="Seleccione una solicitud para ver sus incidencias"
-        android:textAlignment="center"
-        android:textColor="@color/colorDarkGray" />
-
-    <View
-        android:id="@+id/view3"
-        android:layout_width="wrap_content"
-        android:layout_height="0.5dp"
-        android:background="@color/colorDarkGray" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvSolicitudes"
+    <LinearLayout
+        android:id="@+id/laySuccessFS"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp">
+        android:orientation="vertical"
+        android:visibility="visible">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:background="@color/colorDarkGray" />
+
+        <TextView
+            android:id="@+id/txtInstructionTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorLighterGray"
+            android:padding="5dp"
+            android:text="Seleccione una solicitud para ver sus incidencias"
+            android:textAlignment="center"
+            android:textColor="@color/colorDarkGray" />
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="@color/colorDarkGray" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSolicitudes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layFailFS"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal|center_vertical"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imageView17"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:srcCompat="@drawable/ic_empty" />
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Sin Solicitudes!"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:text="Actualmente no cuentas con solicitudes creadas. Selecciona la pestaña NUEVA SOLICITUD para crear una"
+            android:textAlignment="center" />
+
+    </LinearLayout>
 
 </LinearLayout>

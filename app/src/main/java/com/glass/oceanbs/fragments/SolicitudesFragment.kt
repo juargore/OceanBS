@@ -11,36 +11,39 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
-import com.glass.oceanbs.adapters.SolicitudAdapter
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.EditarSolicitudActivity
 import com.glass.oceanbs.activities.IncidenciasActivity
-import com.glass.oceanbs.database.TableUser
+import com.glass.oceanbs.adapters.ShortSolicitudAdapter
+import com.glass.oceanbs.models.ShortSolicitud
 import okhttp3.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.runOnUiThread
+import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.Error
 
 class SolicitudesFragment : Fragment() {
 
     private lateinit var progress : AlertDialog
+    private lateinit var laySuccessFS: LinearLayout
+    private lateinit var layFailFS: LinearLayout
     private lateinit var layParentS: LinearLayout
     private lateinit var rvSolicitudes: RecyclerView
 
+    private var listSolicitudes: ArrayList<ShortSolicitud> = ArrayList()
     private var userId = ""
 
     companion object{
@@ -54,9 +57,20 @@ class SolicitudesFragment : Fragment() {
 
         val rootView = inflater.inflate(R.layout.fragment_solicitudes, container, false)
 
-        layParentS = rootView.findViewById(R.id.layParentS)
-        rvSolicitudes = rootView.findViewById(R.id.rvSolicitudes)
-        setUpRecyclerView()
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
+        initComponents(rootView)
+
+        return rootView
+    }
+
+    @SuppressLint("InflateParams")
+    private fun initComponents(view: View){
+        layParentS = view.findViewById(R.id.layParentS)
+        laySuccessFS = view.findViewById(R.id.laySuccessFS)
+        layFailFS = view.findViewById(R.id.layFailFS)
+        rvSolicitudes = view.findViewById(R.id.rvSolicitudes)
 
         // set up progress dialg
         val builder = AlertDialog.Builder(context!!, R.style.HalfDialogTheme)
@@ -66,25 +80,19 @@ class SolicitudesFragment : Fragment() {
         builder.setView(dialogView)
         progress = builder.create()
 
+        // after init -> get solicitudes
         getSolicitudes()
-
-        return rootView
     }
 
     private fun getSolicitudes(){
         progress.show()
-
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
-
         userId = Constants.getUserId(context!!)
-        val cUser = TableUser(context!!).getCurrentUserById(userId)
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
             .add("WebService","ConsultaSolicitudesAGIdUsuario")
             .add("IdUsuario", userId)
-            .add("EsColaborador", cUser.colaborador.toString())
+            .add("EsColaborador", "1")
             .build()
 
         val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
@@ -100,19 +108,51 @@ class SolicitudesFragment : Fragment() {
                     else{
 
                         // create solicitud object and iterate json array
+                        val arraySolicitud = jsonRes.getJSONArray("Datos")
 
+                        for(i in 0 until arraySolicitud.length()){
+
+                            val jsonObj : JSONObject = arraySolicitud.getJSONObject(i)
+                            listSolicitudes.add(
+                                ShortSolicitud(
+                                    jsonObj.getString("Id"),
+                                    jsonObj.getString("FechaAlta"),
+                                    jsonObj.getString("NombrePR"),
+                                    jsonObj.getString("NombreDesarrollo"),
+                                    jsonObj.getString("CodigoUnidad"),
+                                    jsonObj.getString("NombreUnidad")
+                                )
+                            )
+                        }
+
+                        // show / hide layout according the number of rows
+                        runOnUiThread {
+                            if(listSolicitudes.size > 0){
+                                laySuccessFS.visibility = View.VISIBLE
+                                layFailFS.visibility = View.GONE
+                                setUpRecyclerView()
+                            } else{
+                                laySuccessFS.visibility = View.GONE
+                                layFailFS.visibility = View.VISIBLE
+                            }
+                        }
                     }
+
                     runOnUiThread { progress.dismiss() }
+
                 } catch (e: Error){
-                    snackbar(context!!, layParentS, e.message.toString())
-                    runOnUiThread { progress.dismiss() }
+                    runOnUiThread {
+                        progress.dismiss()
+                        snackbar(context!!, layParentS, e.message.toString()) }
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("--","${e.message}")
-                snackbar(context!!, layParentS, e.message.toString())
-                progress.dismiss()
+                runOnUiThread {
+                    Log.e("--","${e.message}")
+                    snackbar(context!!, layParentS, e.message.toString())
+                    progress.dismiss()
+                }
             }
         })
     }
@@ -120,14 +160,19 @@ class SolicitudesFragment : Fragment() {
     private fun setUpRecyclerView(){
         rvSolicitudes.layoutManager = LinearLayoutManager(context)
 
-        val adapter = SolicitudAdapter(context!!, object : SolicitudAdapter.InterfaceOnClick{
+        val adapter = ShortSolicitudAdapter(context!!, listSolicitudes, object : ShortSolicitudAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
+
+                // on click -> open Incidencias screen
                 val intent = Intent(activity!!, IncidenciasActivity::class.java)
+                intent.putExtra("idSolicitud", listSolicitudes[pos].Id)
                 startActivity(intent)
             }
-        }, object : SolicitudAdapter.InterfaceOnLongClick{
+        }, object : ShortSolicitudAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                showPopOptions(context!!)
+
+                // on long click -> show pop up wih options
+                showPopOptions(context!!, listSolicitudes[pos].Id)
             }
         })
 
@@ -135,7 +180,7 @@ class SolicitudesFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showPopOptions(context: Context){
+    private fun showPopOptions(context: Context, solicitudId: String){
         val dialog = Dialog(context, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -151,7 +196,7 @@ class SolicitudesFragment : Fragment() {
         edit.text = "Editar Solicitud"
 
         cancel.setOnClickListener { dialog.dismiss() }
-        delete.setOnClickListener { showDeleteDialog(); dialog.dismiss() }
+        delete.setOnClickListener { showDeleteDialog(solicitudId); dialog.dismiss() }
         edit.setOnClickListener {
             dialog.dismiss()
             val intent = Intent(activity, EditarSolicitudActivity::class.java)
@@ -162,12 +207,12 @@ class SolicitudesFragment : Fragment() {
         dialog.show()
     }
 
-    private fun showDeleteDialog(){
+    private fun showDeleteDialog(solicitudId: String){
         alert(resources.getString(R.string.msg_confirm_deletion),
             "Eliminar Solicitud")
         {
             positiveButton(resources.getString(R.string.accept)) {
-
+                deleteSolicludByServer(solicitudId)
             }
             negativeButton(resources.getString(R.string.cancel)){}
         }.show().apply {
@@ -175,5 +220,45 @@ class SolicitudesFragment : Fragment() {
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
         }
     }
+
+    private fun deleteSolicludByServer(solicitudId: String){
+        progress.show()
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","EliminaSolicitudAG")
+            .add("Id", solicitudId)
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // something went wrong -> show message to user
+                runOnUiThread {
+                    progress.dismiss()
+                    snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde") }
+            }
+            override fun onResponse(call: Call, response: Response) {
+                try{
+                    val jsonRes = JSONObject(response.body()!!.string())
+                    if(jsonRes.getInt("Error") == 0){
+                        // successfully deleted on Server -> refresh fragment
+                        runOnUiThread {
+                            progress.dismiss()
+                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"))
+                            listSolicitudes.clear()
+                            getSolicitudes() }
+                    }
+                } catch (e: java.lang.Error){
+                    // something went wrong -> show message to user
+                    runOnUiThread {
+                        progress.dismiss()
+                        snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde") }
+                }
+            }
+        })
+    }
+
 
 }

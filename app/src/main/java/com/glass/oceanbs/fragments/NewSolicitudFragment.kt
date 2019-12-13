@@ -47,6 +47,7 @@ class NewSolicitudFragment : Fragment() {
     private lateinit var btnSaveSolicitud: Button
 
     private var userId = ""
+    private lateinit var policy: StrictMode.ThreadPolicy
 
     companion object{
         fun newInstance(): NewSolicitudFragment {
@@ -58,14 +59,70 @@ class NewSolicitudFragment : Fragment() {
 
         val rootView = inflater.inflate(R.layout.fragment_new_solicitud, container, false)
 
+        policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
         initComponents(rootView)
         setUpSpinners()
 
         return rootView
     }
 
+    // get current code according the WS
+    private fun getCurrentCode(){
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","")
+            .add("", "")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+        val cCode = client.newCall(request).execute( ).body().toString()
+
+        getListDesarrollos()
+    }
+
+    // get a list of all desarrollos in DB
+    private fun getListDesarrollos(){
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","")
+            .add("", "")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+        val listStrDesarrollos = client.newCall(request).execute( ).body().toString()
+    }
+
+    // get list of unidad according the desarrollo id
+    private fun getListUnidad(){
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","")
+            .add("", "")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+        val listStrUnidad = client.newCall(request).execute( ).body().toString()
+    }
+
+    // get nombre de propietario according unidad
+    private fun getPropietarioName() : String{
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","")
+            .add("", "")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+        val propietario = client.newCall(request).execute( ).body().toString()
+
+        return propietario
+    }
+
     @SuppressLint("SetTextI18n")
     private fun initComponents(view: View){
+        userId = Constants.getUserId(context!!)
 
         layParentN = view.findViewById(R.id.layParentN)
         etCodigoS = view.findViewById(R.id.etCodigoN)
@@ -87,11 +144,12 @@ class NewSolicitudFragment : Fragment() {
     }
 
     private fun setUpSpinners(){
-        val itemList = arrayOf("Item 1 dffdgd dfg df f", "Item 2", "Item 3 dfdfgdfgd")
-        val adapter = ArrayAdapter(context!!, R.layout.spinner_text, itemList)
-        spinDesarrolloS.adapter = adapter
+        val relationList = arrayOf(" ", "Esposo(a)", "Hijo(a)", "Otro familiar", "Administrador", "Arrendatario", "Otro")
+        val adapter = ArrayAdapter(context!!, R.layout.spinner_text, relationList)
+
         spinRelacionS.adapter = adapter
-        spinUnidadS.adapter = adapter
+        //spinDesarrolloS.adapter = adapter
+        //spinUnidadS.adapter = adapter
     }
 
     private fun showConfirmDialog(context: Context){
@@ -110,11 +168,6 @@ class NewSolicitudFragment : Fragment() {
 
     private fun sendDataToServer(){
         //progress.show()
-
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
-
-        userId = Constants.getUserId(context!!)
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
