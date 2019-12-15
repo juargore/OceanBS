@@ -403,7 +403,7 @@ class NewSolicitudFragment : Fragment() {
             .add("WebService","GuardaSolicitudAG")
             .add("Id", "") // empty if new
             .add("Codigo", etCodigoN.text.toString()) //codigo
-            .add("IdProducto", listUnidades[spinUnidadN.selectedItemPosition].Id) // unidad
+            .add("IdProducto", listUnidades[spinUnidadN.selectedItemPosition-1].Id) // unidad
             .add("ReportaPropietario", "$reporta") // 0 || 1
             .add("NombrePR", etReportaN.text.toString()) //nombre del propietario
             .add("TipoRelacionPropietario", "${spinRelacionN.selectedItemPosition}") // 0,1,2,3,4,5,6

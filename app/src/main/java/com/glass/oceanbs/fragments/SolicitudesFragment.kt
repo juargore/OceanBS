@@ -176,7 +176,7 @@ class SolicitudesFragment : Fragment() {
             override fun onItemLongClick(pos: Int) {
 
                 // on long click -> show pop up wih options
-                showPopOptions(context!!, listSolicitudes[pos].Id)
+                showPopOptions(context!!, listSolicitudes[pos].Id, listSolicitudes[pos].NombreDesarrollo, listSolicitudes[pos].NombrePR)
             }
         })
 
@@ -184,7 +184,7 @@ class SolicitudesFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showPopOptions(context: Context, solicitudId: String){
+    private fun showPopOptions(context: Context, solicitudId: String, desarrollo: String, persona: String){
         val dialog = Dialog(context, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -205,6 +205,8 @@ class SolicitudesFragment : Fragment() {
             dialog.dismiss()
             val intent = Intent(activity, EditarSolicitudActivity::class.java)
             intent.putExtra("solicitudId", solicitudId)
+            intent.putExtra("desarrollo", desarrollo)
+            intent.putExtra("persona", persona)
             startActivity(intent)
         }
 
@@ -262,6 +264,14 @@ class SolicitudesFragment : Fragment() {
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(mustRefreshSolicitudes(context!!)){
+            listSolicitudes.clear()
+            getSolicitudes()
+        }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {

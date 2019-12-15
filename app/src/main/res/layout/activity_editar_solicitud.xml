@@ -49,7 +49,7 @@
                 android:paddingRight="12dp">
 
                 <TextView
-                    android:id="@+id/textView24"
+                    android:id="@+id/txtTitleDesarrolloE"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
@@ -59,7 +59,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textView23"
+                    android:id="@+id/txtSubTitleDesarrolloE"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-2dp"
@@ -143,8 +143,10 @@
                             android:id="@+id/etCodigoE"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/rectangle_round_corner"
+                            android:background="@drawable/rectangle_round_corner_gray_fill"
+                            android:editable="false"
                             android:ems="10"
+                            android:enabled="false"
                             android:inputType="textPersonName" />
                     </LinearLayout>
 
@@ -172,7 +174,8 @@
                                 android:id="@+id/spinDesarrolloE"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rectangle_round_corner" />
+                                android:background="@drawable/rectangle_round_corner_gray_fill"
+                                android:clickable="false" />
 
                             <ImageView
                                 android:id="@+id/imageView"
@@ -219,7 +222,8 @@
                                 android:id="@+id/spinUnidadE"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rectangle_round_corner" />
+                                android:background="@drawable/rectangle_round_corner_gray_fill"
+                                android:clickable="false" />
 
                             <ImageView
                                 android:id="@+id/imageView5"
@@ -254,8 +258,10 @@
                             android:id="@+id/etPropietarioE"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/rectangle_round_corner"
+                            android:background="@drawable/rectangle_round_corner_gray_fill"
+                            android:editable="false"
                             android:ems="10"
+                            android:enabled="false"
                             android:inputType="textPersonName" />
                     </LinearLayout>
                 </LinearLayout>
