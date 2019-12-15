@@ -70,6 +70,17 @@ object Constants {
         return prefs.getBoolean("remember", false)
     }
 
+    fun mustRefreshSolicitudes(context: Context): Boolean{
+        val prefs = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE)
+        return prefs.getBoolean("refreshSolicitudes", false)
+    }
+
+    fun updateRefreshSolicitudes(context: Context, value: Boolean){
+        val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
+        editor.putBoolean("refreshSolicitudes", value)
+        editor.apply()
+    }
+
 
     /* functions to check if User has active internet connection or not */
 

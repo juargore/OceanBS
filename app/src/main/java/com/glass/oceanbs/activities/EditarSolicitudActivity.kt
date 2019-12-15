@@ -43,14 +43,19 @@ class EditarSolicitudActivity : AppCompatActivity() {
     private lateinit var btnSaveSolicitud: Button
 
     private var userId = ""
+    private var solicitudId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editar_solicitud)
 
         supportActionBar?.hide()
-        
+
+        val args = intent.extras
+        solicitudId = args!!.getString("solicitudId").toString()
+
         initComponents()
+        getCurrentSolicitud()
     }
 
     @SuppressLint("SetTextI18n")
@@ -73,71 +78,23 @@ class EditarSolicitudActivity : AppCompatActivity() {
         etEmailE = findViewById(R.id.etEmailE)
         etObservacionesE = findViewById(R.id.etObservacionesE)
         btnSaveSolicitud = findViewById(R.id.btnUpdateSolicitudE)
-
-        btnSaveSolicitud.setOnClickListener { showConfirmDialog() }
     }
 
-    private fun sendDataToServer(){
-        //progress.show()
-
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
-
-        userId = Constants.getUserId(this)
-
+    private fun getCurrentSolicitud(){
         val client = OkHttpClient()
         val builder = FormBody.Builder()
-            .add("WebService","GuardarSolicitudAG")
-            .add("Id", "") // not empty -> modify
-            .add("Codigo", "") //desarrollo
-            .add("IdProducto", "") // unidad
-            .add("ReportaPropietario", "") // 0 || 1
-            .add("NombrePR", "") //nombre del propietario
-            .add("TipoRelacionPropietario", "") // 0,1,2,3,4,5,6
-            .add("TelCelularPR", "")
-            .add("TelParticularPR", "")
-            .add("CorreoElectronicoPR", "")
-            .add("Observaciones", "")
-            .add("IdColaborador1", userId)
-            .add("Status", "1") // active / inactive
+            .add("WebService","ConsultaSolicitudAGIdMin")
+            .add("Id", solicitudId)
             .build()
 
         val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
-
         client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
-                try {
-                    val jsonRes = JSONObject(response.body()!!.string())
-                    Log.e("--","$jsonRes")
-
-                    //runOnUiThread { progress.dismiss() }
-                } catch (e: Error){
-                    Constants.snackbar(applicationContext, layParentE, e.message.toString())
-                    //runOnUiThread { progress.dismiss() }
-                }
-            }
-
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("--","${e.message}")
-                Constants.snackbar(applicationContext, layParentE, e.message.toString())
-                //progress.dismiss()
+                val res = response.body()?.string().toString()
+                Log.e("--", res)
             }
         })
-    }
-
-    private fun showConfirmDialog(){
-        alert(resources.getString(R.string.msg_confirm_creation),
-            "Confirmar Solicitud")
-        {
-            positiveButton(resources.getString(R.string.accept)) {
-                // enviar datos de actualización al server
-                
-            }
-            negativeButton(resources.getString(R.string.cancel)){}
-        }.show().apply {
-            getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
-            getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
-        }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {

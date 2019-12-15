@@ -14,7 +14,10 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.text.TextUtils
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.glass.oceanbs.Constants
@@ -22,19 +25,22 @@ import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.IncidenciasActivity
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Propietario
+import com.squareup.picasso.Picasso
 import okhttp3.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.runOnUiThread
-import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.Error
+import java.util.concurrent.TimeUnit
 
 
 class NewSolicitudFragment : Fragment() {
 
+    private lateinit var progress : AlertDialog
+    private lateinit var titleProgress: TextView
     private lateinit var layParentN: LinearLayout
+
     private lateinit var etCodigoN: EditText
     private lateinit var spinDesarrolloN: Spinner
     private lateinit var spinUnidadN: Spinner
@@ -77,7 +83,7 @@ class NewSolicitudFragment : Fragment() {
         return rootView
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "InflateParams")
     private fun initComponents(view: View){
         userId = Constants.getUserId(context!!)
 
@@ -97,16 +103,25 @@ class NewSolicitudFragment : Fragment() {
         etObservacionesN = view.findViewById(R.id.etObservacionesN)
         btnSaveSolicitud = view.findViewById(R.id.btnSaveSolicitud)
 
+        val builder = AlertDialog.Builder(context!!, R.style.HalfDialogTheme)
+        val inflat = this.layoutInflater
+        val dialogView = inflat.inflate(R.layout.progress, null)
+
+        titleProgress = dialogView.findViewById(R.id.loading_title)
+
+        builder.setView(dialogView)
+        progress = builder.create()
+
         btnSaveSolicitud.setOnClickListener {
             if(validateFullFields())
-                showConfirmDialog(context!!) }
+                showConfirmDialog() }
 
         chckBoxReportaN.setOnClickListener {
             if(::cPropietario.isInitialized && etPropietarioN.text.toString() != ""){
                 fillDataAccordingCheck()
             } else{
                 chckBoxReportaN.isChecked = false
-                toast("Elija una Unidad para obtener la información del Propietario")
+                Constants.snackbar(context!!, layParentN, "Elija una Unidad para obtener la información del Propietario")
             }
         }
     }
@@ -258,7 +273,7 @@ class NewSolicitudFragment : Fragment() {
         val desarrollosList: ArrayList<String> = ArrayList()
 
         for (i in listDesarrollos)
-            desarrollosList.add("${i.Id} - ${i.Nombre}")
+            desarrollosList.add(i.Nombre)
 
         desarrollosList.add(0, "Seleccionar")
         val adapterDesarrollo = ArrayAdapter(context!!, R.layout.spinner_text, desarrollosList)
@@ -297,6 +312,7 @@ class NewSolicitudFragment : Fragment() {
                 if(pos != 0){
                     if(chckBoxReportaN.isChecked)
                         resetAllEdittext()
+
                     getPropietarioName(listUnidades[pos-1].Id)
                 } else{
                     etPropietarioN.setText("")
@@ -359,12 +375,12 @@ class NewSolicitudFragment : Fragment() {
     }
 
     // dialog to confirm saving the solicitud
-    private fun showConfirmDialog(context: Context){
+    private fun showConfirmDialog(){
         alert(resources.getString(R.string.msg_confirm_creation),
             "Confirmar Solicitud")
         {
             positiveButton(resources.getString(R.string.accept)) {
-                //sendDataToServer()
+                sendDataToServer()
             }
             negativeButton(resources.getString(R.string.cancel)){}
         }.show().apply {
@@ -373,22 +389,28 @@ class NewSolicitudFragment : Fragment() {
         }
     }
 
+    // send values to server to create a new solicitud
+    @SuppressLint("SetTextI18n")
     private fun sendDataToServer(){
-        //progress.show()
+        progress.show()
+        progress.setCancelable(false)
+        titleProgress.text = "Enviando Información"
 
-        val client = OkHttpClient()
+        val reporta : Int = if(chckBoxReportaN.isChecked){1}else{0}
+        val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
+
         val builder = FormBody.Builder()
-            .add("WebService","GuardarSolicitudAG")
+            .add("WebService","GuardaSolicitudAG")
             .add("Id", "") // empty if new
-            .add("Codigo", "") //desarrollo
-            .add("IdProducto", "") // unidad
-            .add("ReportaPropietario", "") // 0 || 1
-            .add("NombrePR", "") //nombre del propietario
-            .add("TipoRelacionPropietario", "") // 0,1,2,3,4,5,6
-            .add("TelCelularPR", "")
-            .add("TelParticularPR", "")
-            .add("CorreoElectronicoPR", "")
-            .add("Observaciones", "")
+            .add("Codigo", etCodigoN.text.toString()) //codigo
+            .add("IdProducto", listUnidades[spinUnidadN.selectedItemPosition].Id) // unidad
+            .add("ReportaPropietario", "$reporta") // 0 || 1
+            .add("NombrePR", etReportaN.text.toString()) //nombre del propietario
+            .add("TipoRelacionPropietario", "${spinRelacionN.selectedItemPosition}") // 0,1,2,3,4,5,6
+            .add("TelCelularPR", etTelMovilN.text.toString())
+            .add("TelParticularPR", etTelParticularN.text.toString())
+            .add("CorreoElectronicoPR", etEmailN.text.toString())
+            .add("Observaciones", etObservacionesN.text.toString())
             .add("IdColaborador1", userId)
             .add("Status", "1") // active / inactive
             .build()
@@ -399,33 +421,70 @@ class NewSolicitudFragment : Fragment() {
             override fun onResponse(call: Call, response: Response) {
                 try {
                     val jsonRes = JSONObject(response.body()!!.string())
-                    Log.e("--","$jsonRes")
+                    Log.e("RES SAVE", jsonRes.toString())
 
-                    runOnUiThread { showResumeDialog(context!!) }
+                    if(jsonRes.getInt("Error") == 0){
+                        runOnUiThread {
+                            Constants.snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
+                            Constants.updateRefreshSolicitudes(context!!, true)
+                            showResumeDialog(context!!) }
+                    } else{
+                        runOnUiThread {
+                            Constants.snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
+                        }
+                    }
 
-                    //runOnUiThread { progress.dismiss() }
+                    runOnUiThread { progress.dismiss() }
                 } catch (e: Error){
-                    Constants.snackbar(context!!, layParentN, e.message.toString())
-                    //runOnUiThread { progress.dismiss() }
+                    runOnUiThread {
+                        Constants.snackbar(context!!, layParentN, e.message.toString())
+                        progress.dismiss()
+                    }
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("--","${e.message}")
-                Constants.snackbar(context!!, layParentN, e.message.toString())
-                //progress.dismiss()
+                runOnUiThread {
+                    Log.e("--","${e.message}")
+                    Constants.snackbar(context!!, layParentN, e.message.toString())
+                    progress.dismiss()
+                }
             }
         })
     }
 
     // dialog showing current info about solicitud
+    @SuppressLint("SetTextI18n")
     private fun showResumeDialog(context: Context){
         val dialog = Dialog(context, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.pop_data_solicitud)
 
+        val photo = dialog.findViewById<ImageView>(R.id.rPhoto)
+        val desarrollo = dialog.findViewById<TextView>(R.id.rDesarrollo)
+        val direccion = dialog.findViewById<TextView>(R.id.rDirección)
+        val unidad = dialog.findViewById<TextView>(R.id.rUnidad)
+        val dirUnidad = dialog.findViewById<TextView>(R.id.rDireccionUnidad)
+        val fecha = dialog.findViewById<TextView>(R.id.rFechaEntrega)
+        val propietario = dialog.findViewById<TextView>(R.id.rPropietario)
+        val celular = dialog.findViewById<TextView>(R.id.rCelular)
+        val email = dialog.findViewById<TextView>(R.id.rEmail)
+
+        Picasso.get().load("https://www.kia.com/us/content/dam/kia/us/en/home/hero/seltos-banner/foreground/kia_homepage_mobile_hero_seltos_2021_post_foreground.png").fit().into(photo)
+        desarrollo.text = "Desarrollo ${spinDesarrolloN.selectedItem}"
+        direccion.text = ""
+        unidad.text = "Unidad ${spinUnidadN.selectedItem}"
+        dirUnidad.text = ""
+        fecha.text = "Entregado: "
+        propietario.text = "Propietario ${etPropietarioN.text}"
+        celular.text = "Celular ${etTelMovilN.text}"
+        email.text = etEmailN.text.toString()
+
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddIncidencias)
+        val btnCancel = dialog.findViewById<TextView>(R.id.btnCancelIncidencias)
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
         btnAdd.setOnClickListener {
             dialog.dismiss()
 
@@ -434,6 +493,7 @@ class NewSolicitudFragment : Fragment() {
         }
 
         dialog.show()
+        dialog.setCancelable(false)
     }
 
 }

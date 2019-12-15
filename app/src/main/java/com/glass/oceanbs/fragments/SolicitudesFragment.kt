@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.Constants
+import com.glass.oceanbs.Constants.mustRefreshSolicitudes
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.EditarSolicitudActivity
@@ -79,6 +80,7 @@ class SolicitudesFragment : Fragment() {
 
         builder.setView(dialogView)
         progress = builder.create()
+        progress.setCancelable(false)
 
         // after init -> get solicitudes
         getSolicitudes()
@@ -136,6 +138,8 @@ class SolicitudesFragment : Fragment() {
                                 layFailFS.visibility = View.VISIBLE
                             }
                         }
+
+                        Constants.updateRefreshSolicitudes(context!!, false)
                     }
 
                     runOnUiThread { progress.dismiss() }
@@ -200,7 +204,7 @@ class SolicitudesFragment : Fragment() {
         edit.setOnClickListener {
             dialog.dismiss()
             val intent = Intent(activity, EditarSolicitudActivity::class.java)
-            intent.putExtra("solicitudId","255")
+            intent.putExtra("solicitudId", solicitudId)
             startActivity(intent)
         }
 
@@ -260,5 +264,16 @@ class SolicitudesFragment : Fragment() {
         })
     }
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if(view != null){
+            if(isVisibleToUser){
+                if(mustRefreshSolicitudes(context!!)){
+                    listSolicitudes.clear()
+                    getSolicitudes()
+                }
+            }
+        }
 
+    }
 }
