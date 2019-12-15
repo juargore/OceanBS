@@ -20,6 +20,8 @@ object Constants {
     private const val URL_PARENT = "http://oceanbs01.com/models/"
     const val URL_USER = "${URL_PARENT}catalogos/CCatColaborador.php"
     const val URL_SOLICITUDES = "${URL_PARENT}registros/CRegSolicitudAG.php"
+    const val URL_SUCURSALES = "${URL_PARENT}catalogos/CCatSucursal.php"
+    const val URL_PRODUCTO = "${URL_PARENT}catalogos/CCatProducto.php"
 
     private const val DATABASE_SP = "oceanbs"
 

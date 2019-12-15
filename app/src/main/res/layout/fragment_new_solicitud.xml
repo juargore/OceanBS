@@ -182,9 +182,12 @@
                         android:id="@+id/etPropietarioN"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/rectangle_round_corner"
+                        android:background="@drawable/rectangle_round_corner_gray_fill"
+                        android:editable="false"
                         android:ems="10"
-                        android:inputType="textPersonName" />
+                        android:enabled="false"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/colorBlack" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -239,9 +242,7 @@
                         android:id="@+id/textView21"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="Relación propietario"
-                        android:textStyle="bold" />
+                        android:text="Relación propietario" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
