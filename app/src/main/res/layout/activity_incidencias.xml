@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layParentI"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -31,10 +32,10 @@
                     android:id="@+id/imgBackIncidencias"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_back_arrow"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
+                    app:srcCompat="@drawable/ic_back_arrow"
                     tools:ignore="UnusedAttribute" />
             </RelativeLayout>
 
@@ -48,7 +49,7 @@
                 android:paddingRight="12dp">
 
                 <TextView
-                    android:id="@+id/textView24"
+                    android:id="@+id/txtTitleDesarrolloI"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
@@ -58,7 +59,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textView23"
+                    android:id="@+id/txtSubTitleDesarrolloI"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-2dp"
@@ -86,15 +87,64 @@
         android:textSize="22sp"
         android:textStyle="bold" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvIncidencias"
+    <RelativeLayout
+        android:id="@+id/layFailI"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/txtTitleIncidencias"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_above="@id/textView8"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/ic_empty" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Sin Incidencias!"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView8"
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:text="Actualmente no cuentas con incidencias creadas. Selecciona el botón + abajo ↓ para agregar una"
+            android:textAlignment="center" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/laySuccessI"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/txtTitleIncidencias"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:background="@android:color/white"
-        android:paddingBottom="10dp" />
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvIncidencias"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/white"
+            android:paddingBottom="10dp" />
+    </RelativeLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabNewIncidencia"

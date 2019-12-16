@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +30,6 @@ import com.glass.oceanbs.models.ShortSolicitud
 import okhttp3.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.runOnUiThread
-import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
@@ -101,61 +99,54 @@ class SolicitudesFragment : Fragment() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                try {
-                    val jsonRes = JSONObject(response.body()!!.string())
-                    Log.e("--","$jsonRes")
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
 
-                    if(jsonRes.getInt("Error") > 0)
-                        runOnUiThread{ snackbar(context!!, layParentS, jsonRes.getString("Mensaje"))}
-                    else{
+                        if(jsonRes.getInt("Error") > 0)
+                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"))
+                        else{
 
-                        // create solicitud object and iterate json array
-                        val arraySolicitud = jsonRes.getJSONArray("Datos")
+                            // create solicitud object and iterate json array
+                            val arraySolicitud = jsonRes.getJSONArray("Datos")
 
-                        for(i in 0 until arraySolicitud.length()){
+                            for(i in 0 until arraySolicitud.length()){
 
-                            val jsonObj : JSONObject = arraySolicitud.getJSONObject(i)
-                            listSolicitudes.add(
-                                ShortSolicitud(
-                                    jsonObj.getString("Id"),
-                                    jsonObj.getString("FechaAlta"),
-                                    jsonObj.getString("NombrePR"),
-                                    jsonObj.getString("NombreDesarrollo"),
-                                    jsonObj.getString("CodigoUnidad"),
-                                    jsonObj.getString("NombreUnidad")
-                                )
-                            )
-                        }
+                                val jsonObj : JSONObject = arraySolicitud.getJSONObject(i)
+                                listSolicitudes.add( ShortSolicitud (
+                                        jsonObj.getString("Id"),
+                                        jsonObj.getString("FechaAlta"),
+                                        jsonObj.getString("NombrePR"),
+                                        jsonObj.getString("NombreDesarrollo"),
+                                        jsonObj.getString("CodigoUnidad"),
+                                        jsonObj.getString("NombreUnidad")))
+                            }
 
-                        // show / hide layout according the number of rows
-                        runOnUiThread {
+                            // show / hide layout according the number of rows
                             if(listSolicitudes.size > 0){
                                 laySuccessFS.visibility = View.VISIBLE
                                 layFailFS.visibility = View.GONE
+
                                 setUpRecyclerView()
                             } else{
                                 laySuccessFS.visibility = View.GONE
                                 layFailFS.visibility = View.VISIBLE
                             }
-                        }
 
-                        Constants.updateRefreshSolicitudes(context!!, false)
-                    }
+                            Constants.updateRefreshSolicitudes(context!!, false)
+                        }; progress.dismiss()
 
-                    runOnUiThread { progress.dismiss() }
-
-                } catch (e: Error){
-                    runOnUiThread {
+                    } catch (e: Error){
                         progress.dismiss()
-                        snackbar(context!!, layParentS, e.message.toString()) }
+                        snackbar(context!!, layParentS, e.message.toString())
+                    }
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Log.e("--","${e.message}")
-                    snackbar(context!!, layParentS, e.message.toString())
                     progress.dismiss()
+                    snackbar(context!!, layParentS, e.message.toString())
                 }
             }
         })
@@ -169,7 +160,9 @@ class SolicitudesFragment : Fragment() {
 
                 // on click -> open Incidencias screen
                 val intent = Intent(activity!!, IncidenciasActivity::class.java)
-                intent.putExtra("idSolicitud", listSolicitudes[pos].Id)
+                intent.putExtra("solicitudId", listSolicitudes[pos].Id)
+                intent.putExtra("desarrollo", listSolicitudes[pos].NombreDesarrollo)
+                intent.putExtra("persona", listSolicitudes[pos].NombrePR)
                 startActivity(intent)
             }
         }, object : ShortSolicitudAdapter.InterfaceOnLongClick{
@@ -240,27 +233,27 @@ class SolicitudesFragment : Fragment() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                // something went wrong -> show message to user
                 runOnUiThread {
                     progress.dismiss()
                     snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde") }
             }
+
             override fun onResponse(call: Call, response: Response) {
-                try{
-                    val jsonRes = JSONObject(response.body()!!.string())
-                    if(jsonRes.getInt("Error") == 0){
-                        // successfully deleted on Server -> refresh fragment
-                        runOnUiThread {
+                runOnUiThread {
+                    try{
+                        val jsonRes = JSONObject(response.body()!!.string())
+                        if(jsonRes.getInt("Error") == 0){
+
+                            // successfully deleted on Server -> refresh fragment
                             progress.dismiss()
                             snackbar(context!!, layParentS, jsonRes.getString("Mensaje"))
                             listSolicitudes.clear()
-                            getSolicitudes() }
-                    }
-                } catch (e: java.lang.Error){
-                    // something went wrong -> show message to user
-                    runOnUiThread {
+                            getSolicitudes()
+                        }
+                    } catch (e: java.lang.Error){
                         progress.dismiss()
-                        snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde") }
+                        snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde")
+                    }
                 }
             }
         })

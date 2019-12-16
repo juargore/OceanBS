@@ -183,6 +183,7 @@ class EditarSolicitudActivity : AppCompatActivity() {
         val request = Request.Builder().url(Constants.URL_PRODUCTO).post(builder).build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {}
+
             @SuppressLint("SetTextI18n")
             override fun onResponse(call: Call, response: Response) {
                 try {
@@ -190,12 +191,12 @@ class EditarSolicitudActivity : AppCompatActivity() {
 
                     if(j.getInt("Error") == 0){
                         cPropietario = Propietario(
-                            "",
+                            j.getString("Id"),
                             j.getString("Nombre"),
                             j.getString("ApellidoP"),
                             j.getString("ApellidoM"),
                             j.getString("TelMovil"),
-                            "",
+                            j.getString("TelCasa"),
                             j.getString("CorreoElecP")
                         )
                     }
@@ -205,48 +206,57 @@ class EditarSolicitudActivity : AppCompatActivity() {
     }
 
     private fun getCurrentSolicitud(){
+        progress.show()
+
         val client = OkHttpClient()
         val builder = FormBody.Builder()
-            .add("WebService","ConsultaSolicitudAGIdMin")
+            .add("WebService","ConsultaSolicitudAGIdApp")
             .add("Id", solicitudId)
             .build()
 
         val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {}
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread { progress.dismiss()
+                    Constants.snackbar(applicationContext, layParentE, e.message.toString()) }
+            }
             override fun onResponse(call: Call, response: Response) {
-                try {
-                    val js = JSONObject(response.body()!!.string())
-                    if(js.getInt("Error") == 0){
-                        val j = js.getJSONArray("Datos").getJSONObject(0)
+                runOnUiThread {
+                    try {
+                        val js = JSONObject(response.body()!!.string())
+                        if(js.getInt("Error") == 0){
+                            val j = js.getJSONArray("Datos").getJSONObject(0)
 
-                        cSolicitud = Solicitud(
-                            j.getString("Id"),
-                            j.getString("Codigo"),
-                            j.getString("IdDesarrollo"),
-                            j.getString("CodigoDesarrollo"),
-                            j.getString("IdProducto"),
-                            j.getString("CodigoUnidad"),
-                            j.getString("IdPropietario"),
-                            j.getString("NombrePropietario"),
-                            j.getString("ReportaPropietario"),
-                            j.getString("TipoRelacionPropietario"),
-                            j.getString("NombrePR"),
-                            j.getString("TelCelularPR"),
-                            j.getString("TelParticularPR"),
-                            j.getString("CorreoElectronicoPR"),
-                            j.getString("Observaciones"),
-                            j.getString("IdColaborador1"),
-                            j.getString("Status")
-                        )
+                            cSolicitud = Solicitud(
+                                j.getString("Id"),
+                                j.getString("Codigo"),
+                                j.getString("IdDesarrollo"),
+                                j.getString("CodigoDesarrollo"),
+                                j.getString("IdProducto"),
+                                j.getString("CodigoUnidad"),
+                                j.getString("IdPropietario"),
+                                j.getString("NombrePropietario"),
+                                j.getString("ReportaPropietario"),
+                                j.getString("TipoRelacionPropietario"),
+                                j.getString("NombrePR"),
+                                j.getString("TelCelularPR"),
+                                j.getString("TelParticularPR"),
+                                j.getString("CorreoElectronicoPR"),
+                                j.getString("Observaciones"),
+                                j.getString("IdColaborador1"),
+                                j.getString("Status")
+                            )
 
-                        runOnUiThread{fillFields()}
-                    } else{
-                        runOnUiThread {
+                            progress.dismiss()
+                            fillFields()
+                        } else{
+                            progress.dismiss()
                             Constants.snackbar(applicationContext, layParentE, js.getString("Mensaje"))
                         }
+                    }catch (e: Error){
+                        progress.dismiss()
                     }
-                }catch (e: Error){ }
+                }
             }
         })
     }
@@ -283,7 +293,7 @@ class EditarSolicitudActivity : AppCompatActivity() {
             .add("IdProducto", cSolicitud.IdProducto) // unidad
             .add("ReportaPropietario", "$reporta") // 0 || 1
             .add("NombrePR", etReportaE.text.toString()) //nombre del propietario
-            .add("TipoRelacionPropietario", "${spinRelacionE.selectedItemPosition}") // 0,1,2,3,4,5,6
+            .add("TipoRelacionPropietario", "${spinRelacionE.selectedItemPosition}")
             .add("TelCelularPR", etTelMovilE.text.toString())
             .add("TelParticularPR", etTelParticularE.text.toString())
             .add("CorreoElectronicoPR", etEmailE.text.toString())
@@ -296,24 +306,19 @@ class EditarSolicitudActivity : AppCompatActivity() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                try {
-                    val jsonRes = JSONObject(response.body()!!.string())
-                    Log.e("RES SAVE", jsonRes.toString())
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
 
-                    if(jsonRes.getInt("Error") == 0){
-                        runOnUiThread {
+                        if(jsonRes.getInt("Error") == 0){
                             Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"))
                             Constants.updateRefreshSolicitudes(applicationContext, true)
                             showInfoDialog()
-                        }
-                    } else{
-                        Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"))
-                    }
+                        } else{
+                            Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"))
+                        }; progress.dismiss()
 
-                    runOnUiThread { progress.dismiss() }
-                } catch (e: Error){
-                    runOnUiThread {
-                        Log.e("--","${e.message}")
+                    } catch (e: Error){
                         Constants.snackbar(applicationContext, layParentE, e.message.toString())
                         progress.dismiss()
                     }
@@ -322,7 +327,6 @@ class EditarSolicitudActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Log.e("--","${e.message}")
                     Constants.snackbar(applicationContext, layParentE, e.message.toString())
                     progress.dismiss()
                 }

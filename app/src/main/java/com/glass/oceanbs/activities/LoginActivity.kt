@@ -93,49 +93,51 @@ class LoginActivity : AppCompatActivity()  {
 
         client.newCall(request).enqueue(object : Callback{
             override fun onResponse(call: Call, response: Response) {
-                try{
-                    val jsonRes = JSONObject(response.body()!!.string())
-                    Log.e("--","$jsonRes")
+                runOnUiThread {
+                    try{
+                        val jsonRes = JSONObject(response.body()!!.string())
 
-                    if(jsonRes.getInt("Error") > 0)
-                        runOnUiThread{ snackbar(applicationContext, parentLayout, jsonRes.getString("Mensaje"))}
-                    else{
+                        if(jsonRes.getInt("Error") > 0)
+                            snackbar(applicationContext, parentLayout, jsonRes.getString("Mensaje"))
+                        else{
 
-                        // create object User and save it in SQLite DB
-                        val user = User(
-                            jsonRes.getString("Id"),
-                            jsonRes.getBoolean("Colaborador"),
-                            jsonRes.getString("Codigo"),
-                            jsonRes.getString("Nombre"),
-                            jsonRes.getString("ApellidoP"),
-                            jsonRes.getString("ApellidoM")
-                        )
+                            // create object User and save it in SQLite DB
+                            val user = User(
+                                jsonRes.getString("Id"),
+                                jsonRes.getBoolean("Colaborador"),
+                                jsonRes.getString("Codigo"),
+                                jsonRes.getString("Nombre"),
+                                jsonRes.getString("ApellidoP"),
+                                jsonRes.getString("ApellidoM")
+                            )
 
-                        TableUser(applicationContext).insertNewOrExistingUser(user)
-                        Constants.setUserId(applicationContext, user.id)
+                            TableUser(applicationContext).insertNewOrExistingUser(user)
+                            Constants.setUserId(applicationContext, user.id)
 
-                        if(chckBoxLogin.isChecked)
-                            Constants.setKeepLogin(applicationContext, true)
+                            if(chckBoxLogin.isChecked)
+                                Constants.setKeepLogin(applicationContext, true)
 
-                        // show a welcome message to the user
-                        runOnUiThread { toast("Bienvenido") }
-                        this@LoginActivity.finish()
+                            // show a welcome message to the user
+                            toast("Bienvenido")
+                            this@LoginActivity.finish()
 
-                        // start new activity main
-                        startActivity(Intent(applicationContext, MainActivity::class.java))
+                            // start new activity main
+                            startActivity(Intent(applicationContext, MainActivity::class.java))
+                        }
+
+                    } catch (e: Error){
+                        snackbar(applicationContext, parentLayout, e.message.toString())
                     }
 
-                } catch (e: Error){
-                    snackbar(applicationContext, parentLayout, e.message.toString())
+                    progress.dismiss()
                 }
-
-                progress.dismiss()
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("--","${e.message}")
-                snackbar(applicationContext, parentLayout, e.message.toString())
-                progress.dismiss()
+                runOnUiThread {
+                    snackbar(applicationContext, parentLayout, e.message.toString())
+                    progress.dismiss()
+                }
             }
         })
     }

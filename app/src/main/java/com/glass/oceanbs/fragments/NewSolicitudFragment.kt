@@ -21,6 +21,7 @@ import android.view.Window
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.glass.oceanbs.Constants
+import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.IncidenciasActivity
 import com.glass.oceanbs.models.GenericObj
@@ -114,14 +115,15 @@ class NewSolicitudFragment : Fragment() {
 
         btnSaveSolicitud.setOnClickListener {
             if(validateFullFields())
-                showConfirmDialog() }
+                showConfirmDialog()
+        }
 
         chckBoxReportaN.setOnClickListener {
-            if(::cPropietario.isInitialized && etPropietarioN.text.toString() != ""){
+            if(::cPropietario.isInitialized && etPropietarioN.text.toString() != "")
                 fillDataAccordingCheck()
-            } else{
+            else{
                 chckBoxReportaN.isChecked = false
-                Constants.snackbar(context!!, layParentN, "Elija una Unidad para obtener la información del Propietario")
+                snackbar(context!!, layParentN, "Elija una Unidad para obtener la información del Propietario")
             }
         }
     }
@@ -134,6 +136,7 @@ class NewSolicitudFragment : Fragment() {
             .build()
 
         val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
@@ -150,7 +153,7 @@ class NewSolicitudFragment : Fragment() {
         getListDesarrollos()
     }
 
-    // get a list of all desarrollos in DB
+    // get a list of all desarrollos in Server
     private fun getListDesarrollos(){
         val client = OkHttpClient()
         val builder = FormBody.Builder()
@@ -158,6 +161,7 @@ class NewSolicitudFragment : Fragment() {
             .build()
 
         val request = Request.Builder().url(Constants.URL_SUCURSALES).post(builder).build()
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
@@ -170,13 +174,12 @@ class NewSolicitudFragment : Fragment() {
                         for(i in 0 until arrayDesarrollos.length()){
                             val jsonObj : JSONObject = arrayDesarrollos.getJSONObject(i)
 
-                            listDesarrollos.add(
-                                GenericObj(
-                                    jsonObj.getString("Id"),
-                                    jsonObj.getString("Codigo"),
-                                    jsonObj.getString("Nombre")
-                                )
-                            )
+                            listDesarrollos.add( GenericObj (
+                                jsonObj.getString("Id"),
+                                jsonObj.getString("Codigo"),
+                                jsonObj.getString("Nombre"),
+                                "${jsonObj.getString("Calle")} ${jsonObj.getString("NumExt")}",
+                                jsonObj.getString("Fotografia")))
                         }
 
                         runOnUiThread { setUpFirstSpinners() }
@@ -212,7 +215,8 @@ class NewSolicitudFragment : Fragment() {
                                 GenericObj(
                                     jsonObj.getString("Id"),
                                     jsonObj.getString("Codigo"),
-                                    jsonObj.getString("Nombre")
+                                    jsonObj.getString("Nombre"),
+                                    jsonObj.getString("FechaEntrega")
                                 )
                             )
                         }
@@ -245,12 +249,12 @@ class NewSolicitudFragment : Fragment() {
 
                     if(j.getInt("Error") == 0){
                         cPropietario = Propietario(
-                            "",
+                            j.getString("Id"),
                             j.getString("Nombre"),
                             j.getString("ApellidoP"),
                             j.getString("ApellidoM"),
                             j.getString("TelMovil"),
-                            "",
+                            j.getString("TelCasa"),
                             j.getString("CorreoElecP")
                         )
 
@@ -301,10 +305,9 @@ class NewSolicitudFragment : Fragment() {
             unidadesList.add("${i.Id} - ${i.Nombre}")
 
         unidadesList.add(0, "Seleccionar")
-
         val adapterUnidad = ArrayAdapter(context!!, R.layout.spinner_text, unidadesList)
-        spinUnidadN.adapter = adapterUnidad
 
+        spinUnidadN.adapter = adapterUnidad
         spinUnidadN.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
@@ -404,7 +407,7 @@ class NewSolicitudFragment : Fragment() {
             .add("Id", "") // empty if new
             .add("Codigo", etCodigoN.text.toString()) //codigo
             .add("IdProducto", listUnidades[spinUnidadN.selectedItemPosition-1].Id) // unidad
-            .add("ReportaPropietario", "$reporta") // 0 || 1
+            .add("ReportaPropietario", "$reporta") // 0 | 1
             .add("NombrePR", etReportaN.text.toString()) //nombre del propietario
             .add("TipoRelacionPropietario", "${spinRelacionN.selectedItemPosition}") // 0,1,2,3,4,5,6
             .add("TelCelularPR", etTelMovilN.text.toString())
@@ -412,32 +415,28 @@ class NewSolicitudFragment : Fragment() {
             .add("CorreoElectronicoPR", etEmailN.text.toString())
             .add("Observaciones", etObservacionesN.text.toString())
             .add("IdColaborador1", userId)
-            .add("Status", "1") // active / inactive
+            .add("Status", "1") // active | inactive
             .build()
 
         val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                try {
-                    val jsonRes = JSONObject(response.body()!!.string())
-                    Log.e("RES SAVE", jsonRes.toString())
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
 
-                    if(jsonRes.getInt("Error") == 0){
-                        runOnUiThread {
-                            Constants.snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
+                        if(jsonRes.getInt("Error") == 0){
+                            snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
                             Constants.updateRefreshSolicitudes(context!!, true)
-                            showResumeDialog(context!!) }
-                    } else{
-                        runOnUiThread {
-                            Constants.snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
-                        }
-                    }
+                            showResumeDialog(context!!)
+                        } else
+                            snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
 
-                    runOnUiThread { progress.dismiss() }
-                } catch (e: Error){
-                    runOnUiThread {
-                        Constants.snackbar(context!!, layParentN, e.message.toString())
+                        progress.dismiss()
+
+                    } catch (e: Error){
+                        snackbar(context!!, layParentN, e.message.toString())
                         progress.dismiss()
                     }
                 }
@@ -445,8 +444,7 @@ class NewSolicitudFragment : Fragment() {
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Log.e("--","${e.message}")
-                    Constants.snackbar(context!!, layParentN, e.message.toString())
+                    snackbar(context!!, layParentN, e.message.toString())
                     progress.dismiss()
                 }
             }
@@ -465,18 +463,16 @@ class NewSolicitudFragment : Fragment() {
         val desarrollo = dialog.findViewById<TextView>(R.id.rDesarrollo)
         val direccion = dialog.findViewById<TextView>(R.id.rDirección)
         val unidad = dialog.findViewById<TextView>(R.id.rUnidad)
-        val dirUnidad = dialog.findViewById<TextView>(R.id.rDireccionUnidad)
         val fecha = dialog.findViewById<TextView>(R.id.rFechaEntrega)
         val propietario = dialog.findViewById<TextView>(R.id.rPropietario)
         val celular = dialog.findViewById<TextView>(R.id.rCelular)
         val email = dialog.findViewById<TextView>(R.id.rEmail)
 
-        Picasso.get().load("https://www.kia.com/us/content/dam/kia/us/en/home/hero/seltos-banner/foreground/kia_homepage_mobile_hero_seltos_2021_post_foreground.png").fit().into(photo)
+        Picasso.get().load("${Constants.URL_IMAGES}${listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra2}").fit().into(photo)
         desarrollo.text = "Desarrollo ${spinDesarrolloN.selectedItem}"
-        direccion.text = ""
+        direccion.text = listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra1  //address
         unidad.text = "Unidad ${spinUnidadN.selectedItem}"
-        dirUnidad.text = ""
-        fecha.text = "Entregado: "
+        fecha.text = "Entregado: ${listUnidades[spinUnidadN.selectedItemPosition-1].extra1}"
         propietario.text = "Propietario ${etPropietarioN.text}"
         celular.text = "Celular ${etTelMovilN.text}"
         email.text = etEmailN.text.toString()
