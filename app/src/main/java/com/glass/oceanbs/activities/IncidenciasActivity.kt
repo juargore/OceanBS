@@ -17,7 +17,6 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.IncidenciaAdapter
-import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.ShortIncidencia
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okhttp3.*
@@ -84,7 +83,7 @@ class IncidenciasActivity : AppCompatActivity() {
         txtSubTitleDesarrolloI.text = persona
 
         fabNewIncidencia.setOnClickListener {
-            val intent = Intent(applicationContext, RegistroIncidenciaActivity::class.java)
+            val intent = Intent(applicationContext, NuevaIncidenciaActivity::class.java)
             startActivity(intent)
         }
 
@@ -162,24 +161,25 @@ class IncidenciasActivity : AppCompatActivity() {
         rvIncidencias.layoutManager = LinearLayoutManager(this)
         val adapter = IncidenciaAdapter(this, listIncidencias, object : IncidenciaAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
-                val intent = Intent(applicationContext, RegistroIncidenciaActivity::class.java)
-                startActivity(intent)
+                /*val intent = Intent(applicationContext, NuevaIncidenciaActivity::class.java)
+                intent.putExtra("incidenciaId", listIncidencias[pos].Id)
+                startActivity(intent)*/
             }
         }, object : IncidenciaAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                showDeleteDialog()
+                showDeleteDialog(listIncidencias[pos].Id)
             }
         })
 
         rvIncidencias.adapter = adapter
     }
 
-    private fun showDeleteDialog(){
+    private fun showDeleteDialog(incidenciaId: String){
         alert(resources.getString(R.string.msg_confirm_deletion),
             "Eliminar Incidencia")
         {
             positiveButton(resources.getString(R.string.accept)) {
-                deleteIncidenciaByServer("1")
+                deleteIncidenciaByServer(incidenciaId)
             }
             negativeButton(resources.getString(R.string.cancel)){}
         }.show().apply {
@@ -193,11 +193,11 @@ class IncidenciasActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
-            .add("WebService","")
+            .add("WebService","EliminaIncidencia")
             .add("Id", incidenciaId)
             .build()
 
-        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+        val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

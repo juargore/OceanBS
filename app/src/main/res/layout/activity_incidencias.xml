@@ -92,7 +92,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/txtTitleIncidencias"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/imageView2"
@@ -135,7 +135,7 @@
         android:layout_below="@id/txtTitleIncidencias"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvIncidencias"

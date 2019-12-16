@@ -45,7 +45,7 @@ import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
 
-class RegistroIncidenciaActivity : AppCompatActivity() {
+class NuevaIncidenciaActivity : AppCompatActivity() {
 
     private lateinit var imgBackRegistroIncidencia: ImageView
     private lateinit var txtBitacoraStatus: TextView
@@ -111,7 +111,7 @@ class RegistroIncidenciaActivity : AppCompatActivity() {
         pictureDialog.setTitle("Obtener fotografía")
 
         val pictureDialogItems = arrayOf("Seleccionar foto de la galería", "Capturar foto con la cámara")
-        pictureDialog.setItems(pictureDialogItems) { dialog, which ->
+        pictureDialog.setItems(pictureDialogItems) { _, which ->
             when (which) {
                 0 -> choosePhotoFromGallary()
                 1 -> takePhotoFromCamera()
