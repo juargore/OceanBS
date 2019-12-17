@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layParentIn"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -32,11 +33,11 @@
                     android:id="@+id/imgBackRegistroIncidencia"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_back_arrow"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
-                    tools:ignore="UnusedAttribute"/>
+                    app:srcCompat="@drawable/ic_back_arrow"
+                    tools:ignore="UnusedAttribute" />
             </RelativeLayout>
 
             <LinearLayout
@@ -49,7 +50,7 @@
                 android:paddingRight="12dp">
 
                 <TextView
-                    android:id="@+id/textView24"
+                    android:id="@+id/txtTitleDesarrolloIn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
@@ -59,7 +60,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textView23"
+                    android:id="@+id/txtSubTitleDesarrolloIn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-2dp"
@@ -93,7 +94,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -221,7 +222,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/editText11"
+                        android:id="@+id/etFechaAltaI"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner_gray_fill"
@@ -248,7 +249,7 @@
                         android:text="Fecha Última Modificación" />
 
                     <EditText
-                        android:id="@+id/editText12"
+                        android:id="@+id/etFechaModifI"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner_gray_fill"
@@ -276,7 +277,7 @@
                     android:textStyle="bold" />
 
                 <EditText
-                    android:id="@+id/editText13"
+                    android:id="@+id/etFallaReportadaI"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_round_corner"
@@ -297,7 +298,7 @@
                     android:text="Falla real" />
 
                 <EditText
-                    android:id="@+id/editText14"
+                    android:id="@+id/etFallaRealI"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_round_corner"
@@ -318,7 +319,7 @@
                     android:text="Observaciones" />
 
                 <EditText
-                    android:id="@+id/editText15"
+                    android:id="@+id/etObservacionesI"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_round_corner"
@@ -340,7 +341,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/btnSaveIncidenciaI"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rectangle_blue_button"

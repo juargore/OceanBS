@@ -11,9 +11,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
@@ -21,7 +21,7 @@
             android:id="@+id/txtOpTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
+            android:layout_marginBottom="20dp"
             android:text="Opciones de "
             android:textColor="@color/colorBlack"
             android:textSize="20sp"
@@ -31,7 +31,10 @@
             android:id="@+id/txtOpEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
+            android:layout_marginBottom="18dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:text="Editar"
             android:textColor="@color/colorBlack"
             android:textSize="18sp" />
@@ -40,7 +43,10 @@
             android:id="@+id/txtOpDel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:text="Eliminar"
             android:textColor="@color/colorBlack"
             android:textSize="18sp" />

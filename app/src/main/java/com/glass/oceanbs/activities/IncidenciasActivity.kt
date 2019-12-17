@@ -84,6 +84,7 @@ class IncidenciasActivity : AppCompatActivity() {
 
         fabNewIncidencia.setOnClickListener {
             val intent = Intent(applicationContext, NuevaIncidenciaActivity::class.java)
+            intent.putExtra("solicitudId", solicitudId)
             startActivity(intent)
         }
 

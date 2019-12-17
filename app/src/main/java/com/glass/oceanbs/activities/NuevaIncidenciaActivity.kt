@@ -23,10 +23,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,8 +32,11 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
 import com.squareup.picasso.Picasso
+import okhttp3.*
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.support.v4.runOnUiThread
 import org.jetbrains.anko.textColor
+import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -44,19 +44,30 @@ import java.io.IOException
 import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class NuevaIncidenciaActivity : AppCompatActivity() {
 
+    private lateinit var layParentIn: LinearLayout
+    private lateinit var txtTitleDesarrolloIn: TextView
+    private lateinit var txtSubTitleDesarrolloIn: TextView
     private lateinit var imgBackRegistroIncidencia: ImageView
-    private lateinit var txtBitacoraStatus: TextView
 
     private lateinit var txtShowPhoto: TextView
     private lateinit var cardPhoto: CardView
     private lateinit var imgPhoto: ImageView
 
+    private lateinit var etFallaReportadaI: EditText
+    private lateinit var etFallaRealI: EditText
+    private lateinit var etObservacionesI: EditText
+    private lateinit var btnSaveIncidenciaI: Button
+
+    private lateinit var txtBitacoraStatus: TextView
+
     private val GALLERY = 1
     private val CAMERA = 2
     private var mCameraFileName = ""
+    private var idSolicitud = ""
 
     companion object {
         private val IMAGE_DIRECTORY = "/demonuts"
@@ -75,21 +86,86 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
+        val extras = intent.extras
+        idSolicitud = extras!!.getString("solicitudId").toString()
+
         initComponents()
     }
 
     private fun initComponents(){
+        layParentIn = findViewById(R.id.layParentIn)
+        txtTitleDesarrolloIn = findViewById(R.id.txtTitleDesarrolloIn)
+        txtSubTitleDesarrolloIn = findViewById(R.id.txtSubTitleDesarrolloIn)
         imgBackRegistroIncidencia = findViewById(R.id.imgBackRegistroIncidencia)
         txtBitacoraStatus = findViewById(R.id.txtBitacoraStatus)
+
+        etFallaReportadaI = findViewById(R.id.etFallaReportadaI)
+        etFallaRealI = findViewById(R.id.etFallaRealI)
+        etObservacionesI = findViewById(R.id.etObservacionesI)
+        btnSaveIncidenciaI = findViewById(R.id.btnSaveIncidenciaI)
 
         txtShowPhoto = findViewById(R.id.txtShowPhoto)
         cardPhoto = findViewById(R.id.cardPhoto)
         imgPhoto = findViewById(R.id.imgPhoto)
 
         imgBackRegistroIncidencia.setOnClickListener { this.finish() }
-        txtBitacoraStatus.setOnClickListener { showPopBitacoraStatus() }
-        cardPhoto.setOnClickListener { showPictureDialog() }
         txtShowPhoto.setOnClickListener { showPopPhoto() }
+        cardPhoto.setOnClickListener { showPictureDialog() }
+        txtBitacoraStatus.setOnClickListener { showPopBitacoraStatus() }
+        btnSaveIncidenciaI.setOnClickListener { sendDataToServer() }
+    }
+
+    // send values to server to create a new solicitud
+    @SuppressLint("SetTextI18n")
+    private fun sendDataToServer(){
+        /*progress.show()
+        progress.setCancelable(false)
+        titleProgress.text = "Enviando Información"*/
+        val userId = Constants.getUserId(this)
+        val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
+
+        val builder = FormBody.Builder()
+            .add("WebService","GuardaIncidencia")
+            .add("Id", "") // empty if new
+            .add("Status", "1")
+            .add("Observaciones", etObservacionesI.text.toString())
+            .add("IdSolicitudAG", idSolicitud)
+            .add("IdValorClasif1", "")
+            .add("IdValorClasif2", "3")
+            .add("IdValorClasif3", "")
+            .add("FallaReportada", etFallaReportadaI.text.toString())
+            .add("FallaReal", etFallaRealI.text.toString())
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
+
+                        if(jsonRes.getInt("Error") == 0){
+                            Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"))
+                        } else
+                            Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"))
+
+                        //progress.dismiss()
+
+                    } catch (e: Error){
+                        Constants.snackbar(applicationContext, layParentIn, e.message.toString())
+                        //progress.dismiss()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Constants.snackbar(applicationContext, layParentIn, e.message.toString())
+                    //progress.dismiss()
+                }
+            }
+        })
     }
 
     private fun showPopPhoto(){
