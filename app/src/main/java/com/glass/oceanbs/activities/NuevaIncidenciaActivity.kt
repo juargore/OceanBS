@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -19,8 +18,9 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
-import android.util.Log
+import android.text.TextUtils
 import android.view.MotionEvent
+import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -31,10 +31,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
-import com.squareup.picasso.Picasso
+import com.glass.oceanbs.models.GenericObj
 import okhttp3.*
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.support.v4.runOnUiThread
 import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
@@ -45,9 +44,12 @@ import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class NuevaIncidenciaActivity : AppCompatActivity() {
 
+    private lateinit var progress : AlertDialog
+    private lateinit var titleProgress: TextView
     private lateinit var layParentIn: LinearLayout
     private lateinit var txtTitleDesarrolloIn: TextView
     private lateinit var txtSubTitleDesarrolloIn: TextView
@@ -57,12 +59,20 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
     private lateinit var cardPhoto: CardView
     private lateinit var imgPhoto: ImageView
 
+    private lateinit var spinner3m: Spinner
+    private lateinit var spinner6m: Spinner
+    private lateinit var spinner1a: Spinner
+
     private lateinit var etFallaReportadaI: EditText
     private lateinit var etFallaRealI: EditText
     private lateinit var etObservacionesI: EditText
     private lateinit var btnSaveIncidenciaI: Button
 
     private lateinit var txtBitacoraStatus: TextView
+
+    private var listSpinner3m: ArrayList<GenericObj> = ArrayList()
+    private var listSpinner6m: ArrayList<GenericObj> = ArrayList()
+    private var listSpinner1a: ArrayList<GenericObj> = ArrayList()
 
     private val GALLERY = 1
     private val CAMERA = 2
@@ -75,7 +85,7 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_registro_incidencia)
+        setContentView(R.layout.activity_nueva_incidencia)
 
         supportActionBar?.hide()
 
@@ -92,12 +102,17 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
         initComponents()
     }
 
+    @SuppressLint("InflateParams")
     private fun initComponents(){
         layParentIn = findViewById(R.id.layParentIn)
         txtTitleDesarrolloIn = findViewById(R.id.txtTitleDesarrolloIn)
         txtSubTitleDesarrolloIn = findViewById(R.id.txtSubTitleDesarrolloIn)
         imgBackRegistroIncidencia = findViewById(R.id.imgBackRegistroIncidencia)
         txtBitacoraStatus = findViewById(R.id.txtBitacoraStatus)
+
+        spinner3m = findViewById(R.id.spinner3m)
+        spinner6m = findViewById(R.id.spinner6m)
+        spinner1a = findViewById(R.id.spinner1a)
 
         etFallaReportadaI = findViewById(R.id.etFallaReportadaI)
         etFallaRealI = findViewById(R.id.etFallaRealI)
@@ -108,31 +123,188 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
         cardPhoto = findViewById(R.id.cardPhoto)
         imgPhoto = findViewById(R.id.imgPhoto)
 
+        // set up progress dialg
+        val builder = AlertDialog.Builder(this, R.style.HalfDialogTheme)
+        val inflat = this.layoutInflater
+        val dialogView = inflat.inflate(R.layout.progress, null)
+
+        titleProgress = dialogView.findViewById(R.id.loading_title)
+
+        builder.setView(dialogView)
+        progress = builder.create()
+        progress.setCancelable(false)
+
         imgBackRegistroIncidencia.setOnClickListener { this.finish() }
         txtShowPhoto.setOnClickListener { showPopPhoto() }
         cardPhoto.setOnClickListener { showPictureDialog() }
-        txtBitacoraStatus.setOnClickListener { showPopBitacoraStatus() }
-        btnSaveIncidenciaI.setOnClickListener { sendDataToServer() }
+        //txtBitacoraStatus.setOnClickListener { showPopBitacoraStatus() }
+
+        btnSaveIncidenciaI.setOnClickListener {
+            if(validateFullFields())
+                sendDataToServer()
+        }
+
+        getDataForSpinners(1)
     }
 
-    // send values to server to create a new solicitud
+    private fun getDataForSpinners(value: Int){
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","ConsultaValoresClasificacionIdClasificacion")
+            .add("IdClasificacion", value.toString())
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_CLASIFICACION).post(builder).build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
+
+                        if(jsonRes.getInt("Error") == 0){
+                            val arrayClasif = jsonRes.getJSONArray("Datos")
+
+                            for(i in 0 until arrayClasif.length()){
+                                val j : JSONObject = arrayClasif.getJSONObject(i)
+
+                                when(value){
+                                    1->{ listSpinner3m.add(GenericObj(
+                                            j.getString("Id"),
+                                            j.getString("Codigo"),
+                                            j.getString("Nombre")))
+                                        }
+                                    2->{ listSpinner6m.add(GenericObj(
+                                            j.getString("Id"),
+                                            j.getString("Codigo"),
+                                            j.getString("Nombre")))
+                                        }
+                                    3->{ listSpinner1a.add(GenericObj(
+                                            j.getString("Id"),
+                                            j.getString("Codigo"),
+                                            j.getString("Nombre")))
+                                        }
+                                }
+                            }
+                        }
+
+                        when(value){
+                            1-> getDataForSpinners(2)
+                            2-> getDataForSpinners(3)
+                            3 -> setUpSpinners()
+                        }
+
+                    } catch (e: Error){}
+                }
+            }
+        })
+    }
+
+    private fun setUpSpinners(){
+        val list3m: ArrayList<String> = ArrayList()
+        list3m.add(0, "Seleccionar")
+
+        for (i in listSpinner3m)
+            list3m.add(i.Nombre)
+
+        val adapter3m = ArrayAdapter(this, R.layout.spinner_text, list3m)
+        spinner3m.adapter = adapter3m
+
+        spinner3m.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
+                if(pos > 0){
+                    spinner6m.setSelection(0)
+                    spinner1a.setSelection(0)
+                }
+            }
+        }
+
+
+        val list6m: ArrayList<String> = ArrayList()
+        list6m.add(0, "Seleccionar")
+
+        for (i in listSpinner6m)
+            list6m.add(i.Nombre)
+
+        val adapter6m = ArrayAdapter(this, R.layout.spinner_text, list6m)
+        spinner6m.adapter = adapter6m
+
+        spinner6m.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
+                if(pos > 0){
+                    spinner3m.setSelection(0)
+                    spinner1a.setSelection(0)
+                }
+            }
+        }
+
+
+        val list1a: ArrayList<String> = ArrayList()
+        list1a.add(0, "Seleccionar")
+
+        for (i in listSpinner1a)
+            list1a.add(i.Nombre)
+
+        val adapter1a = ArrayAdapter(this, R.layout.spinner_text, list1a)
+        spinner1a.adapter = adapter1a
+
+        spinner1a.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
+                if(pos > 0){
+                    spinner3m.setSelection(0)
+                    spinner6m.setSelection(0)
+                }
+            }
+        }
+
+    }
+
+
+    private fun validateFullFields(): Boolean {
+        val msg = "Este campo no puede estar vacío"
+        return when {
+            TextUtils.isEmpty(etFallaReportadaI.text.toString()) -> {
+                etFallaReportadaI.error = msg; false }
+            else -> true
+        }
+    }
+
+    // send values to server to create a new incidencia
     @SuppressLint("SetTextI18n")
     private fun sendDataToServer(){
-        /*progress.show()
-        progress.setCancelable(false)
-        titleProgress.text = "Enviando Información"*/
+        progress.show()
+        titleProgress.text = "Enviando Información"
+
         val userId = Constants.getUserId(this)
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
+
+        var valor3m = ""
+        if(spinner3m.selectedItemPosition > 0)
+            valor3m = listSpinner3m[spinner3m.selectedItemPosition-1].Id
+
+        var valor6m = ""
+        if(spinner6m.selectedItemPosition > 0)
+            valor6m = listSpinner6m[spinner6m.selectedItemPosition-1].Id
+
+        var valor1a = ""
+        if(spinner1a.selectedItemPosition > 0)
+            valor1a = listSpinner1a[spinner1a.selectedItemPosition-1].Id
 
         val builder = FormBody.Builder()
             .add("WebService","GuardaIncidencia")
             .add("Id", "") // empty if new
             .add("Status", "1")
             .add("Observaciones", etObservacionesI.text.toString())
+            .add("IdColaboradorAlta", userId)
             .add("IdSolicitudAG", idSolicitud)
-            .add("IdValorClasif1", "")
-            .add("IdValorClasif2", "3")
-            .add("IdValorClasif3", "")
+            .add("IdValorClasif1", valor3m)
+            .add("IdValorClasif2", valor6m)
+            .add("IdValorClasif3", valor1a)
             .add("FallaReportada", etFallaReportadaI.text.toString())
             .add("FallaReal", etFallaRealI.text.toString())
             .build()
@@ -147,14 +319,16 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
 
                         if(jsonRes.getInt("Error") == 0){
                             Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"))
+                            Constants.updateRefreshIncidencias(applicationContext, true)
+                            showSuccessDialog()
                         } else
                             Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"))
 
-                        //progress.dismiss()
+                        progress.dismiss()
 
                     } catch (e: Error){
                         Constants.snackbar(applicationContext, layParentIn, e.message.toString())
-                        //progress.dismiss()
+                        progress.dismiss()
                     }
                 }
             }
@@ -162,10 +336,26 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
                     Constants.snackbar(applicationContext, layParentIn, e.message.toString())
-                    //progress.dismiss()
+                    progress.dismiss()
                 }
             }
         })
+    }
+
+    private fun showSuccessDialog(){
+        alert("La incidencia se ha registrado con éxito. ¿Qué desea hacer ahora?",
+            "Incidencia Guardada")
+        {
+            positiveButton("Ver status de incidencias") {
+                showPopBitacoraStatus()
+            }
+            negativeButton("Regresar"){
+                this@NuevaIncidenciaActivity.finish()
+            }
+        }.show().apply {
+            getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorPrimary) }
+            getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorDarkGray) }
+        }.setCancelable(false)
     }
 
     private fun showPopPhoto(){
@@ -301,7 +491,10 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
             startActivity(intent) }
 
         val btnExit = dialog.findViewById<TextView>(R.id.txtCancelP)
-        btnExit.setOnClickListener { dialog.dismiss() }
+        btnExit.setOnClickListener {
+            dialog.dismiss()
+            this@NuevaIncidenciaActivity.finish()
+        }
 
         val rvBitacoraStatusIncidencia = dialog.findViewById<RecyclerView>(R.id.rvBitacoraStatusIncidencia)
         rvBitacoraStatusIncidencia.layoutManager = LinearLayoutManager(this)
@@ -320,6 +513,7 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
         rvBitacoraStatusIncidencia.adapter = adapter
 
         dialog.show()
+        dialog.setCancelable(false)
     }
 
     private fun showDeleteDialog(){

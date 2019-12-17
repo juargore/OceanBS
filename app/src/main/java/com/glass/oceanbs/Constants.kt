@@ -23,6 +23,7 @@ object Constants {
     const val URL_SUCURSALES = "${URL_PARENT}catalogos/CCatSucursal.php"
     const val URL_PRODUCTO = "${URL_PARENT}catalogos/CCatProducto.php"
     const val URL_INCIDENCIAS = "${URL_PARENT}registros/CRegIncidencia.php"
+    const val URL_CLASIFICACION = "${URL_PARENT}catalogos/CCatValorClasificacion.php"
     const val URL_IMAGES = "http://oceanbs04.com/uploads/catalogos/sucursales/"
 
     private const val DATABASE_SP = "oceanbs"
@@ -80,6 +81,17 @@ object Constants {
     fun updateRefreshSolicitudes(context: Context, value: Boolean){
         val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
         editor.putBoolean("refreshSolicitudes", value)
+        editor.apply()
+    }
+
+    fun mustRefreshIncidencias(context: Context): Boolean{
+        val prefs = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE)
+        return prefs.getBoolean("refreshIncidentes", false)
+    }
+
+    fun updateRefreshIncidencias(context: Context, value: Boolean){
+        val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
+        editor.putBoolean("refreshIncidentes", value)
         editor.apply()
     }
 

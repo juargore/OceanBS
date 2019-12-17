@@ -140,6 +140,7 @@ class IncidenciasActivity : AppCompatActivity() {
                             }
                         }
 
+                        Constants.updateRefreshIncidencias(applicationContext, false)
                         progress.dismiss()
 
                     } catch (e: Error){
@@ -231,6 +232,15 @@ class IncidenciasActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        if(Constants.mustRefreshIncidencias(this)){
+            listIncidencias.clear()
+            getIncidencias()
+        }
     }
 
 }

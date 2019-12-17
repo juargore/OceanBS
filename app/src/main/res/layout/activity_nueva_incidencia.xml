@@ -54,7 +54,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
-                    android:text="Palm Springs"
+                    android:text="Incidencias"
                     android:textColor="@color/colorBlack"
                     android:textSize="22sp"
                     android:textStyle="bold" />
@@ -64,7 +64,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-2dp"
-                    android:text="José Altamirano Díaz"
+                    android:text="Complete el formulario"
                     android:textSize="15sp" />
             </LinearLayout>
         </LinearLayout>
@@ -125,13 +125,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="2dp"
-                        android:layout_marginTop="1dp"
                         android:layout_marginRight="10dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="2dp"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
-                        app:cardCornerRadius="4dp">
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="3dp"
+                        app:cardMaxElevation="3dp">
 
                         <ImageView
                             android:id="@+id/imgPhoto"
@@ -160,11 +161,27 @@
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
-                    <Spinner
-                        android:id="@+id/spinner3"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/rectangle_round_corner" />
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/spinner3m"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:background="@drawable/rectangle_round_corner" />
+
+                        <ImageView
+                            android:id="@+id/imageView7"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="8dp"
+                            android:tint="@color/colorDarkGray"
+                            app:srcCompat="@android:drawable/arrow_down_float" />
+
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/textView35"
@@ -175,11 +192,27 @@
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
-                    <Spinner
-                        android:id="@+id/spinner2"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/rectangle_round_corner" />
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/spinner6m"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:background="@drawable/rectangle_round_corner" />
+
+                        <ImageView
+                            android:id="@+id/imageView8"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="8dp"
+                            android:tint="@color/colorDarkGray"
+                            app:srcCompat="@android:drawable/arrow_down_float" />
+
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/textView34"
@@ -190,11 +223,28 @@
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
-                    <Spinner
-                        android:id="@+id/spinner"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/rectangle_round_corner" />
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/spinner1a"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:background="@drawable/rectangle_round_corner" />
+
+                        <ImageView
+                            android:id="@+id/imageView9"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="8dp"
+                            android:tint="@color/colorDarkGray"
+                            app:srcCompat="@android:drawable/arrow_down_float" />
+
+                    </RelativeLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -245,8 +295,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
+                        android:fontFamily="sans-serif-light"
                         android:lines="1"
-                        android:text="Fecha Última Modificación" />
+                        android:text="Fecha Última Modificación"
+                        android:textColor="@color/colorBlack"
+                        android:textStyle="bold" />
 
                     <EditText
                         android:id="@+id/etFechaModifI"
@@ -344,6 +397,7 @@
                 android:id="@+id/btnSaveIncidenciaI"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
                 android:background="@drawable/rectangle_blue_button"
                 android:text="Guardar Incidencia"
                 android:textColor="@android:color/white" />
