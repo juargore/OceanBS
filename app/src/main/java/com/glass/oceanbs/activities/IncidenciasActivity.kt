@@ -163,9 +163,9 @@ class IncidenciasActivity : AppCompatActivity() {
         rvIncidencias.layoutManager = LinearLayoutManager(this)
         val adapter = IncidenciaAdapter(this, listIncidencias, object : IncidenciaAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
-                /*val intent = Intent(applicationContext, NuevaIncidenciaActivity::class.java)
+                val intent = Intent(applicationContext, EditarIncidenciaActivity::class.java)
                 intent.putExtra("incidenciaId", listIncidencias[pos].Id)
-                startActivity(intent)*/
+                startActivity(intent)
             }
         }, object : IncidenciaAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {

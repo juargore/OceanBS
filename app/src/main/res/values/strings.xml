@@ -21,5 +21,6 @@
     <string name="desc_no_internet">La App necesita conectarse a internet para poder descargar la última información del
         Servidor.\n\nPor favor connecte el dispositivo a una red e intente de nuevo</string>
 
+    <string name="bitacora"><u>Bitácora Status de Incidencia</u></string>
 
 </resources>
