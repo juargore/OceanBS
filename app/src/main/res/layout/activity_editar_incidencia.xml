@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layParentIn"
+    android:id="@+id/layParentEdIn"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -30,7 +30,7 @@
                 android:layout_weight=".15">
 
                 <ImageView
-                    android:id="@+id/imgBackRegistroIncidencia"
+                    android:id="@+id/imgBackRegistroIncidenciaEdIn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="true"

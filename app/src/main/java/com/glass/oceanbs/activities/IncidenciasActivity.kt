@@ -165,6 +165,9 @@ class IncidenciasActivity : AppCompatActivity() {
             override fun onItemClick(pos: Int) {
                 val intent = Intent(applicationContext, EditarIncidenciaActivity::class.java)
                 intent.putExtra("incidenciaId", listIncidencias[pos].Id)
+                intent.putExtra("solicitudId", solicitudId)
+                intent.putExtra("persona", persona)
+                intent.putExtra("desarrollo", desarrollo)
                 startActivity(intent)
             }
         }, object : IncidenciaAdapter.InterfaceOnLongClick{
