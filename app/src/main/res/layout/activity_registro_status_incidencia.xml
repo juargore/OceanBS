@@ -49,7 +49,7 @@
                 android:paddingRight="12dp">
 
                 <TextView
-                    android:id="@+id/textView24"
+                    android:id="@+id/txtTitleR"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
@@ -59,7 +59,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textView23"
+                    android:id="@+id/txtSubTitleR"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-2dp"
@@ -297,13 +297,28 @@
                     android:layout_height="wrap_content"
                     android:text="Status de Incidencia" />
 
-                <EditText
-                    android:id="@+id/editText16"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rectangle_round_corner"
-                    android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:background="@drawable/rectangle_round_corner" />
+
+                    <ImageView
+                        android:id="@+id/imageView10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:tint="@color/colorDarkGray"
+                        app:srcCompat="@android:drawable/arrow_down_float" />
+
+                </RelativeLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -318,13 +333,28 @@
                     android:layout_height="wrap_content"
                     android:text="Colaborador que registra" />
 
-                <EditText
-                    android:id="@+id/editText17"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rectangle_round_corner"
-                    android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinner2"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:background="@drawable/rectangle_round_corner" />
+
+                    <ImageView
+                        android:id="@+id/imageView11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:tint="@color/colorDarkGray"
+                        app:srcCompat="@android:drawable/arrow_down_float" />
+
+                </RelativeLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -339,13 +369,28 @@
                     android:layout_height="wrap_content"
                     android:text="Colaborador que atiende" />
 
-                <EditText
-                    android:id="@+id/editText18"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rectangle_round_corner"
-                    android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinner3"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:background="@drawable/rectangle_round_corner" />
+
+                    <ImageView
+                        android:id="@+id/imageView12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:tint="@color/colorDarkGray"
+                        app:srcCompat="@android:drawable/arrow_down_float" />
+
+                </RelativeLayout>
+
             </LinearLayout>
 
             <LinearLayout

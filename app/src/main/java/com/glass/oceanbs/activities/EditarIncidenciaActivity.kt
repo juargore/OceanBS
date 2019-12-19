@@ -71,6 +71,7 @@ class EditarIncidenciaActivity : AppCompatActivity() {
     private var listSpinner3m: ArrayList<GenericObj> = ArrayList()
     private var listSpinner6m: ArrayList<GenericObj> = ArrayList()
     private var listSpinner1a: ArrayList<GenericObj> = ArrayList()
+    private var listRegistroStatus: ArrayList<GenericObj> = ArrayList()
 
     private val GALLERY = 1
     private val CAMERA = 2
@@ -99,7 +100,7 @@ class EditarIncidenciaActivity : AppCompatActivity() {
 
         val extras = intent.extras
         idSolicitud = extras!!.getString("solicitudId").toString()
-        idIncidencia = extras!!.getString("incidenciaId").toString()
+        idIncidencia = extras.getString("incidenciaId").toString()
         persona = extras.getString("persona").toString()
         desarrollo = extras.getString("desarrollo").toString()
 
@@ -153,8 +154,8 @@ class EditarIncidenciaActivity : AppCompatActivity() {
                 sendDataToServer()
         }
 
-        getIncidencia()
         getDataForSpinners(1)
+        getIncidencia()
     }
 
     private fun getDataForSpinners(value: Int){
@@ -326,6 +327,39 @@ class EditarIncidenciaActivity : AppCompatActivity() {
                 }
             }
         }
+
+        fillSpinners()
+    }
+
+    private fun fillSpinners(){
+
+        when {
+            cIncidencia.IdValorClasif1.toInt() != 0 -> {
+
+                // value is in first spinner
+                for(i in 0 until listSpinner3m.size){
+                    if(cIncidencia.IdValorClasif1 == listSpinner3m[i].Id)
+                        spinner3mEd.setSelection(i+1)
+                }
+            }
+            cIncidencia.IdValorClasif2.toInt() != 0 -> {
+
+                // value is in second spinner
+                for(i in 0 until listSpinner6m.size){
+                    if(cIncidencia.IdValorClasif2 == listSpinner6m[i].Id)
+                        spinner6mEd.setSelection(i+1)
+                }
+            }
+            cIncidencia.IdValorClasif3.toInt() != 0 -> {
+
+                // value is in third spinner
+                for(i in 0 until listSpinner1a.size){
+                    if(cIncidencia.IdValorClasif3 == listSpinner1a[i].Id)
+                        spinner1aEd.setSelection(i+1)
+                }
+            }
+        }
+
     }
 
     private fun validateFullFields(): Boolean {
@@ -360,7 +394,7 @@ class EditarIncidenciaActivity : AppCompatActivity() {
 
         val builder = FormBody.Builder()
             .add("WebService","GuardaIncidencia")
-            .add("Id", cIncidencia.Id) // empty if new
+            .add("Id", cIncidencia.Id) // empty if new | else -> ID
             .add("Status", "1")
             .add("Observaciones", etObservacionesEdI.text.toString())
             .add("IdColaboradorAlta", userId)
@@ -381,16 +415,16 @@ class EditarIncidenciaActivity : AppCompatActivity() {
                         val jsonRes = JSONObject(response.body()!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
-                            Constants.snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
                             Constants.updateRefreshIncidencias(applicationContext, true)
                             showSuccessDialog()
                         } else
-                            Constants.snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
 
                         progress.dismiss()
 
                     } catch (e: Error){
-                        Constants.snackbar(applicationContext, layParentEdIn, e.message.toString())
+                        snackbar(applicationContext, layParentEdIn, e.message.toString())
                         progress.dismiss()
                     }
                 }
@@ -398,7 +432,7 @@ class EditarIncidenciaActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Constants.snackbar(applicationContext, layParentEdIn, e.message.toString())
+                    snackbar(applicationContext, layParentEdIn, e.message.toString())
                     progress.dismiss()
                 }
             }
@@ -410,7 +444,8 @@ class EditarIncidenciaActivity : AppCompatActivity() {
             "Incidencia Actualizada")
         {
             positiveButton("Ver status de incidencias") {
-                showPopBitacoraStatus()
+                getStatus()
+                //showPopBitacoraStatus()
             }
             negativeButton("Regresar"){
                 this@EditarIncidenciaActivity.finish()
@@ -504,6 +539,62 @@ class EditarIncidenciaActivity : AppCompatActivity() {
         }
     }
 
+    private fun getStatus(){
+        progress.show()
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","")
+            .add("Id", "")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    snackbar(applicationContext, layParentEdIn, e.message.toString())
+                    progress.dismiss()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+
+                        val jsonRes = JSONObject(response.body()!!.string())
+
+                        if(jsonRes.getInt("Error") > 0)
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                        else{
+
+                            // create status object and iterate json array
+                            val arrayStatus = jsonRes.getJSONArray("Datos")
+
+                            for(i in 0 until arrayStatus.length()){
+                                val j : JSONObject = arrayStatus.getJSONObject(i)
+
+                                /*listRegistroStatus.add(ShortIncidencia(
+                                    j.getString("Id"),
+                                    j.getString("FechaAlta"),
+                                    j.getString("Clasificacion"),
+                                    j.getString("Vigencia"),
+                                    j.getString("Status")))*/
+                            }
+                        }
+
+                        showPopBitacoraStatus()
+                        progress.dismiss()
+
+                    }catch (e: Error){
+                        snackbar(applicationContext, layParentEdIn, e.message.toString())
+                        progress.dismiss()
+                    }
+                }
+            }
+        })
+    }
+
     private fun showPopBitacoraStatus(){
         val dialog = Dialog(this, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -524,14 +615,15 @@ class EditarIncidenciaActivity : AppCompatActivity() {
         val rvBitacoraStatusIncidencia = dialog.findViewById<RecyclerView>(R.id.rvBitacoraStatusIncidencia)
         rvBitacoraStatusIncidencia.layoutManager = LinearLayoutManager(this)
 
-        val adapter = BitacoraStatusAdapter(this, object : BitacoraStatusAdapter.InterfaceOnClick{
+        val adapter = BitacoraStatusAdapter(this, listRegistroStatus, object : BitacoraStatusAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
                 val intent = Intent(applicationContext, RegistroStatusIncidenciaActivity::class.java)
+                //intent.putExtra("statusId", "")
                 startActivity(intent)
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                showDeleteDialog()
+                showDeleteDialog("")
             }
         })
 
@@ -541,12 +633,12 @@ class EditarIncidenciaActivity : AppCompatActivity() {
         dialog.setCancelable(false)
     }
 
-    private fun showDeleteDialog(){
+    private fun showDeleteDialog(idStatus: String){
         alert(resources.getString(R.string.msg_confirm_deletion),
             "Eliminar Status de Incidencia")
         {
             positiveButton(resources.getString(R.string.accept)) {
-
+                deleteStatusRegistro(idStatus)
             }
             negativeButton(resources.getString(R.string.cancel)){}
         }.show().apply {
@@ -554,6 +646,54 @@ class EditarIncidenciaActivity : AppCompatActivity() {
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
         }
     }
+
+
+    private fun deleteStatusRegistro(idStatus: String){
+        progress.show()
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","EliminaIncidencia")
+            .add("Id", idStatus)
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    progress.dismiss()
+                    val msg = "No es posible eliminar esta status!"
+                    snackbar(applicationContext, layParentEdIn, msg)
+                }
+            }
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread{
+                    try{
+                        val jsonRes = JSONObject(response.body()!!.string())
+                        if(jsonRes.getInt("Error") == 0){
+
+                            // successfully deleted on Server -> refresh list
+                            //listRegistroStatus.clear()
+                            progress.dismiss()
+
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            getStatus()
+                        } else{
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            progress.dismiss()
+                        }
+
+                    } catch (e: java.lang.Error){
+                        progress.dismiss()
+                        snackbar(applicationContext, layParentEdIn,
+                            "No es posible eliminar este status!")
+                    }
+                }
+            }
+        })
+    }
+
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {

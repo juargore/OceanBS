@@ -226,6 +226,7 @@ class IncidenciasActivity : AppCompatActivity() {
                             getIncidencias()
                         } else{
                             snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"))
+                            progress.dismiss()
                         }
                     } catch (e: java.lang.Error){
                         progress.dismiss()

@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.glass.oceanbs.R
+import com.glass.oceanbs.models.GenericObj
 
 class BitacoraStatusAdapter(private val context: Context,
+                            private val listStatus: ArrayList<GenericObj>,
                             private val eventClick: InterfaceOnClick,
                             private val eventLongClick: InterfaceOnLongClick)
     : androidx.recyclerview.widget.RecyclerView.Adapter<BitacoraStatusAdapter.ItemViewHolder>() {
