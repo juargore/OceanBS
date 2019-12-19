@@ -7,9 +7,9 @@
     android:background="@android:color/white"
     android:orientation="vertical"
     android:paddingLeft="15dp"
-    android:id="@+id/layParentR"
+    android:id="@+id/layParentER"
     android:paddingRight="15dp"
-    tools:context=".activities.RegistroStatusIncidenciaActivity">
+    tools:context=".activities.EditStatusIncidenciaActivity">
 
     <LinearLayout
         android:id="@+id/layTop"
@@ -30,7 +30,7 @@
                 android:layout_weight=".15">
 
                 <ImageView
-                    android:id="@+id/imgBackStatusR"
+                    android:id="@+id/imgBackStatusER"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/ic_back_arrow"
@@ -50,7 +50,7 @@
                 android:paddingRight="12dp">
 
                 <TextView
-                    android:id="@+id/txtTitleR"
+                    android:id="@+id/txtTitleER"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
@@ -60,7 +60,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txtSubTitleR"
+                    android:id="@+id/txtSubTitleER"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-2dp"
@@ -81,7 +81,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:text="Nuevo Status de Incidencia"
+        android:text="Editar Status de Incidencia"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="22sp"
@@ -110,7 +110,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/txtShowPhoto1"
+                        android:id="@+id/txtShowPhoto1ER"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
@@ -121,7 +121,7 @@
                         android:textStyle="bold" />
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/cardPhoto1"
+                        android:id="@+id/cardPhoto1ER"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="1dp"
@@ -134,7 +134,7 @@
                         app:cardCornerRadius="4dp">
 
                         <ImageView
-                            android:id="@+id/imgPhoto1"
+                            android:id="@+id/imgPhoto1ER"
                             android:layout_width="wrap_content"
                             android:layout_height="80dp"
                             android:layout_margin="10dp"
@@ -151,7 +151,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/txtShowPhoto2"
+                        android:id="@+id/txtShowPhoto2ER"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
@@ -162,7 +162,7 @@
                         android:textStyle="bold" />
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/cardPhoto2"
+                        android:id="@+id/cardPhoto2ER"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="1dp"
@@ -175,7 +175,7 @@
                         app:cardCornerRadius="4dp">
 
                         <ImageView
-                            android:id="@+id/imgPhoto2"
+                            android:id="@+id/imgPhoto2ER"
                             android:layout_width="wrap_content"
                             android:layout_height="80dp"
                             android:layout_margin="10dp"
@@ -190,7 +190,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/txtShowPhoto3"
+                        android:id="@+id/txtShowPhoto3ER"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
@@ -201,7 +201,7 @@
                         android:textStyle="bold" />
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/cardPhoto3"
+                        android:id="@+id/cardPhoto3ER"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="1dp"
@@ -214,7 +214,7 @@
                         app:cardCornerRadius="4dp">
 
                         <ImageView
-                            android:id="@+id/imgPhoto3"
+                            android:id="@+id/imgPhoto3ER"
                             android:layout_width="wrap_content"
                             android:layout_height="80dp"
                             android:layout_margin="10dp"
@@ -247,7 +247,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/etAltaR"
+                        android:id="@+id/etAltaER"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner_gray_fill"
@@ -274,7 +274,7 @@
                         android:text="Fecha Última Modificación" />
 
                     <EditText
-                        android:id="@+id/etModifR"
+                        android:id="@+id/etModifER"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner_gray_fill"
@@ -303,7 +303,7 @@
                     android:layout_height="wrap_content">
 
                     <Spinner
-                        android:id="@+id/spinnerStatusR"
+                        android:id="@+id/spinnerStatusER"
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:background="@drawable/rectangle_round_corner" />
@@ -339,7 +339,7 @@
                     android:layout_height="wrap_content">
 
                     <Spinner
-                        android:id="@+id/spinnerRegistraR"
+                        android:id="@+id/spinnerRegistraER"
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:background="@drawable/rectangle_round_corner" />
@@ -375,7 +375,7 @@
                     android:layout_height="wrap_content">
 
                     <Spinner
-                        android:id="@+id/spinnerAtiendeR"
+                        android:id="@+id/spinnerAtiendeER"
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:background="@drawable/rectangle_round_corner" />
@@ -407,7 +407,7 @@
                     android:text="Observaciones" />
 
                 <EditText
-                    android:id="@+id/etObservacionesR"
+                    android:id="@+id/etObservacionesER"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_round_corner"
@@ -420,7 +420,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btnSaveStatusR"
+                android:id="@+id/btnUpdateStatusER"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"

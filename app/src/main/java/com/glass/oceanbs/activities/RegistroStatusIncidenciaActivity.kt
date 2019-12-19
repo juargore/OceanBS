@@ -13,31 +13,34 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.media.MediaScannerConnection
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.view.MotionEvent
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.graphics.drawable.toBitmap
 import com.glass.oceanbs.Constants
+import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
-import java.io.ByteArrayOutputStream
+import okhttp3.*
+import org.json.JSONObject
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
 
 class RegistroStatusIncidenciaActivity : AppCompatActivity() {
 
+    private lateinit var progress : AlertDialog
+    private lateinit var layParentR: LinearLayout
+    private lateinit var txtTitleR: TextView
+    private lateinit var txtSubTitleR: TextView
     private lateinit var imgBackStatus: ImageView
 
     private lateinit var txtShowPhoto1: TextView
@@ -52,6 +55,12 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
     private lateinit var cardPhoto3: CardView
     private lateinit var imgPhoto3: ImageView
 
+    private lateinit var spinnerStatusR: Spinner
+    private lateinit var spinnerRegistraR: Spinner
+    private lateinit var spinnerAtiendeR: Spinner
+    private lateinit var etObservacionesR: EditText
+    private lateinit var btnSaveStatusR: Button
+
     private val GALLERY = 1
     private val CAMERA = 2
     private var SELECTED = 0
@@ -59,10 +68,6 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
     private var mCameraFileName1 = ""
     private var mCameraFileName2 = ""
     private var mCameraFileName3 = ""
-
-    companion object {
-        private const val IMAGE_DIRECTORY = "/demonuts"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +86,10 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
     }
 
     private fun initComponents(){
-        imgBackStatus = findViewById(R.id.imgBackStatus)
+        layParentR = findViewById(R.id.layParentR)
+        imgBackStatus = findViewById(R.id.imgBackStatusR)
+        txtTitleR = findViewById(R.id.txtTitleR)
+        txtSubTitleR = findViewById(R.id.txtSubTitleR)
 
         txtShowPhoto1 = findViewById(R.id.txtShowPhoto1)
         cardPhoto1 = findViewById(R.id.cardPhoto1)
@@ -94,6 +102,12 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
         txtShowPhoto3 = findViewById(R.id.txtShowPhoto3)
         cardPhoto3 = findViewById(R.id.cardPhoto3)
         imgPhoto3 = findViewById(R.id.imgPhoto3)
+
+        spinnerStatusR = findViewById(R.id.spinnerStatusR)
+        spinnerRegistraR = findViewById(R.id.spinnerRegistraR)
+        spinnerAtiendeR = findViewById(R.id.spinnerAtiendeR)
+        etObservacionesR = findViewById(R.id.etObservacionesR)
+        btnSaveStatusR = findViewById(R.id.btnSaveStatusR)
 
         setListeners()
     }
@@ -108,6 +122,47 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
         txtShowPhoto1.setOnClickListener { showPopPhoto(1) }
         txtShowPhoto2.setOnClickListener { showPopPhoto(2) }
         txtShowPhoto3.setOnClickListener { showPopPhoto(3) }
+
+        btnSaveStatusR.setOnClickListener {  }
+    }
+
+    private fun getDataForSpinners(){
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","")
+            .add("Id", "")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_CLASIFICACION).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
+
+                        if(jsonRes.getInt("Error") == 0){
+
+                        }
+
+                    }catch (e: Error){
+                        snackbar(applicationContext, layParentR, e.message.toString())
+                    }
+                }
+            }
+        })
+
+    }
+
+    private fun setUpSpinner(){
+
+    }
+
+    private fun sendDataToServer(){
+
     }
 
     private fun showPictureDialog(photo: Int) {
@@ -226,31 +281,19 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
                     val file = File(mCameraFileName1)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName1))
-                        imgPhoto1.setImageURI(uriImage)
-
-                        //val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
-                        //mCameraFileName1 = saveImage(bitmap)
-                    }
+                        imgPhoto1.setImageURI(uriImage) }
                 }
                 2->{
                     val file = File(mCameraFileName2)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName2))
-                        imgPhoto2.setImageURI(uriImage)
-
-                        //val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
-                        //mCameraFileName1 = saveImage(bitmap)
-                    }
+                        imgPhoto2.setImageURI(uriImage) }
                 }
                 else->{
                     val file = File(mCameraFileName3)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName3))
-                        imgPhoto3.setImageURI(uriImage)
-
-                        //val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
-                        //mCameraFileName1 = saveImage(bitmap)
-                    }
+                        imgPhoto3.setImageURI(uriImage) }
                 }
             }
         }

@@ -73,6 +73,7 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
     private var listSpinner3m: ArrayList<GenericObj> = ArrayList()
     private var listSpinner6m: ArrayList<GenericObj> = ArrayList()
     private var listSpinner1a: ArrayList<GenericObj> = ArrayList()
+    private var listRegistroStatus: ArrayList<GenericObj> = ArrayList()
 
     private val GALLERY = 1
     private val CAMERA = 2
@@ -499,7 +500,7 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
         val rvBitacoraStatusIncidencia = dialog.findViewById<RecyclerView>(R.id.rvBitacoraStatusIncidencia)
         rvBitacoraStatusIncidencia.layoutManager = LinearLayoutManager(this)
 
-        val adapter = BitacoraStatusAdapter(this, object : BitacoraStatusAdapter.InterfaceOnClick{
+        val adapter = BitacoraStatusAdapter(this, listRegistroStatus, object : BitacoraStatusAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
                 val intent = Intent(applicationContext, RegistroStatusIncidenciaActivity::class.java)
                 startActivity(intent)

@@ -617,8 +617,9 @@ class EditarIncidenciaActivity : AppCompatActivity() {
 
         val adapter = BitacoraStatusAdapter(this, listRegistroStatus, object : BitacoraStatusAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
-                val intent = Intent(applicationContext, RegistroStatusIncidenciaActivity::class.java)
-                //intent.putExtra("statusId", "")
+                val intent = Intent(applicationContext, EditStatusIncidenciaActivity::class.java)
+                intent.putExtra("persona",persona)
+                intent.putExtra("desarrollo",desarrollo)
                 startActivity(intent)
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
