@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layParentIn"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
     android:paddingLeft="15dp"
+    android:id="@+id/layParentR"
     android:paddingRight="15dp"
-    tools:context=".activities.NuevaIncidenciaActivity">
+    tools:context=".activities.CreateStatusActivity">
 
     <LinearLayout
         android:id="@+id/layTop"
@@ -30,14 +30,14 @@
                 android:layout_weight=".15">
 
                 <ImageView
-                    android:id="@+id/imgBackRegistroIncidencia"
+                    android:id="@+id/imgBackStatusR"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_back_arrow"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
-                    app:srcCompat="@drawable/ic_back_arrow"
-                    tools:ignore="UnusedAttribute" />
+                    tools:ignore="UnusedAttribute"/>
             </RelativeLayout>
 
             <LinearLayout
@@ -50,17 +50,17 @@
                 android:paddingRight="12dp">
 
                 <TextView
-                    android:id="@+id/txtTitleDesarrolloIn"
+                    android:id="@+id/txtTitleR"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
-                    android:text="Incidencias"
+                    android:text="Status de Incidencia"
                     android:textColor="@color/colorBlack"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txtSubTitleDesarrolloIn"
+                    android:id="@+id/txtSubTitleR"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-2dp"
@@ -81,7 +81,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:text="Registro de Incidencia"
+        android:text="Nuevo Status de Incidencia"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="22sp"
@@ -94,54 +94,50 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical" >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:orientation="horizontal"
-                android:weightSum="2">
+                android:weightSum="3">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight=".8"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/txtShowPhoto"
+                        android:id="@+id/txtShowPhoto1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="sans-serif-light"
-                        android:text="Fotografía"
+                        android:text="Fotografía 1"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/cardPhoto"
+                        android:id="@+id/cardPhoto1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="1dp"
                         android:layout_marginBottom="2dp"
                         android:clickable="true"
                         android:focusable="true"
                         android:foreground="?android:attr/selectableItemBackground"
-                        app:cardCornerRadius="4dp"
-                        app:cardElevation="3dp"
-                        app:cardMaxElevation="3dp">
+                        app:cardCornerRadius="4dp">
 
                         <ImageView
-                            android:id="@+id/imgPhoto"
+                            android:id="@+id/imgPhoto1"
                             android:layout_width="wrap_content"
-                            android:layout_height="70dp"
-                            android:layout_gravity="center_horizontal|center_vertical"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
-                            android:scaleType="fitCenter"
+                            android:layout_height="80dp"
+                            android:layout_margin="10dp"
                             app:srcCompat="@drawable/ic_box" />
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
@@ -149,102 +145,81 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.2"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/textView36"
+                        android:id="@+id/txtShowPhoto2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
                         android:fontFamily="sans-serif-light"
-                        android:text="Vigencia 3 meses"
+                        android:text="Fotografía 2"
+                        android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
-                    <RelativeLayout
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardPhoto2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <Spinner
-                            android:id="@+id/spinner3m"
-                            android:layout_width="match_parent"
-                            android:layout_height="30dp"
-                            android:background="@drawable/rectangle_round_corner" />
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_marginBottom="2dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        app:cardCornerRadius="4dp">
 
                         <ImageView
-                            android:id="@+id/imageView7"
+                            android:id="@+id/imgPhoto2"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="8dp"
-                            android:tint="@color/colorDarkGray"
-                            app:srcCompat="@android:drawable/arrow_down_float" />
+                            android:layout_height="80dp"
+                            android:layout_margin="10dp"
+                            app:srcCompat="@drawable/ic_box" />
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-                    </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/textView35"
+                        android:id="@+id/txtShowPhoto3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
                         android:fontFamily="sans-serif-light"
-                        android:text="Vigencia 6 meses"
+                        android:text="Fotografía 3"
+                        android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
-                    <RelativeLayout
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardPhoto3"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <Spinner
-                            android:id="@+id/spinner6m"
-                            android:layout_width="match_parent"
-                            android:layout_height="30dp"
-                            android:background="@drawable/rectangle_round_corner" />
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_marginBottom="2dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        app:cardCornerRadius="4dp">
 
                         <ImageView
-                            android:id="@+id/imageView8"
+                            android:id="@+id/imgPhoto3"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="8dp"
-                            android:tint="@color/colorDarkGray"
-                            app:srcCompat="@android:drawable/arrow_down_float" />
-
-                    </RelativeLayout>
-
-                    <TextView
-                        android:id="@+id/textView34"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:text="Vigencia 1 año"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <Spinner
-                            android:id="@+id/spinner1a"
-                            android:layout_width="match_parent"
-                            android:layout_height="30dp"
-                            android:background="@drawable/rectangle_round_corner" />
-
-                        <ImageView
-                            android:id="@+id/imageView9"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="8dp"
-                            android:tint="@color/colorDarkGray"
-                            app:srcCompat="@android:drawable/arrow_down_float" />
-
-                    </RelativeLayout>
-
+                            android:layout_height="80dp"
+                            android:layout_margin="10dp"
+                            app:srcCompat="@drawable/ic_box" />
+                    </androidx.cardview.widget.CardView>
                 </LinearLayout>
             </LinearLayout>
 
@@ -272,7 +247,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/etFechaAltaI"
+                        android:id="@+id/etAltaR"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner_gray_fill"
@@ -295,14 +270,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:fontFamily="sans-serif-light"
                         android:lines="1"
-                        android:text="Fecha Última Modificación"
-                        android:textColor="@color/colorBlack"
-                        android:textStyle="bold" />
+                        android:text="Fecha Última Modificación" />
 
                     <EditText
-                        android:id="@+id/etFechaModifI"
+                        android:id="@+id/etModifR"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/rectangle_round_corner_gray_fill"
@@ -321,21 +293,33 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView39"
+                    android:id="@+id/textView49"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:text="Falla reportada"
-                    android:textColor="@color/colorBlack"
-                    android:textStyle="bold" />
+                    android:text="Status de Incidencia" />
 
-                <EditText
-                    android:id="@+id/etFallaReportadaI"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rectangle_round_corner"
-                    android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinnerStatusR"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:background="@drawable/rectangle_round_corner" />
+
+                    <ImageView
+                        android:id="@+id/imageView10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:tint="@color/colorDarkGray"
+                        app:srcCompat="@android:drawable/arrow_down_float" />
+
+                </RelativeLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -345,34 +329,85 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView40"
+                    android:id="@+id/textView50"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Falla real" />
+                    android:text="Colaborador que registra" />
 
-                <EditText
-                    android:id="@+id/etFallaRealI"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rectangle_round_corner"
-                    android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinnerRegistraR"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:background="@drawable/rectangle_round_corner" />
+
+                    <ImageView
+                        android:id="@+id/imageView11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:tint="@color/colorDarkGray"
+                        app:srcCompat="@android:drawable/arrow_down_float" />
+
+                </RelativeLayout>
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView41"
+                    android:id="@+id/textView51"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Colaborador que atiende" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinnerAtiendeR"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:background="@drawable/rectangle_round_corner" />
+
+                    <ImageView
+                        android:id="@+id/imageView12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10dp"
+                        android:tint="@color/colorDarkGray"
+                        app:srcCompat="@android:drawable/arrow_down_float" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView52"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Observaciones" />
 
                 <EditText
-                    android:id="@+id/etObservacionesI"
+                    android:id="@+id/etObservacionesR"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_round_corner"
@@ -384,26 +419,17 @@
                     android:minLines="4" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/txtBitacoraStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:text="Bitácora Status de Incidencia"
-                android:textAlignment="center"
-                android:textStyle="bold" />
-
             <Button
-                android:id="@+id/btnSaveIncidenciaI"
+                android:id="@+id/btnSaveStatusR"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/rectangle_blue_button"
-                android:text="Guardar Incidencia"
-                android:textColor="@android:color/white" />
-
+                android:text="Guardar Status de Incidencia"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
         </LinearLayout>
-
     </ScrollView>
+
 
 </LinearLayout>

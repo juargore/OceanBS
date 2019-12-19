@@ -7,7 +7,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -23,7 +22,7 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class EditarSolicitudActivity : AppCompatActivity() {
+class EditSolicitudActivity : AppCompatActivity() {
 
     private lateinit var progress : AlertDialog
     private lateinit var titleProgress: TextView
@@ -56,7 +55,7 @@ class EditarSolicitudActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_editar_solicitud)
+        setContentView(R.layout.activity_edit_solicitud)
 
         supportActionBar?.hide()
 
@@ -339,7 +338,7 @@ class EditarSolicitudActivity : AppCompatActivity() {
             "Solicitud Actualizada")
         {
             positiveButton(resources.getString(R.string.accept)) {
-                this@EditarSolicitudActivity.finish()
+                this@EditSolicitudActivity.finish()
             }
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }

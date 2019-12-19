@@ -40,35 +40,35 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.EditarSolicitudActivity">
+        <activity android:name=".activities.EditSolicitudActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.IncidenciasActivity">
+        <activity android:name=".activities.ListIncidenciasActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.NuevaIncidenciaActivity">
+        <activity android:name=".activities.CreateIncidenciaActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.RegistroStatusIncidenciaActivity">
+        <activity android:name=".activities.CreateStatusActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.EditarIncidenciaActivity">
+        <activity android:name=".activities.EditIncidenciaActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

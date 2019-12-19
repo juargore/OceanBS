@@ -23,8 +23,8 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.mustRefreshSolicitudes
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
-import com.glass.oceanbs.activities.EditarSolicitudActivity
-import com.glass.oceanbs.activities.IncidenciasActivity
+import com.glass.oceanbs.activities.EditSolicitudActivity
+import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.adapters.ShortSolicitudAdapter
 import com.glass.oceanbs.models.ShortSolicitud
 import okhttp3.*
@@ -34,7 +34,7 @@ import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
 
-class SolicitudesFragment : Fragment() {
+class ListSolicitudesFragment : Fragment() {
 
     private lateinit var progress : AlertDialog
     private lateinit var laySuccessFS: LinearLayout
@@ -46,15 +46,15 @@ class SolicitudesFragment : Fragment() {
     private var userId = ""
 
     companion object{
-        fun newInstance(): SolicitudesFragment {
-            return SolicitudesFragment()
+        fun newInstance(): ListSolicitudesFragment {
+            return ListSolicitudesFragment()
         }
     }
 
     @SuppressLint("InflateParams")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val rootView = inflater.inflate(R.layout.fragment_solicitudes, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_list_solicitudes, container, false)
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -159,7 +159,7 @@ class SolicitudesFragment : Fragment() {
             override fun onItemClick(pos: Int) {
 
                 // on click -> open Incidencias screen
-                val intent = Intent(activity!!, IncidenciasActivity::class.java)
+                val intent = Intent(activity!!, ListIncidenciasActivity::class.java)
                 intent.putExtra("solicitudId", listSolicitudes[pos].Id)
                 intent.putExtra("desarrollo", listSolicitudes[pos].NombreDesarrollo)
                 intent.putExtra("persona", listSolicitudes[pos].NombrePR)
@@ -195,8 +195,9 @@ class SolicitudesFragment : Fragment() {
         cancel.setOnClickListener { dialog.dismiss() }
         delete.setOnClickListener { showDeleteDialog(solicitudId); dialog.dismiss() }
         edit.setOnClickListener {
+
             dialog.dismiss()
-            val intent = Intent(activity, EditarSolicitudActivity::class.java)
+            val intent = Intent(activity, EditSolicitudActivity::class.java)
             intent.putExtra("solicitudId", solicitudId)
             intent.putExtra("desarrollo", desarrollo)
             intent.putExtra("persona", persona)
@@ -277,6 +278,5 @@ class SolicitudesFragment : Fragment() {
                 }
             }
         }
-
     }
 }

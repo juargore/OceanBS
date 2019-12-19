@@ -4,15 +4,15 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.glass.oceanbs.fragments.NewSolicitudFragment
-import com.glass.oceanbs.fragments.SolicitudesFragment
+import com.glass.oceanbs.fragments.CreateSolicitudFragment
+import com.glass.oceanbs.fragments.ListSolicitudesFragment
 
 class ParentPagerAdapter(var context: Context, manager: FragmentManager) : FragmentPagerAdapter(manager) {
 
     override fun getItem(position: Int): Fragment {
         return when(position){
-            0-> SolicitudesFragment.newInstance()
-            else -> NewSolicitudFragment.newInstance()
+            0-> ListSolicitudesFragment.newInstance()
+            else -> CreateSolicitudFragment.newInstance()
         }
     }
 

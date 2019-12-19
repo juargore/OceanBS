@@ -46,7 +46,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
-class NuevaIncidenciaActivity : AppCompatActivity() {
+class CreateIncidenciaActivity : AppCompatActivity() {
 
     private lateinit var progress : AlertDialog
     private lateinit var titleProgress: TextView
@@ -81,12 +81,12 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
     private var idSolicitud = ""
 
     companion object {
-        private val IMAGE_DIRECTORY = "/demonuts"
+        private const val IMAGE_DIRECTORY = "/demonuts"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_nueva_incidencia)
+        setContentView(R.layout.activity_create_incidencia)
 
         supportActionBar?.hide()
 
@@ -138,7 +138,6 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
         imgBackRegistroIncidencia.setOnClickListener { this.finish() }
         txtShowPhoto.setOnClickListener { showPopPhoto() }
         cardPhoto.setOnClickListener { showPictureDialog() }
-        //txtBitacoraStatus.setOnClickListener { showPopBitacoraStatus() }
 
         btnSaveIncidenciaI.setOnClickListener {
             if(validateFullFields())
@@ -351,7 +350,7 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
                 showPopBitacoraStatus()
             }
             negativeButton("Regresar"){
-                this@NuevaIncidenciaActivity.finish()
+                this@CreateIncidenciaActivity.finish()
             }
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorPrimary) }
@@ -488,13 +487,13 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
 
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
         btnAdd.setOnClickListener {
-            val intent = Intent(applicationContext, RegistroStatusIncidenciaActivity::class.java)
+            val intent = Intent(applicationContext, CreateStatusActivity::class.java)
             startActivity(intent) }
 
         val btnExit = dialog.findViewById<TextView>(R.id.txtCancelP)
         btnExit.setOnClickListener {
             dialog.dismiss()
-            this@NuevaIncidenciaActivity.finish()
+            this@CreateIncidenciaActivity.finish()
         }
 
         val rvBitacoraStatusIncidencia = dialog.findViewById<RecyclerView>(R.id.rvBitacoraStatusIncidencia)
@@ -502,7 +501,7 @@ class NuevaIncidenciaActivity : AppCompatActivity() {
 
         val adapter = BitacoraStatusAdapter(this, listRegistroStatus, object : BitacoraStatusAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
-                val intent = Intent(applicationContext, RegistroStatusIncidenciaActivity::class.java)
+                val intent = Intent(applicationContext, CreateStatusActivity::class.java)
                 startActivity(intent)
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{

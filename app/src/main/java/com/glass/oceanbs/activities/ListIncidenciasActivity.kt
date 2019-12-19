@@ -25,7 +25,7 @@ import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
 
-class IncidenciasActivity : AppCompatActivity() {
+class ListIncidenciasActivity : AppCompatActivity() {
 
     private lateinit var txtTitleDesarrolloI: TextView
     private lateinit var txtSubTitleDesarrolloI: TextView
@@ -46,7 +46,7 @@ class IncidenciasActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_incidencias)
+        setContentView(R.layout.activity_list_incidencias)
 
         supportActionBar?.hide()
 
@@ -83,7 +83,7 @@ class IncidenciasActivity : AppCompatActivity() {
         txtSubTitleDesarrolloI.text = persona
 
         fabNewIncidencia.setOnClickListener {
-            val intent = Intent(applicationContext, NuevaIncidenciaActivity::class.java)
+            val intent = Intent(applicationContext, CreateIncidenciaActivity::class.java)
             intent.putExtra("solicitudId", solicitudId)
             startActivity(intent)
         }
@@ -163,7 +163,7 @@ class IncidenciasActivity : AppCompatActivity() {
         rvIncidencias.layoutManager = LinearLayoutManager(this)
         val adapter = IncidenciaAdapter(this, listIncidencias, object : IncidenciaAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
-                val intent = Intent(applicationContext, EditarIncidenciaActivity::class.java)
+                val intent = Intent(applicationContext, EditIncidenciaActivity::class.java)
                 intent.putExtra("incidenciaId", listIncidencias[pos].Id)
                 intent.putExtra("solicitudId", solicitudId)
                 intent.putExtra("persona", persona)

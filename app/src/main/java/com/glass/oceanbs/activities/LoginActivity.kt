@@ -9,7 +9,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.TextUtils
-import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -88,8 +87,7 @@ class LoginActivity : AppCompatActivity()  {
         .add("TelMovil", etPhone.text.toString().replace(" ",""))
         .build()
 
-        val request = Request.Builder()
-            .url(Constants.URL_USER).post(builder).build()
+        val request = Request.Builder().url(Constants.URL_USER).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback{
             override fun onResponse(call: Call, response: Response) {
@@ -108,8 +106,7 @@ class LoginActivity : AppCompatActivity()  {
                                 jsonRes.getString("Codigo"),
                                 jsonRes.getString("Nombre"),
                                 jsonRes.getString("ApellidoP"),
-                                jsonRes.getString("ApellidoM")
-                            )
+                                jsonRes.getString("ApellidoM"))
 
                             TableUser(applicationContext).insertNewOrExistingUser(user)
                             Constants.setUserId(applicationContext, user.id)
@@ -118,7 +115,7 @@ class LoginActivity : AppCompatActivity()  {
                                 Constants.setKeepLogin(applicationContext, true)
 
                             // show a welcome message to the user
-                            toast("Bienvenido")
+                            toast("Bienvenido!")
                             this@LoginActivity.finish()
 
                             // start new activity main

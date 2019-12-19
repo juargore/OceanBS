@@ -13,7 +13,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +22,7 @@ import androidx.fragment.app.Fragment
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
-import com.glass.oceanbs.activities.IncidenciasActivity
+import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Propietario
 import com.squareup.picasso.Picasso
@@ -36,7 +35,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 
-class NewSolicitudFragment : Fragment() {
+class CreateSolicitudFragment : Fragment() {
 
     private lateinit var progress : AlertDialog
     private lateinit var titleProgress: TextView
@@ -66,14 +65,14 @@ class NewSolicitudFragment : Fragment() {
     private lateinit var cPropietario: Propietario
 
     companion object{
-        fun newInstance(): NewSolicitudFragment {
-            return NewSolicitudFragment()
+        fun newInstance(): CreateSolicitudFragment {
+            return CreateSolicitudFragment()
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val rootView = inflater.inflate(R.layout.fragment_new_solicitud, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_create_solicitud, container, false)
 
         policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -130,6 +129,7 @@ class NewSolicitudFragment : Fragment() {
 
     // get current code according the WS
     private fun getSuggestedCode(){
+
         val client = OkHttpClient()
         val builder = FormBody.Builder()
             .add("WebService","GetCodigoSugeridoSolicitudAG")
@@ -139,6 +139,7 @@ class NewSolicitudFragment : Fragment() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {}
+
             override fun onResponse(call: Call, response: Response) {
                 try {
                     val jsonRes = JSONObject(response.body()!!.string())
@@ -270,6 +271,7 @@ class NewSolicitudFragment : Fragment() {
 
     // fill spinner desarrollos and relacion propietario
     private fun setUpFirstSpinners(){
+
         val relationList = arrayOf("Seleccionar", "Esposo(a)", "Hijo(a)", "Otro familiar", "Administrador", "Arrendatario", "Otro")
         val adapterRelation = ArrayAdapter(context!!, R.layout.spinner_text, relationList)
         spinRelacionN.adapter = adapterRelation
@@ -409,7 +411,7 @@ class NewSolicitudFragment : Fragment() {
             .add("IdProducto", listUnidades[spinUnidadN.selectedItemPosition-1].Id) // unidad
             .add("ReportaPropietario", "$reporta") // 0 | 1
             .add("NombrePR", etReportaN.text.toString()) //nombre del propietario
-            .add("TipoRelacionPropietario", "${spinRelacionN.selectedItemPosition}") // 0,1,2,3,4,5,6
+            .add("TipoRelacionPropietario", "${spinRelacionN.selectedItemPosition}")
             .add("TelCelularPR", etTelMovilN.text.toString())
             .add("TelParticularPR", etTelParticularN.text.toString())
             .add("CorreoElectronicoPR", etEmailN.text.toString())
@@ -470,7 +472,7 @@ class NewSolicitudFragment : Fragment() {
 
         Picasso.get().load("${Constants.URL_IMAGES}${listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra2}").fit().into(photo)
         desarrollo.text = "Desarrollo ${spinDesarrolloN.selectedItem}"
-        direccion.text = listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra1  //address
+        direccion.text = listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra1
         unidad.text = "Unidad ${spinUnidadN.selectedItem}"
         fecha.text = "Entregado: ${listUnidades[spinUnidadN.selectedItemPosition-1].extra1}"
         propietario.text = "Propietario ${etPropietarioN.text}"
@@ -484,7 +486,7 @@ class NewSolicitudFragment : Fragment() {
         btnAdd.setOnClickListener {
             dialog.dismiss()
 
-            val intent = Intent(activity, IncidenciasActivity::class.java)
+            val intent = Intent(activity, ListIncidenciasActivity::class.java)
             startActivity(intent)
         }
 

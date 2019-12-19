@@ -43,7 +43,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
-class EditarIncidenciaActivity : AppCompatActivity() {
+class EditIncidenciaActivity : AppCompatActivity() {
 
     private lateinit var progress : AlertDialog
     private lateinit var titleProgress: TextView
@@ -87,7 +87,7 @@ class EditarIncidenciaActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_editar_incidencia)
+        setContentView(R.layout.activity_edit_incidencia)
 
         supportActionBar?.hide()
 
@@ -225,7 +225,7 @@ class EditarIncidenciaActivity : AppCompatActivity() {
         val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                snackbar(applicationContext, layParentEdIn, e.message.toString())
+                runOnUiThread { snackbar(applicationContext, layParentEdIn, e.message.toString()) }
             }
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
@@ -247,14 +247,14 @@ class EditarIncidenciaActivity : AppCompatActivity() {
                                 j.getString("FallaReal"))
 
                             fillData()
-                        } else{
+                        } else
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
-                        }
+
                     }catch (e: Error){
                         snackbar(applicationContext, layParentEdIn, e.message.toString())
                     }
+                    progress.dismiss()
                 }
-                progress.dismiss()
             }
         })
     }
@@ -269,6 +269,7 @@ class EditarIncidenciaActivity : AppCompatActivity() {
     }
 
     private fun setUpSpinners(){
+
         val list3m: ArrayList<String> = ArrayList()
         list3m.add(0, "Seleccionar")
 
@@ -448,7 +449,7 @@ class EditarIncidenciaActivity : AppCompatActivity() {
                 //showPopBitacoraStatus()
             }
             negativeButton("Regresar"){
-                this@EditarIncidenciaActivity.finish()
+                this@EditIncidenciaActivity.finish()
             }
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorPrimary) }
@@ -603,13 +604,13 @@ class EditarIncidenciaActivity : AppCompatActivity() {
 
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
         btnAdd.setOnClickListener {
-            val intent = Intent(applicationContext, RegistroStatusIncidenciaActivity::class.java)
+            val intent = Intent(applicationContext, CreateStatusActivity::class.java)
             startActivity(intent) }
 
         val btnExit = dialog.findViewById<TextView>(R.id.txtCancelP)
         btnExit.setOnClickListener {
             dialog.dismiss()
-            this@EditarIncidenciaActivity.finish()
+            this@EditIncidenciaActivity.finish()
         }
 
         val rvBitacoraStatusIncidencia = dialog.findViewById<RecyclerView>(R.id.rvBitacoraStatusIncidencia)

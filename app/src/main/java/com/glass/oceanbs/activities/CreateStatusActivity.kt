@@ -35,7 +35,7 @@ import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
 
-class RegistroStatusIncidenciaActivity : AppCompatActivity() {
+class CreateStatusActivity : AppCompatActivity() {
 
     private lateinit var progress : AlertDialog
     private lateinit var layParentR: LinearLayout
@@ -71,7 +71,7 @@ class RegistroStatusIncidenciaActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_registro_status_incidencia)
+        setContentView(R.layout.activity_create_status)
 
         supportActionBar?.hide()
 
