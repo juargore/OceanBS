@@ -7,12 +7,16 @@ import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
+import android.util.Log
 import android.widget.*
 import androidx.cardview.widget.CardView
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
+import okhttp3.*
+import org.json.JSONObject
+import java.io.IOException
 
-class EditStatusIncidenciaActivity : AppCompatActivity() {
+class EditStatusActivity : AppCompatActivity() {
 
     private lateinit var progress : AlertDialog
     private lateinit var layParentER: LinearLayout
@@ -47,13 +51,13 @@ class EditStatusIncidenciaActivity : AppCompatActivity() {
     private var mCameraFileName3 = ""
 
     private var idSolicitud = ""
-    private var idIncidencia = ""
+    private var idStatus = ""
     private var persona = ""
     private var desarrollo = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit_status_incidencia)
+        setContentView(R.layout.activity_edit_status)
 
         supportActionBar?.hide()
 
@@ -66,11 +70,12 @@ class EditStatusIncidenciaActivity : AppCompatActivity() {
 
         val extras = intent.extras
         //idSolicitud = extras!!.getString("solicitudId").toString()
-        //idIncidencia = extras.getString("incidenciaId").toString()
-        persona = extras!!.getString("persona").toString()
+        idStatus = extras!!.getString("idStatus").toString()
+        persona = extras.getString("persona").toString()
         desarrollo = extras.getString("desarrollo").toString()
 
         initComponents()
+        getStatusIncidencia()
     }
 
     private fun initComponents(){
@@ -80,6 +85,26 @@ class EditStatusIncidenciaActivity : AppCompatActivity() {
         txtTitleER.text = desarrollo
         txtSubTitleER.text = persona
 
+    }
+
+    private fun getStatusIncidencia(){
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","ConsultaStatusIncidenciaIdApp")
+            .add("Id", idStatus)
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_STATUS).post(builder).build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val j = JSONObject(response.body()!!.string())
+                Log.e("RES", j.toString())
+            }
+        })
     }
 
 }

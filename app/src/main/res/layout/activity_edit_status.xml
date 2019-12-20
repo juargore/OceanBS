@@ -9,7 +9,7 @@
     android:paddingLeft="15dp"
     android:id="@+id/layParentER"
     android:paddingRight="15dp"
-    tools:context=".activities.EditStatusIncidenciaActivity">
+    tools:context=".activities.EditStatusActivity">
 
     <LinearLayout
         android:id="@+id/layTop"

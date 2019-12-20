@@ -32,6 +32,7 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
 import com.glass.oceanbs.models.GenericObj
+import com.glass.oceanbs.models.ShortStatus
 import okhttp3.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.textColor
@@ -73,7 +74,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
     private var listSpinner3m: ArrayList<GenericObj> = ArrayList()
     private var listSpinner6m: ArrayList<GenericObj> = ArrayList()
     private var listSpinner1a: ArrayList<GenericObj> = ArrayList()
-    private var listRegistroStatus: ArrayList<GenericObj> = ArrayList()
+    private var listRegistroStatus: ArrayList<ShortStatus> = ArrayList()
 
     private val GALLERY = 1
     private val CAMERA = 2

@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -31,9 +32,11 @@ import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Incidencia
+import com.glass.oceanbs.models.ShortStatus
 import okhttp3.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.textColor
+import org.jetbrains.anko.toast
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
@@ -71,7 +74,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
     private var listSpinner3m: ArrayList<GenericObj> = ArrayList()
     private var listSpinner6m: ArrayList<GenericObj> = ArrayList()
     private var listSpinner1a: ArrayList<GenericObj> = ArrayList()
-    private var listRegistroStatus: ArrayList<GenericObj> = ArrayList()
+    private var listRegistroStatus: ArrayList<ShortStatus> = ArrayList()
 
     private val GALLERY = 1
     private val CAMERA = 2
@@ -147,7 +150,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
         imgBackRegistroIncidenciaEdIn.setOnClickListener { this.finish() }
         txtShowPhotoEd.setOnClickListener { showPopPhoto() }
         cardPhotoEd.setOnClickListener { showPictureDialog() }
-        txtBitacoraStatusEd.setOnClickListener { showPopBitacoraStatus() }
+        txtBitacoraStatusEd.setOnClickListener { getStatus() }
 
         btnUpdateIncidenciaEdI.setOnClickListener {
             if(validateFullFields())
@@ -446,7 +449,6 @@ class EditIncidenciaActivity : AppCompatActivity() {
         {
             positiveButton("Ver status de incidencias") {
                 getStatus()
-                //showPopBitacoraStatus()
             }
             negativeButton("Regresar"){
                 this@EditIncidenciaActivity.finish()
@@ -545,11 +547,11 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
-            .add("WebService","")
-            .add("Id", "")
+            .add("WebService","ConsultaStatusIncidenciaIdIncidenciaApp")
+            .add("IdIncidencia", idIncidencia)
             .build()
 
-        val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
+        val request = Request.Builder().url(Constants.URL_STATUS).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -562,8 +564,8 @@ class EditIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-
                         val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("--", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") > 0)
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
@@ -575,16 +577,16 @@ class EditIncidenciaActivity : AppCompatActivity() {
                             for(i in 0 until arrayStatus.length()){
                                 val j : JSONObject = arrayStatus.getJSONObject(i)
 
-                                /*listRegistroStatus.add(ShortIncidencia(
+                                listRegistroStatus.add(ShortStatus(
                                     j.getString("Id"),
                                     j.getString("FechaAlta"),
-                                    j.getString("Clasificacion"),
-                                    j.getString("Vigencia"),
-                                    j.getString("Status")))*/
+                                    j.getString("StatusIncidencia"),
+                                    j.getString("Status")))
                             }
+
+                            showPopBitacoraStatus()
                         }
 
-                        showPopBitacoraStatus()
                         progress.dismiss()
 
                     }catch (e: Error){
@@ -602,10 +604,16 @@ class EditIncidenciaActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.pop_bitacora_status)
 
+        val layParentPop = dialog.findViewById<LinearLayout>(R.id.layParentPop)
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
         btnAdd.setOnClickListener {
             val intent = Intent(applicationContext, CreateStatusActivity::class.java)
-            startActivity(intent) }
+            intent.putExtra("incidenciaId",idIncidencia)
+            startActivity(intent)
+
+            dialog.dismiss()
+            this@EditIncidenciaActivity.finish()
+        }
 
         val btnExit = dialog.findViewById<TextView>(R.id.txtCancelP)
         btnExit.setOnClickListener {
@@ -618,14 +626,16 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
         val adapter = BitacoraStatusAdapter(this, listRegistroStatus, object : BitacoraStatusAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
-                val intent = Intent(applicationContext, EditStatusIncidenciaActivity::class.java)
+                val intent = Intent(applicationContext, EditStatusActivity::class.java)
                 intent.putExtra("persona",persona)
                 intent.putExtra("desarrollo",desarrollo)
+                intent.putExtra("idStatus", listRegistroStatus[pos].Id)
+
                 startActivity(intent)
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                showDeleteDialog("")
+                showDeleteDialog(layParentPop, listRegistroStatus[pos].StatusIncidencia)
             }
         })
 
@@ -635,12 +645,12 @@ class EditIncidenciaActivity : AppCompatActivity() {
         dialog.setCancelable(false)
     }
 
-    private fun showDeleteDialog(idStatus: String){
+    private fun showDeleteDialog(view: View, idStatus: String){
         alert(resources.getString(R.string.msg_confirm_deletion),
             "Eliminar Status de Incidencia")
         {
             positiveButton(resources.getString(R.string.accept)) {
-                deleteStatusRegistro(idStatus)
+                deleteStatusRegistro(view, idStatus)
             }
             negativeButton(resources.getString(R.string.cancel)){}
         }.show().apply {
@@ -650,12 +660,12 @@ class EditIncidenciaActivity : AppCompatActivity() {
     }
 
 
-    private fun deleteStatusRegistro(idStatus: String){
+    private fun deleteStatusRegistro(view: View, idStatus: String){
         progress.show()
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
-            .add("WebService","EliminaIncidencia")
+            .add("WebService","EliminaStatusIncidencia")
             .add("Id", idStatus)
             .build()
 
@@ -666,36 +676,36 @@ class EditIncidenciaActivity : AppCompatActivity() {
                 runOnUiThread {
                     progress.dismiss()
                     val msg = "No es posible eliminar esta status!"
-                    snackbar(applicationContext, layParentEdIn, msg)
+                    snackbar(applicationContext, view, msg)
                 }
             }
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread{
                     try{
                         val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("--", jsonRes.toString())
+
                         if(jsonRes.getInt("Error") == 0){
 
                             // successfully deleted on Server -> refresh list
-                            //listRegistroStatus.clear()
+                            listRegistroStatus.clear()
                             progress.dismiss()
 
-                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, view, jsonRes.getString("Mensaje"))
                             getStatus()
                         } else{
-                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, view, jsonRes.getString("Mensaje"))
                             progress.dismiss()
                         }
 
-                    } catch (e: java.lang.Error){
+                    } catch (e: Error){
                         progress.dismiss()
-                        snackbar(applicationContext, layParentEdIn,
-                            "No es posible eliminar este status!")
+                        snackbar(applicationContext, view, e.message.toString())
                     }
                 }
             }
         })
     }
-
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {

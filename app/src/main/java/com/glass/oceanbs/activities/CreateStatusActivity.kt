@@ -17,6 +17,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.StrictMode
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MotionEvent
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
@@ -27,17 +28,23 @@ import androidx.core.graphics.drawable.toBitmap
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
+import com.glass.oceanbs.models.GenericObj
 import okhttp3.*
+import org.jetbrains.anko.alert
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class CreateStatusActivity : AppCompatActivity() {
 
     private lateinit var progress : AlertDialog
+    private lateinit var titleProgress: TextView
     private lateinit var layParentR: LinearLayout
     private lateinit var txtTitleR: TextView
     private lateinit var txtSubTitleR: TextView
@@ -61,6 +68,9 @@ class CreateStatusActivity : AppCompatActivity() {
     private lateinit var etObservacionesR: EditText
     private lateinit var btnSaveStatusR: Button
 
+    private var listColaboradores1 : ArrayList<GenericObj> = ArrayList()
+    private var listColaboradores2 : ArrayList<GenericObj> = ArrayList()
+
     private val GALLERY = 1
     private val CAMERA = 2
     private var SELECTED = 0
@@ -68,6 +78,8 @@ class CreateStatusActivity : AppCompatActivity() {
     private var mCameraFileName1 = ""
     private var mCameraFileName2 = ""
     private var mCameraFileName3 = ""
+
+    private var incidenciaId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +93,9 @@ class CreateStatusActivity : AppCompatActivity() {
 
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
+
+        val extras = intent.extras
+        incidenciaId = extras!!.getString("incidenciaId").toString()
 
         initComponents()
     }
@@ -109,7 +124,17 @@ class CreateStatusActivity : AppCompatActivity() {
         etObservacionesR = findViewById(R.id.etObservacionesR)
         btnSaveStatusR = findViewById(R.id.btnSaveStatusR)
 
+        // set up progress dialg
+        val builder = AlertDialog.Builder(this, R.style.HalfDialogTheme)
+        val inflat = this.layoutInflater
+        val dialogView = inflat.inflate(R.layout.progress, null)
+
+        titleProgress = dialogView.findViewById(R.id.loading_title)
+
+        builder.setView(dialogView)
+        progress = builder.create()
         setListeners()
+        setUpSpinners()
     }
 
     private fun setListeners(){
@@ -123,7 +148,7 @@ class CreateStatusActivity : AppCompatActivity() {
         txtShowPhoto2.setOnClickListener { showPopPhoto(2) }
         txtShowPhoto3.setOnClickListener { showPopPhoto(3) }
 
-        btnSaveStatusR.setOnClickListener {  }
+        btnSaveStatusR.setOnClickListener { sendDataToServer() }
     }
 
     private fun getDataForSpinners(){
@@ -157,12 +182,127 @@ class CreateStatusActivity : AppCompatActivity() {
 
     }
 
-    private fun setUpSpinner(){
+    private fun setUpSpinners(){
 
+        val statusList = arrayOf(
+            "Seleccione una opción",
+            "Registrada",
+            "Por Verificar",
+            "Aceptada",
+            "Programada",
+            "En Proceso",
+            "Terminada",
+            "Entregada",
+            "No Aceptada",
+            "No Terminada",
+            "No Entregada")
+
+        val adapterRelation = ArrayAdapter(this, R.layout.spinner_text, statusList)
+        spinnerStatusR.adapter = adapterRelation
+
+
+        val listColab1: ArrayList<String> = ArrayList()
+        listColab1.add(0, "Seleccionar")
+
+        for (i in listColaboradores1)
+            listColab1.add(i.Nombre)
+
+        val adapterColab1 = ArrayAdapter(this, R.layout.spinner_text, listColab1)
+        spinnerRegistraR.adapter = adapterColab1
+
+        val listColab2: ArrayList<String> = ArrayList()
+        listColab2.add(0, "Seleccionar")
+
+        for (i in listColaboradores2)
+            listColab2.add(i.Nombre)
+
+        val adapterColab2 = ArrayAdapter(this, R.layout.spinner_text, listColab2)
+        spinnerAtiendeR.adapter = adapterColab2
     }
 
     private fun sendDataToServer(){
+        progress.show()
+        progress.setCancelable(false)
+        titleProgress.text = "Enviando Información"
 
+        val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
+
+        val bitmap = imgPhoto1.drawable.toBitmap()
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        val byteArray = stream.toByteArray()
+
+        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
+
+        val requestBody : RequestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("WebService","GuardaStatusIncidencia")
+            .addFormDataPart("Id", "") // empty if new | else -> ID
+            .addFormDataPart("Status", "1")
+            .addFormDataPart("Observaciones", etObservacionesR.text.toString())
+            .addFormDataPart("IdIncidencia", incidenciaId)
+            .addFormDataPart("IdColaborador1", "1")
+            .addFormDataPart("IdColaborador2", "2")
+            .addFormDataPart("StatusIncidencia", spinnerStatusR.selectedItemPosition.toString())
+            .addFormDataPart("Fotografia1", "image.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray))
+            .addFormDataPart("Fotografia2", "")
+            .addFormDataPart("Fotografia3", "")
+            .build()
+
+        val builder = FormBody.Builder()
+            .add("WebService","GuardaStatusIncidencia")
+            .add("Id", "") // empty if new | else -> ID
+            .add("Status", "1")
+            .add("Observaciones", etObservacionesR.text.toString())
+            .add("IdIncidencia", incidenciaId)
+            .add("IdColaborador1", "1")
+            .add("IdColaborador2", "2")
+            .add("StatusIncidencia", spinnerStatusR.selectedItemPosition.toString())
+            .add("Fotografia1", "")
+            .add("Fotografia2", "")
+            .add("Fotografia3", "")
+            .build()
+
+        val request = Request.Builder()
+            .url(Constants.URL_INCIDENCIAS)
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("RES",  jsonRes.toString())
+
+                        if(jsonRes.getInt("Error") == 0){
+                            showSuccessDialog()
+                            Constants.updateRefreshIncidencias(applicationContext, true)
+                        } else
+                            snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"))
+
+                        progress.dismiss()
+
+                    } catch (e: Error){
+                        progress.dismiss()
+                        snackbar(applicationContext, layParentR, e.message.toString())
+                    }
+                }
+            }
+        })
+    }
+
+    private fun showSuccessDialog(){
+        alert("Se ha guardado el Status de la incidencia satisfactoriamente",
+            "Guardado exitoso!")
+        {
+            positiveButton(resources.getString(R.string.accept)) {
+                this@CreateStatusActivity.finish()
+            }
+        }.show().setCancelable(false)
     }
 
     private fun showPictureDialog(photo: Int) {

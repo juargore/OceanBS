@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="3dp"
-    app:cardElevation="0dp"
-    app:cardMaxElevation="0dp"
-    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_marginTop="5dp"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardElevation="0dp"
+    app:cardMaxElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,14 +22,13 @@
             android:weightSum="2">
 
             <TextView
-                android:id="@+id/textView45"
+                android:id="@+id/txtFechaAlta"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-light"
                 android:paddingLeft="5dp"
                 android:text="TextView"
-                android:textColor="@color/colorBlack"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -40,7 +39,7 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-light"
                 android:paddingRight="5dp"
-                android:text="TextView"
+                android:text="Consultar"
                 android:textAlignment="textEnd"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
@@ -49,17 +48,28 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="24dp"
             android:background="@drawable/progress_base">
 
             <RelativeLayout
+                android:id="@+id/layFill"
                 android:layout_width="200dp"
-                android:layout_height="16dp"
+                android:layout_height="20dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
                 android:background="@drawable/progress_entregada">
 
+                <TextView
+                    android:id="@+id/txtFullName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="TextView"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
