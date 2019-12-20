@@ -19,6 +19,7 @@ import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -31,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
+import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.ShortStatus
 import okhttp3.*
@@ -80,6 +82,9 @@ class CreateIncidenciaActivity : AppCompatActivity() {
     private val CAMERA = 2
     private var mCameraFileName = ""
     private var idSolicitud = ""
+    private var idIncidencia = ""
+    private var persona = ""
+    private var desarrollo = ""
 
     companion object {
         private const val IMAGE_DIRECTORY = "/demonuts"
@@ -100,6 +105,8 @@ class CreateIncidenciaActivity : AppCompatActivity() {
 
         val extras = intent.extras
         idSolicitud = extras!!.getString("solicitudId").toString()
+        persona = extras.getString("persona").toString()
+        desarrollo = extras.getString("desarrollo").toString()
 
         initComponents()
     }
@@ -317,8 +324,11 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("KKK",  jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
+                            idIncidencia = jsonRes.getString("Id")
+
                             Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"))
                             Constants.updateRefreshIncidencias(applicationContext, true)
                             showSuccessDialog()
@@ -348,7 +358,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             "Incidencia Guardada")
         {
             positiveButton("Ver status de incidencias") {
-                showPopBitacoraStatus()
+                getStatus()
             }
             negativeButton("Regresar"){
                 this@CreateIncidenciaActivity.finish()
@@ -480,6 +490,67 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         return ""
     }
 
+
+    private fun getStatus(){
+        progress.show()
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","ConsultaStatusIncidenciaIdIncidenciaApp")
+            .add("IdIncidencia", idIncidencia)
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_STATUS).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Constants.snackbar(applicationContext, layParentIn, e.message.toString())
+                    progress.dismiss()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("--", jsonRes.toString())
+
+                        if(jsonRes.getInt("Error") > 0)
+                            Constants.snackbar(
+                                applicationContext,
+                                layParentIn,
+                                jsonRes.getString("Mensaje")
+                            )
+                        else{
+
+                            // create status object and iterate json array
+                            val arrayStatus = jsonRes.getJSONArray("Datos")
+
+                            for(i in 0 until arrayStatus.length()){
+                                val j : JSONObject = arrayStatus.getJSONObject(i)
+
+                                listRegistroStatus.add(ShortStatus(
+                                    j.getString("Id"),
+                                    j.getString("FechaAlta"),
+                                    j.getString("StatusIncidencia"),
+                                    j.getString("Status")))
+                            }
+
+                            showPopBitacoraStatus()
+                        }
+
+                        progress.dismiss()
+
+                    }catch (e: Error){
+                        Constants.snackbar(applicationContext, layParentIn, e.message.toString())
+                        progress.dismiss()
+                    }
+                }
+            }
+        })
+    }
+
     private fun showPopBitacoraStatus(){
         val dialog = Dialog(this, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -489,7 +560,14 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
         btnAdd.setOnClickListener {
             val intent = Intent(applicationContext, CreateStatusActivity::class.java)
+            intent.putExtra("incidenciaId", idIncidencia)
             startActivity(intent) }
+
+        //show | hide button according user or colaborator
+        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this))
+        if(!user.colaborador)
+            btnAdd.visibility = View.GONE
+
 
         val btnExit = dialog.findViewById<TextView>(R.id.txtCancelP)
         btnExit.setOnClickListener {
@@ -502,7 +580,11 @@ class CreateIncidenciaActivity : AppCompatActivity() {
 
         val adapter = BitacoraStatusAdapter(this, listRegistroStatus, object : BitacoraStatusAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
-                val intent = Intent(applicationContext, CreateStatusActivity::class.java)
+                val intent = Intent(applicationContext, EditStatusActivity::class.java)
+                intent.putExtra("persona",persona)
+                intent.putExtra("desarrollo",desarrollo)
+                intent.putExtra("idStatus", listRegistroStatus[pos].Id)
+                intent.putExtra("incidenciaId", idIncidencia)
                 startActivity(intent)
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{

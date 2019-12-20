@@ -3,25 +3,50 @@
 package com.glass.oceanbs.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Dialog
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
+import android.provider.MediaStore
 import android.util.Log
+import android.view.MotionEvent
+import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.core.graphics.drawable.toBitmap
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
+import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Status
+import com.squareup.picasso.MemoryPolicy
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import okhttp3.*
+import org.jetbrains.anko.alert
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
+import java.lang.Error
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class EditStatusActivity : AppCompatActivity() {
 
     private lateinit var progress : AlertDialog
+    private lateinit var titleProgress: TextView
     private lateinit var layParentER: LinearLayout
     private lateinit var txtTitleER: TextView
     private lateinit var txtSubTitleER: TextView
@@ -49,6 +74,10 @@ class EditStatusActivity : AppCompatActivity() {
     private lateinit var btnUpdateStatusER: Button
     private lateinit var cStatus: Status
 
+    private var listColaboradores1 : ArrayList<GenericObj> = ArrayList()
+    private var listColaboradores2 : ArrayList<GenericObj> = ArrayList()
+    private lateinit var statusList: Array<String>
+
     private val GALLERY = 1
     private val CAMERA = 2
     private var SELECTED = 0
@@ -57,7 +86,7 @@ class EditStatusActivity : AppCompatActivity() {
     private var mCameraFileName2 = ""
     private var mCameraFileName3 = ""
 
-    private var idSolicitud = ""
+    private var incidenciaId = ""
     private var idStatus = ""
     private var persona = ""
     private var desarrollo = ""
@@ -79,9 +108,9 @@ class EditStatusActivity : AppCompatActivity() {
         idStatus = extras!!.getString("idStatus").toString()
         persona = extras.getString("persona").toString()
         desarrollo = extras.getString("desarrollo").toString()
+        incidenciaId = extras.getString("incidenciaId").toString()
 
         initComponents()
-        getStatusIncidencia()
     }
 
     private fun initComponents(){
@@ -117,13 +146,115 @@ class EditStatusActivity : AppCompatActivity() {
         val inflat = this.layoutInflater
         val dialogView = inflat.inflate(R.layout.progress, null)
 
+        titleProgress = dialogView.findViewById(R.id.loading_title)
+
         builder.setView(dialogView)
         progress = builder.create()
 
         txtTitleER.text = desarrollo
         txtSubTitleER.text = persona
 
+        setListeners()
+        getDataForSpinners()
+    }
+
+    private fun setListeners(){
         imgBackStatusER.setOnClickListener { this.finish() }
+
+        cardPhoto1ER.setOnClickListener { showPictureDialog(1); SELECTED = 1 }
+        cardPhoto2ER.setOnClickListener { showPictureDialog(2); SELECTED = 2 }
+        cardPhoto3ER.setOnClickListener { showPictureDialog(3); SELECTED = 3 }
+
+        txtShowPhoto1ER.setOnClickListener { showPopPhoto(1) }
+        txtShowPhoto2ER.setOnClickListener { showPopPhoto(2) }
+        txtShowPhoto3ER.setOnClickListener { showPopPhoto(3) }
+
+        btnUpdateStatusER.setOnClickListener { sendDataToServer() }
+    }
+
+    private fun getDataForSpinners(){
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","ConsultaColaboradoresTodosApp")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_USER).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
+
+                        if(jsonRes.getInt("Error") == 0){
+
+                            val arrayColab = jsonRes.getJSONArray("Datos")
+
+                            for (i in 0 until arrayColab.length()){
+                                val j : JSONObject = arrayColab.getJSONObject(i)
+
+                                listColaboradores1.add(
+                                    GenericObj(
+                                        j.getString("Id"),
+                                        j.getString("Codigo"),
+                                        "${j.getString("Nombre")} ${j.getString("ApellidoP")} ${j.getString("ApellidoM")}")
+                                )
+                            }
+
+                            listColaboradores2.addAll(listColaboradores1)
+                            setUpSpinners()
+                        }
+
+                    }catch (e: Error){
+                        snackbar(applicationContext, layParentER, e.message.toString())
+                    }
+                }
+            }
+        })
+
+    }
+
+    private fun setUpSpinners(){
+
+        statusList = arrayOf(
+            "Seleccione una opción",
+            "Registrada",
+            "Por Verificar",
+            "Aceptada",
+            "Programada",
+            "En Proceso",
+            "Terminada",
+            "Entregada",
+            "No Aceptada",
+            "No Terminada",
+            "No Entregada")
+
+        val adapterRelation = ArrayAdapter(this, R.layout.spinner_text, statusList)
+        spinnerStatusER.adapter = adapterRelation
+
+
+        val listColab1: ArrayList<String> = ArrayList()
+        listColab1.add(0, "Seleccionar")
+
+        for (i in listColaboradores1)
+            listColab1.add(i.Nombre)
+
+        val adapterColab1 = ArrayAdapter(this, R.layout.spinner_text, listColab1)
+        spinnerRegistraER.adapter = adapterColab1
+
+        val listColab2: ArrayList<String> = ArrayList()
+        listColab2.add(0, "Seleccionar")
+
+        for (i in listColaboradores2)
+            listColab2.add(i.Nombre)
+
+        val adapterColab2 = ArrayAdapter(this, R.layout.spinner_text, listColab2)
+        spinnerAtiendeER.adapter = adapterColab2
+
+        getStatusIncidencia()
     }
 
     private fun getStatusIncidencia(){
@@ -176,13 +307,274 @@ class EditStatusActivity : AppCompatActivity() {
     }
 
     private fun fillData(){
-        Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia1}").fit().error(R.drawable.ic_box).into(imgPhoto1ER)
-        Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia2}").fit().error(R.drawable.ic_box).into(imgPhoto2ER)
-        Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia3}").fit().error(R.drawable.ic_box).into(imgPhoto3ER)
+        Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia1}")
+            .memoryPolicy(MemoryPolicy.NO_CACHE )
+            .networkPolicy(NetworkPolicy.NO_CACHE)
+            .fit().error(R.drawable.ic_box).into(imgPhoto1ER)
+
+        Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia2}")
+            .memoryPolicy(MemoryPolicy.NO_CACHE )
+            .networkPolicy(NetworkPolicy.NO_CACHE)
+            .fit().error(R.drawable.ic_box).into(imgPhoto2ER)
+
+        Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia3}")
+            .memoryPolicy(MemoryPolicy.NO_CACHE )
+            .networkPolicy(NetworkPolicy.NO_CACHE)
+            .fit().error(R.drawable.ic_box).into(imgPhoto3ER)
 
         etAltaE.setText(cStatus.FechaAlta)
         etModifER.setText(cStatus.FechaUltimaModif)
         etObservacionesER.setText(cStatus.Observaciones)
+
+        fillSpinners()
+    }
+
+    private fun fillSpinners(){
+        // value is in first spinner
+        for(i in 0 until listColaboradores1.size){
+            if(cStatus.IdColaborador1 == listColaboradores1[i].Id)
+                spinnerRegistraER.setSelection(i+1)
+        }
+
+        // value is in second spinner
+        for(i in 0 until listColaboradores2.size){
+            if(cStatus.IdColaborador2 == listColaboradores2[i].Id)
+                spinnerAtiendeER.setSelection(i+1)
+        }
+
+        // value is in third spinner
+        for(i in statusList.indices){
+            if(cStatus.StatusIncidencia.toInt() == i){
+                spinnerStatusER.setSelection(i)
+                break
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Suppress("LocalVariableName", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    private fun sendDataToServer(){
+        progress.show()
+        progress.setCancelable(false)
+        titleProgress.text = "Enviando Información"
+
+        val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
+
+        val bitmapPhoto1 = imgPhoto1ER.drawable.toBitmap()
+        val stream1 = ByteArrayOutputStream()
+        bitmapPhoto1.compress(Bitmap.CompressFormat.JPEG, 50, stream1)
+        val byteArray1 = stream1.toByteArray()
+
+        val bitmapPhoto2 = imgPhoto2ER.drawable.toBitmap()
+        val stream2 = ByteArrayOutputStream()
+        bitmapPhoto2.compress(Bitmap.CompressFormat.JPEG, 50, stream2)
+        val byteArray2 = stream2.toByteArray()
+
+        val bitmapPhoto3 = imgPhoto3ER.drawable.toBitmap()
+        val stream3 = ByteArrayOutputStream()
+        bitmapPhoto3.compress(Bitmap.CompressFormat.JPEG, 50, stream3)
+        val byteArray3 = stream3.toByteArray()
+
+        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg")
+
+        // get id colaborador according spinners
+        var idColaborador1 = ""
+        if(spinnerAtiendeER.selectedItemPosition > 0)
+            idColaborador1 = listColaboradores1[spinnerAtiendeER.selectedItemPosition-1].Id
+
+        var idColaborador2 = ""
+        if(spinnerRegistraER.selectedItemPosition > 0)
+            idColaborador2 = listColaboradores2[spinnerRegistraER.selectedItemPosition-1].Id
+
+        //val requestBody : RequestBody
+        val requestBody : RequestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("WebService","GuardaStatusIncidencia")
+            .addFormDataPart("Id", idStatus) // empty if new | else -> ID
+            .addFormDataPart("Status", "1")
+            .addFormDataPart("Observaciones", etObservacionesER.text.toString())
+            .addFormDataPart("IdIncidencia", incidenciaId)
+            .addFormDataPart("IdColaborador1", idColaborador2)
+            .addFormDataPart("IdColaborador2", idColaborador1)
+            .addFormDataPart("StatusIncidencia", spinnerStatusER.selectedItemPosition.toString())
+            .addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
+            .addFormDataPart("Fotografia2", "image2.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray2))
+            .addFormDataPart("Fotografia3", "image3.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray3))
+            .build()
+
+
+        val request = Request.Builder()
+            .url(Constants.URL_INCIDENCIAS)
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("RES",  jsonRes.toString())
+
+                        if(jsonRes.getInt("Error") == 0){
+                            showSuccessDialog()
+                            Constants.updateRefreshIncidencias(applicationContext, true)
+                        } else
+                            snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"))
+
+                        progress.dismiss()
+
+                    } catch (e: Error){
+                        progress.dismiss()
+                        snackbar(applicationContext, layParentER, e.message.toString())
+                    }
+                }
+            }
+        })
+    }
+
+    private fun showSuccessDialog(){
+        alert("Se ha actualizado el Status de la incidencia satisfactoriamente",
+            "Guardado exitoso!")
+        {
+            positiveButton(resources.getString(R.string.accept)) {
+                this@EditStatusActivity.finish()
+            }
+        }.show().setCancelable(false)
+    }
+
+    private fun showPictureDialog(photo: Int) {
+        val pictureDialog = AlertDialog.Builder(this)
+        pictureDialog.setTitle("Obtener fotografía")
+
+        val pictureDialogItems = arrayOf("Seleccionar foto de la galería", "Capturar foto con la cámara")
+        pictureDialog.setItems(pictureDialogItems) { dialog, which ->
+            when (which) {
+                0 -> choosePhotoFromGallary()
+                1 -> takePhotoFromCamera(photo)
+            }
+        }
+        pictureDialog.show()
+    }
+
+    private fun showPopPhoto(photo: Int){
+        val dialog = Dialog(this, R.style.FullDialogTheme)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.pop_image)
+
+        val image = dialog.findViewById<ImageView>(R.id.imgCenter)
+
+        val b: Bitmap = when(photo){
+            1->{ imgPhoto1ER.drawable.toBitmap() }
+            2->{ imgPhoto2ER.drawable.toBitmap() }
+            else->{ imgPhoto3ER.drawable.toBitmap() }
+        }
+        image.setImageBitmap(b)
+
+        dialog.show()
+    }
+
+    private fun choosePhotoFromGallary() {
+        val galleryIntent = Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+        startActivityForResult(galleryIntent, GALLERY)
+    }
+    @SuppressLint("SdCardPath")
+    private fun takePhotoFromCamera(photo: Int) {
+        val intent = Intent()
+        intent.action = MediaStore.ACTION_IMAGE_CAPTURE
+
+        val date = Date()
+        val df = SimpleDateFormat("-mm-ss", Locale.getDefault())
+
+        val outUri: Uri
+        when(photo){
+            1->{
+                val newPicFile = df.format(date) + ".jpg"
+                val outPath = "/sdcard/$newPicFile"
+                val outfile = File(outPath)
+
+                mCameraFileName1 = outfile.toString()
+                outUri = Uri.fromFile(outfile)
+            }
+            2->{
+                val newPicFile = df.format(date) + ".jpg"
+                val outPath = "/sdcard/$newPicFile"
+                val outfile = File(outPath)
+
+                mCameraFileName2 = outfile.toString()
+                outUri = Uri.fromFile(outfile)}
+            else->{
+                val newPicFile = df.format(date) + ".jpg"
+                val outPath = "/sdcard/$newPicFile"
+                val outfile = File(outPath)
+
+                mCameraFileName3 = outfile.toString()
+                outUri = Uri.fromFile(outfile)
+            }
+        }
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outUri)
+        startActivityForResult(intent, CAMERA)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (currentFocus != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == GALLERY)
+        {
+            if (data != null)
+            {
+                val contentURI = data.data
+                try {
+                    val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
+
+                    when(SELECTED){
+                        1->{imgPhoto1ER.setImageBitmap(bitmap)}
+                        2->{imgPhoto2ER.setImageBitmap(bitmap)}
+                        else->{imgPhoto3ER.setImageBitmap(bitmap)}
+                    }
+
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        else if (requestCode == CAMERA)
+        {
+            when(SELECTED){
+                1->{
+                    val file = File(mCameraFileName1)
+                    if (file.exists()) {
+                        val uriImage = Uri.fromFile(File(mCameraFileName1))
+                        imgPhoto1ER.setImageURI(uriImage) }
+                }
+                2->{
+                    val file = File(mCameraFileName2)
+                    if (file.exists()) {
+                        val uriImage = Uri.fromFile(File(mCameraFileName2))
+                        imgPhoto2ER.setImageURI(uriImage) }
+                }
+                else->{
+                    val file = File(mCameraFileName3)
+                    if (file.exists()) {
+                        val uriImage = Uri.fromFile(File(mCameraFileName3))
+                        imgPhoto3ER.setImageURI(uriImage) }
+                }
+            }
+        }
     }
 
 }

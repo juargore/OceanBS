@@ -37,8 +37,8 @@ object Constants {
 
         when(type){
             Types.GENERAL ->{ }
-            Types.ERROR ->{ sview.backgroundColor = context.resources.getColor(R.color.colorAccent) }
-            Types.SUCCESS ->{  sview.backgroundColor = context.resources.getColor(R.color.colorAccent)}
+            Types.ERROR ->{ sview.backgroundColor = context.resources.getColor(R.color.colorIncidencePink) }
+            Types.SUCCESS ->{  sview.backgroundColor = context.resources.getColor(R.color.colorIncidenceLightGreen)}
             Types.INFO ->{ sview.backgroundColor = context.resources.getColor(R.color.colorAccent)}
         }
         snack.show()

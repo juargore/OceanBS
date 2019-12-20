@@ -71,7 +71,6 @@ class CreateStatusActivity : AppCompatActivity() {
     private var listColaboradores1 : ArrayList<GenericObj> = ArrayList()
     private var listColaboradores2 : ArrayList<GenericObj> = ArrayList()
 
-
     private val GALLERY = 1
     private val CAMERA = 2
     private var SELECTED = 0
@@ -101,6 +100,7 @@ class CreateStatusActivity : AppCompatActivity() {
         initComponents()
     }
 
+    @SuppressLint("InflateParams")
     private fun initComponents(){
         layParentR = findViewById(R.id.layParentR)
         imgBackStatus = findViewById(R.id.imgBackStatusR)
@@ -235,7 +235,7 @@ class CreateStatusActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    @Suppress("LocalVariableName")
+    @Suppress("LocalVariableName", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     private fun sendDataToServer(){
         progress.show()
         progress.setCancelable(false)
@@ -258,8 +258,18 @@ class CreateStatusActivity : AppCompatActivity() {
         bitmapPhoto3.compress(Bitmap.CompressFormat.JPEG, 50, stream3)
         val byteArray3 = stream3.toByteArray()
 
-        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
+        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg")
 
+        // get id colaborador according spinners
+        var idColaborador1 = ""
+        if(spinnerAtiendeR.selectedItemPosition > 0)
+            idColaborador1 = listColaboradores1[spinnerAtiendeR.selectedItemPosition-1].Id
+
+        var idColaborador2 = ""
+        if(spinnerRegistraR.selectedItemPosition > 0)
+            idColaborador2 = listColaboradores2[spinnerRegistraR.selectedItemPosition-1].Id
+
+        //val requestBody : RequestBody
         val requestBody : RequestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("WebService","GuardaStatusIncidencia")
@@ -267,13 +277,14 @@ class CreateStatusActivity : AppCompatActivity() {
             .addFormDataPart("Status", "1")
             .addFormDataPart("Observaciones", etObservacionesR.text.toString())
             .addFormDataPart("IdIncidencia", incidenciaId)
-            .addFormDataPart("IdColaborador1", listColaboradores1[spinnerAtiendeR.selectedItemPosition].Id)
-            .addFormDataPart("IdColaborador2", listColaboradores2[spinnerRegistraR.selectedItemPosition].Id)
+            .addFormDataPart("IdColaborador1", idColaborador1)
+            .addFormDataPart("IdColaborador2", idColaborador2)
             .addFormDataPart("StatusIncidencia", spinnerStatusR.selectedItemPosition.toString())
             .addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
             .addFormDataPart("Fotografia2", "image2.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray2))
             .addFormDataPart("Fotografia3", "image3.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray3))
             .build()
+
 
         val request = Request.Builder()
             .url(Constants.URL_INCIDENCIAS)
@@ -285,7 +296,6 @@ class CreateStatusActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
-
                     try {
                         val jsonRes = JSONObject(response.body()!!.string())
                         Log.e("RES",  jsonRes.toString())

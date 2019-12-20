@@ -84,6 +84,8 @@ class ListIncidenciasActivity : AppCompatActivity() {
 
         fabNewIncidencia.setOnClickListener {
             val intent = Intent(applicationContext, CreateIncidenciaActivity::class.java)
+            intent.putExtra("persona", persona)
+            intent.putExtra("desarrollo", desarrollo)
             intent.putExtra("solicitudId", solicitudId)
             startActivity(intent)
         }
@@ -117,6 +119,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
 
                             // create incidencia object and iterate json array
                             val arrayIncidencias = jsonRes.getJSONArray("Datos")
+                            listIncidencias.clear()
 
                             for(i in 0 until arrayIncidencias.length()){
                                 val j : JSONObject = arrayIncidencias.getJSONObject(i)

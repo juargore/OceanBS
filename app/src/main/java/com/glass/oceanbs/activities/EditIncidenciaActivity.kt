@@ -30,6 +30,7 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
+import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Incidencia
 import com.glass.oceanbs.models.ShortStatus
@@ -606,6 +607,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
         val layParentPop = dialog.findViewById<LinearLayout>(R.id.layParentPop)
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
+
         btnAdd.setOnClickListener {
             val intent = Intent(applicationContext, CreateStatusActivity::class.java)
             intent.putExtra("incidenciaId",idIncidencia)
@@ -614,6 +616,12 @@ class EditIncidenciaActivity : AppCompatActivity() {
             dialog.dismiss()
             this@EditIncidenciaActivity.finish()
         }
+
+        //show | hide button according user or colaborator
+        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this))
+        if(!user.colaborador)
+            btnAdd.visibility = View.GONE
+
 
         val btnExit = dialog.findViewById<TextView>(R.id.txtCancelP)
         btnExit.setOnClickListener {
@@ -630,7 +638,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
                 intent.putExtra("persona",persona)
                 intent.putExtra("desarrollo",desarrollo)
                 intent.putExtra("idStatus", listRegistroStatus[pos].Id)
-
+                intent.putExtra("incidenciaId",idIncidencia)
                 startActivity(intent)
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{

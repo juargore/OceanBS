@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -427,11 +428,12 @@ class CreateSolicitudFragment : Fragment() {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("ANS",  jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
                             snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
                             Constants.updateRefreshSolicitudes(context!!, true)
-                            showResumeDialog(context!!)
+                            showResumeDialog(context!!, jsonRes.getString("Id"))
                         } else
                             snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
 
@@ -455,7 +457,7 @@ class CreateSolicitudFragment : Fragment() {
 
     // dialog showing current info about solicitud
     @SuppressLint("SetTextI18n")
-    private fun showResumeDialog(context: Context){
+    private fun showResumeDialog(context: Context, solicitudId: String){
         val dialog = Dialog(context, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -487,6 +489,9 @@ class CreateSolicitudFragment : Fragment() {
             dialog.dismiss()
 
             val intent = Intent(activity, ListIncidenciasActivity::class.java)
+            intent.putExtra("solicitudId", solicitudId)
+            intent.putExtra("desarrollo", spinDesarrolloN.selectedItem.toString())
+            intent.putExtra("persona", etReportaN.text.toString())
             startActivity(intent)
         }
 
