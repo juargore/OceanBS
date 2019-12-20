@@ -25,7 +25,9 @@ object Constants {
     const val URL_INCIDENCIAS = "${URL_PARENT}registros/CRegIncidencia.php"
     const val URL_STATUS = "${URL_PARENT}registros/CRegStatusIncidencia.php"
     const val URL_CLASIFICACION = "${URL_PARENT}catalogos/CCatValorClasificacion.php"
+
     const val URL_IMAGES = "http://oceanbs04.com/uploads/catalogos/sucursales/"
+    const val URL_IMAGES_STATUS = "http://oceanbs01.com/uploads/crecento/statusincidencias/"
 
     private const val DATABASE_SP = "oceanbs"
 

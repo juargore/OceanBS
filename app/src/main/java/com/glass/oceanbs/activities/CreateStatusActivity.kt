@@ -71,6 +71,7 @@ class CreateStatusActivity : AppCompatActivity() {
     private var listColaboradores1 : ArrayList<GenericObj> = ArrayList()
     private var listColaboradores2 : ArrayList<GenericObj> = ArrayList()
 
+
     private val GALLERY = 1
     private val CAMERA = 2
     private var SELECTED = 0
@@ -133,8 +134,9 @@ class CreateStatusActivity : AppCompatActivity() {
 
         builder.setView(dialogView)
         progress = builder.create()
+
         setListeners()
-        setUpSpinners()
+        getDataForSpinners()
     }
 
     private fun setListeners(){
@@ -155,11 +157,10 @@ class CreateStatusActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
-            .add("WebService","")
-            .add("Id", "")
+            .add("WebService","ConsultaColaboradoresTodosApp")
             .build()
 
-        val request = Request.Builder().url(Constants.URL_CLASIFICACION).post(builder).build()
+        val request = Request.Builder().url(Constants.URL_USER).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {}
@@ -171,6 +172,19 @@ class CreateStatusActivity : AppCompatActivity() {
 
                         if(jsonRes.getInt("Error") == 0){
 
+                            val arrayColab = jsonRes.getJSONArray("Datos")
+
+                            for (i in 0 until arrayColab.length()){
+                                val j : JSONObject = arrayColab.getJSONObject(i)
+
+                                listColaboradores1.add(GenericObj(
+                                        j.getString("Id"),
+                                        j.getString("Codigo"),
+                                        "${j.getString("Nombre")} ${j.getString("ApellidoP")} ${j.getString("ApellidoM")}"))
+                            }
+
+                            listColaboradores2.addAll(listColaboradores1)
+                            setUpSpinners()
                         }
 
                     }catch (e: Error){
@@ -220,6 +234,8 @@ class CreateStatusActivity : AppCompatActivity() {
         spinnerAtiendeR.adapter = adapterColab2
     }
 
+    @SuppressLint("SetTextI18n")
+    @Suppress("LocalVariableName")
     private fun sendDataToServer(){
         progress.show()
         progress.setCancelable(false)
@@ -227,10 +243,20 @@ class CreateStatusActivity : AppCompatActivity() {
 
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
 
-        val bitmap = imgPhoto1.drawable.toBitmap()
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-        val byteArray = stream.toByteArray()
+        val bitmapPhoto1 = imgPhoto1.drawable.toBitmap()
+        val stream1 = ByteArrayOutputStream()
+        bitmapPhoto1.compress(Bitmap.CompressFormat.JPEG, 50, stream1)
+        val byteArray1 = stream1.toByteArray()
+
+        val bitmapPhoto2 = imgPhoto2.drawable.toBitmap()
+        val stream2 = ByteArrayOutputStream()
+        bitmapPhoto2.compress(Bitmap.CompressFormat.JPEG, 50, stream2)
+        val byteArray2 = stream2.toByteArray()
+
+        val bitmapPhoto3 = imgPhoto3.drawable.toBitmap()
+        val stream3 = ByteArrayOutputStream()
+        bitmapPhoto3.compress(Bitmap.CompressFormat.JPEG, 50, stream3)
+        val byteArray3 = stream3.toByteArray()
 
         val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg");
 
@@ -241,26 +267,12 @@ class CreateStatusActivity : AppCompatActivity() {
             .addFormDataPart("Status", "1")
             .addFormDataPart("Observaciones", etObservacionesR.text.toString())
             .addFormDataPart("IdIncidencia", incidenciaId)
-            .addFormDataPart("IdColaborador1", "1")
-            .addFormDataPart("IdColaborador2", "2")
+            .addFormDataPart("IdColaborador1", listColaboradores1[spinnerAtiendeR.selectedItemPosition].Id)
+            .addFormDataPart("IdColaborador2", listColaboradores2[spinnerRegistraR.selectedItemPosition].Id)
             .addFormDataPart("StatusIncidencia", spinnerStatusR.selectedItemPosition.toString())
-            .addFormDataPart("Fotografia1", "image.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray))
-            .addFormDataPart("Fotografia2", "")
-            .addFormDataPart("Fotografia3", "")
-            .build()
-
-        val builder = FormBody.Builder()
-            .add("WebService","GuardaStatusIncidencia")
-            .add("Id", "") // empty if new | else -> ID
-            .add("Status", "1")
-            .add("Observaciones", etObservacionesR.text.toString())
-            .add("IdIncidencia", incidenciaId)
-            .add("IdColaborador1", "1")
-            .add("IdColaborador2", "2")
-            .add("StatusIncidencia", spinnerStatusR.selectedItemPosition.toString())
-            .add("Fotografia1", "")
-            .add("Fotografia2", "")
-            .add("Fotografia3", "")
+            .addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
+            .addFormDataPart("Fotografia2", "image2.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray2))
+            .addFormDataPart("Fotografia3", "image3.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray3))
             .build()
 
         val request = Request.Builder()
