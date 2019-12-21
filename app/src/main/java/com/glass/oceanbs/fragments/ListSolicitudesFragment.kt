@@ -27,6 +27,7 @@ import com.glass.oceanbs.activities.EditSolicitudActivity
 import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.adapters.ShortSolicitudAdapter
 import com.glass.oceanbs.models.ShortSolicitud
+import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.runOnUiThread
@@ -80,8 +81,12 @@ class ListSolicitudesFragment : Fragment() {
         progress = builder.create()
         progress.setCancelable(false)
 
-        // after init -> get solicitudes
-        getSolicitudes()
+        // after init -> get solicitudes if network available
+        if(Constants.internetConnected(activity!!)){
+            getSolicitudes()
+        } else{
+            Constants.showPopUpNoInternet(activity!!)
+        }
     }
 
     private fun getSolicitudes(){
