@@ -123,7 +123,7 @@ class CreateSolicitudFragment : Fragment() {
                 fillDataAccordingCheck()
             else{
                 chckBoxReportaN.isChecked = false
-                snackbar(context!!, layParentN, "Elija una Unidad para obtener la información del Propietario")
+                snackbar(context!!, layParentN, "Elija una Unidad para obtener la información del Propietario", Constants.Types.INFO)
             }
         }
     }
@@ -431,16 +431,16 @@ class CreateSolicitudFragment : Fragment() {
                         Log.e("ANS",  jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
-                            snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
+                            snackbar(context!!, layParentN, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshSolicitudes(context!!, true)
                             showResumeDialog(context!!, jsonRes.getString("Id"))
                         } else
-                            snackbar(context!!, layParentN, jsonRes.getString("Mensaje"))
+                            snackbar(context!!, layParentN, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
                         progress.dismiss()
 
                     } catch (e: Error){
-                        snackbar(context!!, layParentN, e.message.toString())
+                        snackbar(context!!, layParentN, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
                 }
@@ -448,7 +448,7 @@ class CreateSolicitudFragment : Fragment() {
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    snackbar(context!!, layParentN, e.message.toString())
+                    snackbar(context!!, layParentN, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }
@@ -472,7 +472,7 @@ class CreateSolicitudFragment : Fragment() {
         val celular = dialog.findViewById<TextView>(R.id.rCelular)
         val email = dialog.findViewById<TextView>(R.id.rEmail)
 
-        Picasso.get().load("${Constants.URL_IMAGES}${listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra2}").fit().into(photo)
+        Picasso.get().load("${Constants.URL_IMAGES}${listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra2}").error(resources.getDrawable(R.drawable.ic_no_image)).fit().into(photo)
         desarrollo.text = "Desarrollo ${spinDesarrolloN.selectedItem}"
         direccion.text = listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra1
         unidad.text = "Unidad ${spinUnidadN.selectedItem}"

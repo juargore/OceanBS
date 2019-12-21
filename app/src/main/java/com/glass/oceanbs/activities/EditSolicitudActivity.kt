@@ -217,7 +217,7 @@ class EditSolicitudActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread { progress.dismiss()
-                    Constants.snackbar(applicationContext, layParentE, e.message.toString()) }
+                    Constants.snackbar(applicationContext, layParentE, e.message.toString(), Constants.Types.ERROR) }
             }
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
@@ -250,7 +250,7 @@ class EditSolicitudActivity : AppCompatActivity() {
                             fillFields()
                         } else{
                             progress.dismiss()
-                            Constants.snackbar(applicationContext, layParentE, js.getString("Mensaje"))
+                            Constants.snackbar(applicationContext, layParentE, js.getString("Mensaje"), Constants.Types.ERROR)
                         }
                     }catch (e: Error){
                         progress.dismiss()
@@ -310,15 +310,15 @@ class EditSolicitudActivity : AppCompatActivity() {
                         val jsonRes = JSONObject(response.body()!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
-                            Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"))
+                            Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshSolicitudes(applicationContext, true)
                             showInfoDialog()
                         } else{
-                            Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"))
+                            Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         }; progress.dismiss()
 
                     } catch (e: Error){
-                        Constants.snackbar(applicationContext, layParentE, e.message.toString())
+                        Constants.snackbar(applicationContext, layParentE, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
                 }
@@ -326,7 +326,7 @@ class EditSolicitudActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Constants.snackbar(applicationContext, layParentE, e.message.toString())
+                    Constants.snackbar(applicationContext, layParentE, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }

@@ -173,6 +173,7 @@ class CreateStatusActivity : AppCompatActivity() {
                         if(jsonRes.getInt("Error") == 0){
 
                             val arrayColab = jsonRes.getJSONArray("Datos")
+                            snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
 
                             for (i in 0 until arrayColab.length()){
                                 val j : JSONObject = arrayColab.getJSONObject(i)
@@ -188,7 +189,7 @@ class CreateStatusActivity : AppCompatActivity() {
                         }
 
                     }catch (e: Error){
-                        snackbar(applicationContext, layParentR, e.message.toString())
+                        snackbar(applicationContext, layParentR, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
             }
@@ -304,13 +305,13 @@ class CreateStatusActivity : AppCompatActivity() {
                             showSuccessDialog()
                             Constants.updateRefreshIncidencias(applicationContext, true)
                         } else
-                            snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
                         progress.dismiss()
 
                     } catch (e: Error){
                         progress.dismiss()
-                        snackbar(applicationContext, layParentR, e.message.toString())
+                        snackbar(applicationContext, layParentR, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
             }

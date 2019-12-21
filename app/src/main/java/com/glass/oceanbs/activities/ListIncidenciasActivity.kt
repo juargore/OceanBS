@@ -114,7 +114,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
                         val jsonRes = JSONObject(response.body()!!.string())
 
                         if(jsonRes.getInt("Error") > 0)
-                            snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         else{
 
                             // create incidencia object and iterate json array
@@ -148,14 +148,14 @@ class ListIncidenciasActivity : AppCompatActivity() {
 
                     } catch (e: Error){
                         progress.dismiss()
-                        snackbar(applicationContext, layParentI, e.message.toString())
+                        snackbar(applicationContext, layParentI, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    snackbar(applicationContext, layParentI, e.message.toString())
+                    snackbar(applicationContext, layParentI, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }
@@ -212,7 +212,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
                 runOnUiThread {
                     progress.dismiss()
                     val msg = "No es posible eliminar esta solicitud. Intente más tarde"
-                    snackbar(applicationContext, layParentI, msg)
+                    snackbar(applicationContext, layParentI, msg, Constants.Types.ERROR)
                 }
             }
             override fun onResponse(call: Call, response: Response) {
@@ -225,16 +225,16 @@ class ListIncidenciasActivity : AppCompatActivity() {
                             listIncidencias.clear()
                             progress.dismiss()
 
-                            snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             getIncidencias()
                         } else{
-                            snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                             progress.dismiss()
                         }
                     } catch (e: java.lang.Error){
                         progress.dismiss()
                         snackbar(applicationContext, layParentI,
-                            "No es posible eliminar esta incidencia. Intente más tarde")
+                            "No es posible eliminar esta incidencia. Intente más tarde", Constants.Types.ERROR)
                     }
                 }
             }

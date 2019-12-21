@@ -11,7 +11,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
 import android.provider.MediaStore
@@ -22,6 +21,7 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,11 +37,9 @@ import com.glass.oceanbs.models.ShortStatus
 import okhttp3.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.textColor
-import org.jetbrains.anko.toast
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
-import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -229,7 +227,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
         val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread { snackbar(applicationContext, layParentEdIn, e.message.toString()) }
+                runOnUiThread { snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR) }
             }
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
@@ -238,6 +236,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
                         if(jsonRes.getInt("Error") == 0){
                             val j = jsonRes.getJSONArray("Datos").getJSONObject(0)
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
 
                             cIncidencia = Incidencia(
                                 j.getString("Id"),
@@ -252,10 +251,10 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
                             fillData()
                         } else
-                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
                     }catch (e: Error){
-                        snackbar(applicationContext, layParentEdIn, e.message.toString())
+                        snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR)
                     }
                     progress.dismiss()
                 }
@@ -420,16 +419,16 @@ class EditIncidenciaActivity : AppCompatActivity() {
                         val jsonRes = JSONObject(response.body()!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
-                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshIncidencias(applicationContext, true)
                             showSuccessDialog()
                         } else
-                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
                         progress.dismiss()
 
                     } catch (e: Error){
-                        snackbar(applicationContext, layParentEdIn, e.message.toString())
+                        snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
                 }
@@ -437,7 +436,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    snackbar(applicationContext, layParentEdIn, e.message.toString())
+                    snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }
@@ -557,7 +556,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    snackbar(applicationContext, layParentEdIn, e.message.toString())
+                    snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }
@@ -569,7 +568,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
                         Log.e("--", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") > 0)
-                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         else{
 
                             // create status object and iterate json array
@@ -591,7 +590,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
                         progress.dismiss()
 
                     }catch (e: Error){
-                        snackbar(applicationContext, layParentEdIn, e.message.toString())
+                        snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
                 }
@@ -643,7 +642,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                showDeleteDialog(layParentPop, listRegistroStatus[pos].StatusIncidencia)
+                showDeleteDialog(layParentPop, listRegistroStatus[pos].Id)
             }
         })
 
@@ -669,8 +668,6 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
 
     private fun deleteStatusRegistro(view: View, idStatus: String){
-        progress.show()
-
         val client = OkHttpClient()
         val builder = FormBody.Builder()
             .add("WebService","EliminaStatusIncidencia")
@@ -682,9 +679,8 @@ class EditIncidenciaActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    progress.dismiss()
                     val msg = "No es posible eliminar esta status!"
-                    snackbar(applicationContext, view, msg)
+                    snackbar(applicationContext, view, msg, Constants.Types.ERROR)
                 }
             }
             override fun onResponse(call: Call, response: Response) {
@@ -697,18 +693,16 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
                             // successfully deleted on Server -> refresh list
                             listRegistroStatus.clear()
-                            progress.dismiss()
 
-                            snackbar(applicationContext, view, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, view, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
+                            Constants.updateRefreshIncidencias(applicationContext, true)
                             getStatus()
                         } else{
-                            snackbar(applicationContext, view, jsonRes.getString("Mensaje"))
-                            progress.dismiss()
+                            snackbar(applicationContext, view, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         }
 
                     } catch (e: Error){
-                        progress.dismiss()
-                        snackbar(applicationContext, view, e.message.toString())
+                        snackbar(applicationContext, view, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
             }

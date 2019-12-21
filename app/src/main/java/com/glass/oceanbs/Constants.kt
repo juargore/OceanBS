@@ -7,8 +7,10 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.view.View
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
@@ -34,13 +36,16 @@ object Constants {
     fun snackbar(context: Context, view: View, message: String, type: Types = Types.GENERAL){
         val snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
         val sview = snack.view
+        val tv = sview.findViewById<TextView>(R.id.snackbar_text)
 
         when(type){
             Types.GENERAL ->{ }
             Types.ERROR ->{ sview.backgroundColor = context.resources.getColor(R.color.colorIncidencePink) }
             Types.SUCCESS ->{  sview.backgroundColor = context.resources.getColor(R.color.colorIncidenceLightGreen)}
-            Types.INFO ->{ sview.backgroundColor = context.resources.getColor(R.color.colorAccent)}
+            Types.INFO ->{ sview.backgroundColor = context.resources.getColor(R.color.colorPrimary)}
         }
+
+        tv.setTextColor(Color.BLACK)
         snack.show()
     }
 

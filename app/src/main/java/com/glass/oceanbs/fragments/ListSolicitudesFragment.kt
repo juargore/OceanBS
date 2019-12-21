@@ -104,11 +104,12 @@ class ListSolicitudesFragment : Fragment() {
                         val jsonRes = JSONObject(response.body()!!.string())
 
                         if(jsonRes.getInt("Error") > 0)
-                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"))
+                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         else{
 
                             // create solicitud object and iterate json array
                             val arraySolicitud = jsonRes.getJSONArray("Datos")
+                            listSolicitudes.clear()
 
                             for(i in 0 until arraySolicitud.length()){
 
@@ -138,7 +139,7 @@ class ListSolicitudesFragment : Fragment() {
 
                     } catch (e: Error){
                         progress.dismiss()
-                        snackbar(context!!, layParentS, e.message.toString())
+                        snackbar(context!!, layParentS, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
             }
@@ -146,7 +147,7 @@ class ListSolicitudesFragment : Fragment() {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
                     progress.dismiss()
-                    snackbar(context!!, layParentS, e.message.toString())
+                    snackbar(context!!, layParentS, e.message.toString(), Constants.Types.ERROR)
                 }
             }
         })
@@ -236,7 +237,7 @@ class ListSolicitudesFragment : Fragment() {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
                     progress.dismiss()
-                    snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde") }
+                    snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde", Constants.Types.ERROR) }
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -247,13 +248,13 @@ class ListSolicitudesFragment : Fragment() {
 
                             // successfully deleted on Server -> refresh fragment
                             progress.dismiss()
-                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"))
+                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             listSolicitudes.clear()
                             getSolicitudes()
                         }
                     } catch (e: java.lang.Error){
                         progress.dismiss()
-                        snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde")
+                        snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde", Constants.Types.ERROR)
                     }
                 }
             }

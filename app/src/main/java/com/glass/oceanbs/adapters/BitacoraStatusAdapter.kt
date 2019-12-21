@@ -56,11 +56,32 @@ class BitacoraStatusAdapter(private val context: Context,
                 5-> { context.resources.getDrawable(R.drawable.progress_en_proceso) }
                 6-> { context.resources.getDrawable(R.drawable.progress_terminada) }
                 7-> { context.resources.getDrawable(R.drawable.progress_entregada) }
-                8, 9 -> { context.resources.getDrawable(R.drawable.progress_pink) }
-                else-> { context.resources.getDrawable(R.drawable.progress_pink) }
+                8, 9, 10 -> { context.resources.getDrawable(R.drawable.progress_pink) }
+                else-> { context.resources.getDrawable(R.drawable.progress_base) }
+            }
+            itemView.layFill.backgroundDrawable = fColor
+
+            itemView.layBack.post {
+                val totalWidth = itemView.layBack.width
+                val layParams = itemView.layFill.layoutParams
+
+                // when
+                val newWidth : Int = when(status.StatusIncidencia.toInt()){
+                    1-> 4
+                    2-> 5
+                    3, 4-> 6
+                    5-> 8
+                    6-> 9
+                    7-> 10
+                    8, 9, 10 -> 10
+                    else-> 10
+                }
+
+                layParams.width = (totalWidth/10) * newWidth
+
+                itemView.layFill.layoutParams = layParams
             }
 
-            itemView.layFill.backgroundDrawable = fColor
 
             itemView.setOnClickListener {
                 eventItemClick.onItemClick(position)

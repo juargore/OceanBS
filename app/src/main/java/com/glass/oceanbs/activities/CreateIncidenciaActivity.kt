@@ -329,16 +329,16 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                         if(jsonRes.getInt("Error") == 0){
                             idIncidencia = jsonRes.getString("Id")
 
-                            Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"))
+                            Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshIncidencias(applicationContext, true)
                             showSuccessDialog()
                         } else
-                            Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"))
+                            Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
                         progress.dismiss()
 
                     } catch (e: Error){
-                        Constants.snackbar(applicationContext, layParentIn, e.message.toString())
+                        Constants.snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
                 }
@@ -346,7 +346,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Constants.snackbar(applicationContext, layParentIn, e.message.toString())
+                    Constants.snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }
@@ -505,7 +505,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Constants.snackbar(applicationContext, layParentIn, e.message.toString())
+                    Constants.snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }
@@ -517,11 +517,8 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                         Log.e("--", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") > 0)
-                            Constants.snackbar(
-                                applicationContext,
-                                layParentIn,
-                                jsonRes.getString("Mensaje")
-                            )
+                            Constants.snackbar(applicationContext,
+                                layParentIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         else{
 
                             // create status object and iterate json array
@@ -543,7 +540,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                         progress.dismiss()
 
                     }catch (e: Error){
-                        Constants.snackbar(applicationContext, layParentIn, e.message.toString())
+                        Constants.snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
                 }
@@ -561,7 +558,11 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         btnAdd.setOnClickListener {
             val intent = Intent(applicationContext, CreateStatusActivity::class.java)
             intent.putExtra("incidenciaId", idIncidencia)
-            startActivity(intent) }
+            startActivity(intent)
+
+            dialog.dismiss()
+            this@CreateIncidenciaActivity.finish()
+        }
 
         //show | hide button according user or colaborator
         val user = TableUser(this).getCurrentUserById(Constants.getUserId(this))
@@ -589,7 +590,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                showDeleteDialog()
+                showDeleteDialog(layParentIn, listRegistroStatus[pos].Id)
             }
         })
 
@@ -599,18 +600,71 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         dialog.setCancelable(false)
     }
 
-    private fun showDeleteDialog(){
+    private fun showDeleteDialog(view: View, idStatus: String){
         alert(resources.getString(R.string.msg_confirm_deletion),
             "Eliminar Status de Incidencia")
         {
             positiveButton(resources.getString(R.string.accept)) {
-
+                deleteStatusRegistro(view, idStatus)
             }
             negativeButton(resources.getString(R.string.cancel)){}
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
         }
+    }
+
+    private fun deleteStatusRegistro(view: View, idStatus: String){
+        progress.show()
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","EliminaStatusIncidencia")
+            .add("Id", idStatus)
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    val msg = "No es posible eliminar esta status!"
+                    Constants.snackbar(applicationContext, view, msg, Constants.Types.ERROR)
+                }
+            }
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread{
+                    try{
+                        val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("--", jsonRes.toString())
+
+                        if(jsonRes.getInt("Error") == 0){
+
+                            // successfully deleted on Server -> refresh list
+                            listRegistroStatus.clear()
+
+                            Constants.snackbar(applicationContext, view, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
+                            Constants.updateRefreshIncidencias(applicationContext, true)
+                            getStatus()
+                        } else{
+                            Constants.snackbar(
+                                applicationContext,
+                                view,
+                                jsonRes.getString("Mensaje"),
+                                Constants.Types.ERROR)
+                        }
+
+                    } catch (e: Error){
+                        Constants.snackbar(
+                            applicationContext,
+                            view,
+                            e.message.toString(),
+                            Constants.Types.ERROR
+                        )
+                    }
+                }
+            }
+        })
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {

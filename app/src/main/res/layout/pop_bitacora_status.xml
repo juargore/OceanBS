@@ -59,7 +59,7 @@
             android:id="@+id/txtCancelP"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/cancel"
+            android:text="Cerrar"
             android:textAlignment="center"
             android:textColor="@color/colorAccent" />
     </LinearLayout>

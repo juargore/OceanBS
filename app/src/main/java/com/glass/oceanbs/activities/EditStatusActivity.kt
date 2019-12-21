@@ -209,7 +209,7 @@ class EditStatusActivity : AppCompatActivity() {
                         }
 
                     }catch (e: Error){
-                        snackbar(applicationContext, layParentER, e.message.toString())
+                        snackbar(applicationContext, layParentER, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
             }
@@ -270,7 +270,7 @@ class EditStatusActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 progress.dismiss()
-                snackbar(applicationContext, layParentER, e.message.toString())
+                snackbar(applicationContext, layParentER, e.message.toString(), Constants.Types.ERROR)
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -280,6 +280,7 @@ class EditStatusActivity : AppCompatActivity() {
 
                     if(jsonRes.getInt("Error") == 0){
                         val j = jsonRes.getJSONArray("Datos").getJSONObject(0)
+                        snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
 
                         cStatus = Status(
                             j.getString("Id"),
@@ -299,7 +300,7 @@ class EditStatusActivity : AppCompatActivity() {
 
                     } else {
                         progress.dismiss()
-                        snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"))
+                        snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                     }
                 }
             }
@@ -421,13 +422,13 @@ class EditStatusActivity : AppCompatActivity() {
                             showSuccessDialog()
                             Constants.updateRefreshIncidencias(applicationContext, true)
                         } else
-                            snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
                         progress.dismiss()
 
                     } catch (e: Error){
                         progress.dismiss()
-                        snackbar(applicationContext, layParentER, e.message.toString())
+                        snackbar(applicationContext, layParentER, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
             }
