@@ -1,14 +1,14 @@
 <resources>
-    <string name="app_name">Ocean BS</string>
+    <string name="app_name">Crecento POSTVenta</string>
     <string name="crecento_group">Grupo Crecento</string>
 
     <!-- Strings for Login Activity -->
-    <string name="welcome">Bienvenido</string>
+    <string name="welcome">CRECENTO\nPOSTVenta App\nBienvenido</string>
     <string name="user_code">Código del Colaborador / Propietario</string>
-    <string name="phone_number">Número de celular</string>
+    <string name="phone_number">Teléfono Móvil</string>
     <string name="remember_credentials">Recordar credenciales</string>
     <string name="log_in">Iniciar sesión</string>
-    <string name="ocean_software">Ocean Business Software | México</string>
+    <string name="ocean_software">Desarrollada por \nOcean Business Software | México</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

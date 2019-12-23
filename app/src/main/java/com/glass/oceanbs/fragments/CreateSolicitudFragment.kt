@@ -24,6 +24,7 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.ListIncidenciasActivity
+import com.glass.oceanbs.activities.MainActivity
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Propietario
 import com.squareup.picasso.Picasso
@@ -115,7 +116,7 @@ class CreateSolicitudFragment : Fragment() {
 
         btnSaveSolicitud.setOnClickListener {
             if(validateFullFields())
-                showConfirmDialog()
+                sendDataToServer()
         }
 
         chckBoxReportaN.setOnClickListener {
@@ -305,7 +306,7 @@ class CreateSolicitudFragment : Fragment() {
         val unidadesList: ArrayList<String> = ArrayList()
 
         for (i in listUnidades)
-            unidadesList.add("${i.Id} - ${i.Nombre}")
+            unidadesList.add(i.Nombre)
 
         unidadesList.add(0, "Seleccionar")
         val adapterUnidad = ArrayAdapter(context!!, R.layout.spinner_text, unidadesList)
@@ -331,19 +332,19 @@ class CreateSolicitudFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun fillDataAccordingCheck(){
         if(chckBoxReportaN.isChecked){
-            etReportaN.isEnabled = false
+            //etReportaN.isEnabled = false
             etReportaN.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
 
-            etTelMovilN.isEnabled = false
+            //etTelMovilN.isEnabled = false
             etTelMovilN.setText(cPropietario.telMovil)
 
-            etTelParticularN.isEnabled = false
+            //etTelParticularN.isEnabled = false
             etTelParticularN.setText(cPropietario.telParticular)
 
-            etEmailN.isEnabled = false
+            //etEmailN.isEnabled = false
             etEmailN.setText(cPropietario.correoElecP)
 
-            spinRelacionN.isEnabled = false
+            //spinRelacionN.isEnabled = false
             spinRelacionN.setSelection(0)
         } else{
             resetAllEdittext()
@@ -353,15 +354,15 @@ class CreateSolicitudFragment : Fragment() {
     // reset values in each edittext below
     private fun resetAllEdittext(){
         etReportaN.setText("")
-        etReportaN.isEnabled = true
+        //etReportaN.isEnabled = true
         etTelMovilN.setText("")
-        etTelMovilN.isEnabled = true
+        //etTelMovilN.isEnabled = true
         etTelParticularN.setText("")
-        etTelParticularN.isEnabled = true
+        //etTelParticularN.isEnabled = true
         etEmailN.setText("")
-        etEmailN.isEnabled = true
+        //etEmailN.isEnabled = true
         spinRelacionN.setSelection(0)
-        spinRelacionN.isEnabled = true
+        //spinRelacionN.isEnabled = true
         chckBoxReportaN.isChecked = false
     }
 
@@ -377,21 +378,6 @@ class CreateSolicitudFragment : Fragment() {
             TextUtils.isEmpty(etEmailN.text.toString()) -> {
                 etEmailN.error = msg; false }
             else -> true
-        }
-    }
-
-    // dialog to confirm saving the solicitud
-    private fun showConfirmDialog(){
-        alert(resources.getString(R.string.msg_confirm_creation),
-            "Confirmar Solicitud")
-        {
-            positiveButton(resources.getString(R.string.accept)) {
-                sendDataToServer()
-            }
-            negativeButton(resources.getString(R.string.cancel)){}
-        }.show().apply {
-            getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
-            getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
         }
     }
 
@@ -475,7 +461,8 @@ class CreateSolicitudFragment : Fragment() {
         Picasso.get().load("${Constants.URL_IMAGES}${listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra2}").error(resources.getDrawable(R.drawable.ic_no_image)).fit().into(photo)
         desarrollo.text = "Desarrollo ${spinDesarrolloN.selectedItem}"
         direccion.text = listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra1
-        unidad.text = "Unidad ${spinUnidadN.selectedItem}"
+        //unidad.text = "Unidad ${spinUnidadN.selectedItem}"
+        unidad.text = "Unidad ${listUnidades[spinUnidadN.selectedItemPosition-1].Codigo}"
         fecha.text = "Entregado: ${listUnidades[spinUnidadN.selectedItemPosition-1].extra1}"
         propietario.text = "Propietario ${etPropietarioN.text}"
         celular.text = "Celular ${etTelMovilN.text}"
@@ -484,7 +471,17 @@ class CreateSolicitudFragment : Fragment() {
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddIncidencias)
         val btnCancel = dialog.findViewById<TextView>(R.id.btnCancelIncidencias)
 
-        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnCancel.setOnClickListener {
+
+            //clear edittext
+            spinDesarrolloN.setSelection(0)
+            resetAllEdittext()
+            dialog.dismiss()
+
+            // go to first tab
+            MainActivity.goToFirstTab()
+
+        }
         btnAdd.setOnClickListener {
             dialog.dismiss()
 
@@ -497,6 +494,16 @@ class CreateSolicitudFragment : Fragment() {
 
         dialog.show()
         dialog.setCancelable(false)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if(view != null){
+            if(isVisibleToUser){
+                val ft = fragmentManager?.beginTransaction()
+                ft?.detach(this)?.attach(this)?.commit()
+            }
+        }
     }
 
 }

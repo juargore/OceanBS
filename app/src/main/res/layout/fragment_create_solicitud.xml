@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorLighterGray"
         android:padding="5dp"
-        android:text="Llene los campos para crear una nueva solicitud"
+        android:text="Capture los datos del nuevo registro"
         android:textAlignment="center"
         android:textColor="@color/colorDarkGray" />
 
@@ -218,7 +218,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
-                        android:text="Persona que reporta"
+                        android:text="Persona que Reporta"
                         android:textColor="@color/colorBlack"
                         android:textStyle="bold" />
 
@@ -242,7 +242,10 @@
                         android:id="@+id/textView21"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Relación propietario" />
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:maxLines="1"
+                        android:text="Relación con Propietario" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -328,7 +331,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
-                android:text="Correo electrónico"
+                android:text="Correo Electrónico"
                 android:textColor="@color/colorBlack"
                 android:textStyle="bold" />
 

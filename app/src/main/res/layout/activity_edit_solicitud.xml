@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorLighterGray"
             android:padding="5dp"
-            android:text="Llene los campos para modificar la solicitud"
+            android:text="Última información registrada"
             android:textAlignment="center"
             android:textColor="@color/colorDarkGray" />
 
@@ -143,10 +143,10 @@
                             android:id="@+id/etCodigoE"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/rectangle_round_corner_gray_fill"
-                            android:editable="false"
+                            android:background="@drawable/rectangle_round_corner"
+                            android:editable="true"
                             android:ems="10"
-                            android:enabled="false"
+                            android:enabled="true"
                             android:inputType="textPersonName" />
                     </LinearLayout>
 
@@ -174,8 +174,8 @@
                                 android:id="@+id/spinDesarrolloE"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rectangle_round_corner_gray_fill"
-                                android:clickable="false" />
+                                android:background="@drawable/rectangle_round_corner"
+                                android:clickable="true" />
 
                             <ImageView
                                 android:id="@+id/imageView"
@@ -222,8 +222,8 @@
                                 android:id="@+id/spinUnidadE"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/rectangle_round_corner_gray_fill"
-                                android:clickable="false" />
+                                android:background="@drawable/rectangle_round_corner"
+                                android:clickable="true" />
 
                             <ImageView
                                 android:id="@+id/imageView5"
@@ -293,7 +293,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-light"
-                            android:text="Persona que reporta"
+                            android:text="Persona que Reporta"
                             android:textColor="@color/colorBlack"
                             android:textStyle="bold" />
 
@@ -317,8 +317,11 @@
                             android:id="@+id/textView21"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:ellipsize="end"
                             android:fontFamily="sans-serif-light"
-                            android:text="Relación propietario"
+                            android:lines="1"
+                            android:maxLines="1"
+                            android:text="Relación con Propietario"
                             android:textStyle="bold" />
 
                         <RelativeLayout
@@ -405,7 +408,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
-                    android:text="Correo electrónico"
+                    android:text="Correo Electrónico"
                     android:textColor="@color/colorBlack"
                     android:textStyle="bold" />
 

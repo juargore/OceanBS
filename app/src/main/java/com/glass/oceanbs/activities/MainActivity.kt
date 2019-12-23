@@ -20,12 +20,20 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var tabsParent: TabLayout
-    private lateinit var viewPagerParent: ViewPager
+
     private lateinit var carouselView: CarouselView
     private lateinit var fabExit : FloatingActionButton
 
     private val bitmapList: ArrayList<Bitmap> = ArrayList()
+
+    companion object{
+        private lateinit var tabsParent: TabLayout
+        private lateinit var viewPagerParent: ViewPager
+
+        fun goToFirstTab(){
+            viewPagerParent.currentItem = 0
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,8 +86,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showExitDialog(){
-        alert("¿Seguro que desea salir de la App?",
-            "Confirma salir")
+        alert("¿Está seguro que desea salir de la aplicación?",
+            "")
         {
             positiveButton(resources.getString(R.string.accept)) {
                 Constants.setKeepLogin(applicationContext, false)

@@ -50,6 +50,7 @@ class EditSolicitudActivity : AppCompatActivity() {
     private var solicitudId = ""
     private var desarrollo = ""
     private var persona = ""
+    private var codigoUnidad = ""
     private lateinit var cSolicitud: Solicitud
     private lateinit var cPropietario: Propietario
 
@@ -63,6 +64,7 @@ class EditSolicitudActivity : AppCompatActivity() {
         solicitudId = args!!.getString("solicitudId").toString()
         desarrollo = args.getString("desarrollo").toString()
         persona = args.getString("persona").toString()
+        codigoUnidad = args.getString("codigoUnidad").toString()
 
         initComponents()
         getCurrentSolicitud()
@@ -75,7 +77,7 @@ class EditSolicitudActivity : AppCompatActivity() {
         txtSubTitleDesarrolloE = findViewById(R.id.txtSubTitleDesarrolloE)
         imgBackEdit = findViewById(R.id.imgBackEdit)
 
-        txtTitleDesarrolloE.text = desarrollo
+        txtTitleDesarrolloE.text = "$desarrollo $codigoUnidad"
         txtSubTitleDesarrolloE.text = persona
         imgBackEdit.setOnClickListener { this.finish() }
         
@@ -149,26 +151,16 @@ class EditSolicitudActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun fillDataAccordingCheck(){
         if(chckBoxReporta.isChecked){
-            etReportaE.isEnabled = false
             etReportaE.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
-            etTelMovilE.isEnabled = false
             etTelMovilE.setText(cPropietario.telMovil)
-            etTelParticularE.isEnabled = false
             etTelParticularE.setText(cPropietario.telParticular)
-            etEmailE.isEnabled = false
             etEmailE.setText(cPropietario.correoElecP)
-            spinRelacionE.isEnabled = false
             spinRelacionE.setSelection(0)
         } else{
-            etReportaE.isEnabled = true
             etReportaE.setText("")
-            etTelMovilE.isEnabled = true
             etTelMovilE.setText("")
-            etTelParticularE.isEnabled = true
             etTelParticularE.setText("")
-            etEmailE.isEnabled = true
             etEmailE.setText("")
-            spinRelacionE.isEnabled = true
         }
     }
 
@@ -288,7 +280,7 @@ class EditSolicitudActivity : AppCompatActivity() {
         val builder = FormBody.Builder()
             .add("WebService","GuardaSolicitudAG")
             .add("Id", cSolicitud.Id) // empty if new
-            .add("Codigo", cSolicitud.Codigo) //codigo
+            .add("Codigo", etCodigoE.text.toString()) //codigo
             .add("IdProducto", cSolicitud.IdProducto) // unidad
             .add("ReportaPropietario", "$reporta") // 0 || 1
             .add("NombrePR", etReportaE.text.toString()) //nombre del propietario
@@ -312,7 +304,6 @@ class EditSolicitudActivity : AppCompatActivity() {
                         if(jsonRes.getInt("Error") == 0){
                             Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshSolicitudes(applicationContext, true)
-                            showInfoDialog()
                         } else{
                             Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         }; progress.dismiss()
@@ -333,7 +324,7 @@ class EditSolicitudActivity : AppCompatActivity() {
         })
     }
 
-    private fun showInfoDialog(){
+    /*private fun showInfoDialog(){
         alert("La solicitud se actualizó con éxito!",
             "Solicitud Actualizada")
         {
@@ -343,7 +334,7 @@ class EditSolicitudActivity : AppCompatActivity() {
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
         }.setCancelable(false)
-    }
+    }*/
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {

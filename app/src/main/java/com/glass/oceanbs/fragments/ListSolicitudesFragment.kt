@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.StrictMode
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -107,6 +108,7 @@ class ListSolicitudesFragment : Fragment() {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("RES", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") > 0)
                             snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
@@ -175,7 +177,7 @@ class ListSolicitudesFragment : Fragment() {
             override fun onItemLongClick(pos: Int) {
 
                 // on long click -> show pop up wih options
-                showPopOptions(context!!, listSolicitudes[pos].Id, listSolicitudes[pos].NombreDesarrollo, listSolicitudes[pos].NombrePR)
+                showPopOptions(context!!, listSolicitudes[pos].Id, listSolicitudes[pos].NombreDesarrollo, listSolicitudes[pos].NombrePR, listSolicitudes[pos].CodigoUnidad)
             }
         })
 
@@ -183,7 +185,7 @@ class ListSolicitudesFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showPopOptions(context: Context, solicitudId: String, desarrollo: String, persona: String){
+    private fun showPopOptions(context: Context, solicitudId: String, desarrollo: String, persona: String, codigoUnidad: String){
         val dialog = Dialog(context, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -207,6 +209,7 @@ class ListSolicitudesFragment : Fragment() {
             intent.putExtra("solicitudId", solicitudId)
             intent.putExtra("desarrollo", desarrollo)
             intent.putExtra("persona", persona)
+            intent.putExtra("codigoUnidad", codigoUnidad)
             startActivity(intent)
         }
 
@@ -215,7 +218,7 @@ class ListSolicitudesFragment : Fragment() {
 
     private fun showDeleteDialog(solicitudId: String){
         alert(resources.getString(R.string.msg_confirm_deletion),
-            "Eliminar Solicitud")
+            "")
         {
             positiveButton(resources.getString(R.string.accept)) {
                 deleteSolicludByServer(solicitudId)

@@ -8,13 +8,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
+import android.text.Html
 import android.text.TextUtils
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.LinearLayout
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
@@ -96,7 +95,7 @@ class LoginActivity : AppCompatActivity()  {
                         val jsonRes = JSONObject(response.body()!!.string())
 
                         if(jsonRes.getInt("Error") > 0)
-                            snackbar(applicationContext, parentLayout, jsonRes.getString("Mensaje"))
+                            snackbar(applicationContext, parentLayout, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         else{
 
                             // create object User and save it in SQLite DB
@@ -115,7 +114,11 @@ class LoginActivity : AppCompatActivity()  {
                                 Constants.setKeepLogin(applicationContext, true)
 
                             // show a welcome message to the user
-                            toast("Bienvenido!")
+                            val t = Toast.makeText(applicationContext, "Bienvenido \n${user.nombre} ${user.apellidoP} ${user.apellidoM}", Toast.LENGTH_LONG)
+                            val v = t.view.findViewById<TextView>(android.R.id.message)
+                            if(v != null) v.gravity = Gravity.CENTER
+                            t.show()
+
                             this@LoginActivity.finish()
 
                             // start new activity main
@@ -123,7 +126,7 @@ class LoginActivity : AppCompatActivity()  {
                         }
 
                     } catch (e: Error){
-                        snackbar(applicationContext, parentLayout, e.message.toString())
+                        snackbar(applicationContext, parentLayout, e.message.toString(), Constants.Types.ERROR)
                     }
 
                     progress.dismiss()
@@ -132,7 +135,7 @@ class LoginActivity : AppCompatActivity()  {
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    snackbar(applicationContext, parentLayout, e.message.toString())
+                    snackbar(applicationContext, parentLayout, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }
