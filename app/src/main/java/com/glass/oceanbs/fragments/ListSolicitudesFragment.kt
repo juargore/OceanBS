@@ -3,11 +3,13 @@ package com.glass.oceanbs.fragments
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
@@ -17,6 +19,8 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,13 +32,14 @@ import com.glass.oceanbs.activities.EditSolicitudActivity
 import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.adapters.ShortSolicitudAdapter
 import com.glass.oceanbs.models.ShortSolicitud
-import kotlinx.android.synthetic.main.activity_login.*
 import okhttp3.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.runOnUiThread
 import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ListSolicitudesFragment : Fragment() {
 
@@ -44,8 +49,12 @@ class ListSolicitudesFragment : Fragment() {
     private lateinit var layParentS: LinearLayout
     private lateinit var rvSolicitudes: RecyclerView
 
+    private lateinit var cardFecha: CardView
+    private lateinit var txtFecha: TextView
+
     private var listSolicitudes: ArrayList<ShortSolicitud> = ArrayList()
     private var userId = ""
+    private var today = ""
 
     companion object{
         fun newInstance(): ListSolicitudesFragment {
@@ -66,12 +75,31 @@ class ListSolicitudesFragment : Fragment() {
         return rootView
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "NewApi")
     private fun initComponents(view: View){
         layParentS = view.findViewById(R.id.layParentS)
         laySuccessFS = view.findViewById(R.id.laySuccessFS)
         layFailFS = view.findViewById(R.id.layFailFS)
         rvSolicitudes = view.findViewById(R.id.rvSolicitudes)
+
+        cardFecha = view.findViewById(R.id.cardFecha)
+        txtFecha = view.findViewById(R.id.txtFecha)
+
+
+        val cldr = Calendar.getInstance()
+        val day = cldr.get(Calendar.DAY_OF_MONTH)
+        val month = cldr.get(Calendar.MONTH)
+        val year = cldr.get(Calendar.YEAR)
+
+        val realMonth = month+1
+        var strMonth = realMonth.toString()
+        if(realMonth < 10)
+            strMonth = "0$realMonth"
+
+        today = "$year-$strMonth-$day"
+        txtFecha.text = today
+
+        cardFecha.setOnClickListener { showDatePicker(txtFecha) }
 
         // set up progress dialg
         val builder = AlertDialog.Builder(context!!, R.style.HalfDialogTheme)
@@ -84,13 +112,36 @@ class ListSolicitudesFragment : Fragment() {
 
         // after init -> get solicitudes if network available
         if(Constants.internetConnected(activity!!)){
-            getSolicitudes()
+            getSolicitudesByDate(today)
         } else{
             Constants.showPopUpNoInternet(activity!!)
         }
     }
 
-    private fun getSolicitudes(){
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun showDatePicker(txtView : TextView){
+        val cldr = Calendar.getInstance()
+        val day1  = cldr.get(Calendar.DAY_OF_MONTH)
+        val month1    = cldr.get(Calendar.MONTH)
+        val year1 = cldr.get(Calendar.YEAR)
+
+        val picker = DatePickerDialog(context!!, R.style.AppTheme_CustomDatePickerAccent,
+            DatePickerDialog.OnDateSetListener { _, year, month, day ->
+
+                val realMonth = month+1
+                var strMonth = realMonth.toString()
+                if(realMonth < 10)
+                    strMonth = "0$realMonth"
+
+                txtView.text = "$year-$strMonth-$day"
+                getSolicitudesByDate("$year-$strMonth-$day")
+
+            }, year1, month1, day1)
+        picker.show()
+    }
+
+    private fun getSolicitudesByDate(fecha: String){
         progress.show()
         userId = Constants.getUserId(context!!)
 
@@ -115,6 +166,8 @@ class ListSolicitudesFragment : Fragment() {
                         else{
 
                             // create solicitud object and iterate json array
+                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
+
                             val arraySolicitud = jsonRes.getJSONArray("Datos")
                             listSolicitudes.clear()
 
@@ -260,7 +313,7 @@ class ListSolicitudesFragment : Fragment() {
                             progress.dismiss()
                             snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             listSolicitudes.clear()
-                            getSolicitudes()
+                            getSolicitudesByDate("")
                         }
                     } catch (e: java.lang.Error){
                         progress.dismiss()
@@ -275,7 +328,7 @@ class ListSolicitudesFragment : Fragment() {
         super.onResume()
         if(mustRefreshSolicitudes(context!!)){
             listSolicitudes.clear()
-            getSolicitudes()
+            getSolicitudesByDate(today)
         }
     }
 
@@ -285,7 +338,7 @@ class ListSolicitudesFragment : Fragment() {
             if(isVisibleToUser){
                 if(mustRefreshSolicitudes(context!!)){
                     listSolicitudes.clear()
-                    getSolicitudes()
+                    getSolicitudesByDate(today)
                 }
             }
         }
