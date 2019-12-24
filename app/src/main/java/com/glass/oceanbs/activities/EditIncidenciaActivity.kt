@@ -552,7 +552,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body()!!.string())
-                        Log.e("--", jsonRes.toString())
+                        listRegistroStatus.clear()
 
                         if(jsonRes.getInt("Error") > 0)
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
@@ -574,6 +574,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
                             showPopBitacoraStatus()
                         }
 
+                        Constants.updateRefreshStatus(applicationContext, false)
                         progress.dismiss()
 
                     }catch (e: Error){
@@ -594,7 +595,6 @@ class EditIncidenciaActivity : AppCompatActivity() {
         val btnAddIncidencia = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
         btnAddIncidencia.setOnClickListener {
             dialog.dismiss()
-            this@EditIncidenciaActivity.finish()
 
             val intent = Intent(applicationContext, CreateIncidenciaActivity::class.java)
             intent.putExtra("persona", persona)
@@ -614,7 +614,6 @@ class EditIncidenciaActivity : AppCompatActivity() {
             startActivity(intent)
 
             dialog.dismiss()
-            this@EditIncidenciaActivity.finish()
         }
 
         //show | hide button according user or colaborator
@@ -717,6 +716,14 @@ class EditIncidenciaActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
         }
         return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(Constants.mustRefreshStatus(this)){
+            listRegistroStatus.clear()
+            getStatus()
+        }
     }
 
 }

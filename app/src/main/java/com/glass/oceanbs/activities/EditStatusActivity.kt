@@ -1,4 +1,4 @@
-@file:Suppress("SpellCheckingInspection")
+@file:Suppress("SpellCheckingInspection", "DEPRECATION", "PrivatePropertyName")
 
 package com.glass.oceanbs.activities
 
@@ -12,8 +12,8 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.util.Log
@@ -21,6 +21,7 @@ import android.view.MotionEvent
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.graphics.drawable.toBitmap
 import com.glass.oceanbs.Constants
@@ -32,12 +33,10 @@ import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import okhttp3.*
-import org.jetbrains.anko.alert
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -115,7 +114,7 @@ class EditStatusActivity : AppCompatActivity() {
         initComponents()
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "InflateParams")
     private fun initComponents(){
         layParentER = findViewById(R.id.layParentER)
         txtTitleER = findViewById(R.id.txtTitleER)
@@ -340,6 +339,8 @@ class EditStatusActivity : AppCompatActivity() {
                 spinnerRegistraER.setSelection(i+1)
         }
 
+        spinnerRegistraER.isEnabled = false
+
         // value is in second spinner
         for(i in 0 until listColaboradores2.size){
             if(cStatus.IdColaborador2 == listColaboradores2[i].Id)
@@ -422,8 +423,14 @@ class EditStatusActivity : AppCompatActivity() {
                         Log.e("RES",  jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
-                            showSuccessDialog()
+
+                            snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                             Constants.updateRefreshIncidencias(applicationContext, true)
+                            Constants.updateRefreshStatus(applicationContext, true)
+
+                            Handler().postDelayed({
+                                this@EditStatusActivity.finish()
+                            }, 2000)
                         } else
                             snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
@@ -438,22 +445,12 @@ class EditStatusActivity : AppCompatActivity() {
         })
     }
 
-    private fun showSuccessDialog(){
-        alert("Se ha actualizado el Status de la incidencia satisfactoriamente",
-            "Guardado exitoso!")
-        {
-            positiveButton(resources.getString(R.string.accept)) {
-                this@EditStatusActivity.finish()
-            }
-        }.show().setCancelable(false)
-    }
-
     private fun showPictureDialog(photo: Int) {
         val pictureDialog = AlertDialog.Builder(this)
         pictureDialog.setTitle("Obtener fotografía")
 
         val pictureDialogItems = arrayOf("Seleccionar foto de la galería", "Capturar foto con la cámara")
-        pictureDialog.setItems(pictureDialogItems) { dialog, which ->
+        pictureDialog.setItems(pictureDialogItems) { _, which ->
             when (which) {
                 0 -> choosePhotoFromGallary()
                 1 -> takePhotoFromCamera(photo)

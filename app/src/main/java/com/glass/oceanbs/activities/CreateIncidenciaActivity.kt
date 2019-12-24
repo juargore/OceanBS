@@ -504,7 +504,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body()!!.string())
-                        Log.e("--", jsonRes.toString())
+                        listRegistroStatus.clear()
 
                         if(jsonRes.getInt("Error") > 0)
                             Constants.snackbar(applicationContext,
@@ -527,6 +527,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                             showPopBitacoraStatus()
                         }
 
+                        Constants.updateRefreshStatus(applicationContext, false)
                         progress.dismiss()
 
                     }catch (e: Error){
@@ -562,7 +563,6 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             startActivity(intent)
 
             dialog.dismiss()
-            this@CreateIncidenciaActivity.finish()
         }
 
         //show | hide button according user or colaborator
@@ -675,5 +675,13 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
         }
         return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(Constants.mustRefreshStatus(this)){
+            listRegistroStatus.clear()
+            getStatus()
+        }
     }
 }

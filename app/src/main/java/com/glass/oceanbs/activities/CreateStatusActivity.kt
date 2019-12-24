@@ -15,6 +15,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.util.Log
@@ -28,14 +29,13 @@ import androidx.core.graphics.drawable.toBitmap
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
+import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
 import okhttp3.*
-import org.jetbrains.anko.alert
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -242,6 +242,15 @@ class CreateStatusActivity : AppCompatActivity() {
 
         val adapterColab2 = ArrayAdapter(this, R.layout.spinner_text, listColab2)
         spinnerAtiendeR.adapter = adapterColab2
+
+        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this))
+
+        for(i in 0 until listColaboradores1.size){
+            if(user.id == listColaboradores1[i].Id)
+                spinnerRegistraR.setSelection(i+1)
+        }
+
+        spinnerRegistraR.isEnabled = false
     }
 
     @SuppressLint("SetTextI18n")
@@ -311,8 +320,15 @@ class CreateStatusActivity : AppCompatActivity() {
                         Log.e("RES",  jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
-                            showSuccessDialog()
+
+                            snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                             Constants.updateRefreshIncidencias(applicationContext, true)
+                            Constants.updateRefreshStatus(applicationContext, true)
+
+                            Handler().postDelayed({
+                                this@CreateStatusActivity.finish()
+                            }, 2000)
+
                         } else
                             snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
@@ -325,16 +341,6 @@ class CreateStatusActivity : AppCompatActivity() {
                 }
             }
         })
-    }
-
-    private fun showSuccessDialog(){
-        alert("Se ha guardado el Status de la incidencia satisfactoriamente",
-            "Guardado exitoso!")
-        {
-            positiveButton(resources.getString(R.string.accept)) {
-                this@CreateStatusActivity.finish()
-            }
-        }.show().setCancelable(false)
     }
 
     private fun showPictureDialog(photo: Int) {
