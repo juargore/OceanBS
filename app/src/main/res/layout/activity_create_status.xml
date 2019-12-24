@@ -81,7 +81,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:text="Nuevo Status de Incidencia"
+        android:text="Registro de Status de Incidencia"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="22sp"
@@ -228,6 +228,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 android:weightSum="2">
 
                 <LinearLayout
@@ -332,7 +333,7 @@
                     android:id="@+id/textView50"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Colaborador que registra" />
+                    android:text="Colaborador que Registra" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -368,7 +369,7 @@
                     android:id="@+id/textView51"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Colaborador que atiende" />
+                    android:text="Colaborador que Atiende" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"

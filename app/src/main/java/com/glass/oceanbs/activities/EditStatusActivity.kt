@@ -90,6 +90,7 @@ class EditStatusActivity : AppCompatActivity() {
     private var idStatus = ""
     private var persona = ""
     private var desarrollo = ""
+    private var codigoUnidad = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,13 +107,15 @@ class EditStatusActivity : AppCompatActivity() {
 
         val extras = intent.extras
         idStatus = extras!!.getString("idStatus").toString()
+        incidenciaId = extras.getString("incidenciaId").toString()
         persona = extras.getString("persona").toString()
         desarrollo = extras.getString("desarrollo").toString()
-        incidenciaId = extras.getString("incidenciaId").toString()
+        codigoUnidad = extras.getString("codigoUnidad").toString()
 
         initComponents()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initComponents(){
         layParentER = findViewById(R.id.layParentER)
         txtTitleER = findViewById(R.id.txtTitleER)
@@ -151,7 +154,7 @@ class EditStatusActivity : AppCompatActivity() {
         builder.setView(dialogView)
         progress = builder.create()
 
-        txtTitleER.text = desarrollo
+        txtTitleER.text = "$desarrollo $codigoUnidad"
         txtSubTitleER.text = persona
 
         setListeners()

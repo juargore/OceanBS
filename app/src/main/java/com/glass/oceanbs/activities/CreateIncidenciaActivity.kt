@@ -85,6 +85,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
     private var idIncidencia = ""
     private var persona = ""
     private var desarrollo = ""
+    private var codigoUnidad = ""
 
     companion object {
         private const val IMAGE_DIRECTORY = "/demonuts"
@@ -107,17 +108,21 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         idSolicitud = extras!!.getString("solicitudId").toString()
         persona = extras.getString("persona").toString()
         desarrollo = extras.getString("desarrollo").toString()
+        codigoUnidad = extras.getString("codigoUnidad").toString()
 
         initComponents()
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "SetTextI18n")
     private fun initComponents(){
         layParentIn = findViewById(R.id.layParentIn)
         txtTitleDesarrolloIn = findViewById(R.id.txtTitleDesarrolloIn)
         txtSubTitleDesarrolloIn = findViewById(R.id.txtSubTitleDesarrolloIn)
         imgBackRegistroIncidencia = findViewById(R.id.imgBackRegistroIncidencia)
         txtBitacoraStatus = findViewById(R.id.txtBitacoraStatus)
+
+        txtTitleDesarrolloIn.text = "$desarrollo $codigoUnidad"
+        txtSubTitleDesarrolloIn.text = persona
 
         spinner3m = findViewById(R.id.spinner3m)
         spinner6m = findViewById(R.id.spinner6m)
@@ -324,14 +329,15 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body()!!.string())
-                        Log.e("KKK",  jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
                             idIncidencia = jsonRes.getString("Id")
 
                             Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshIncidencias(applicationContext, true)
-                            showSuccessDialog()
+
+                            getStatus()
+                            /*Handler().postDelayed({getStatus()}, 2500)*/
                         } else
                             Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
@@ -351,22 +357,6 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                 }
             }
         })
-    }
-
-    private fun showSuccessDialog(){
-        alert("La incidencia se ha registrado con éxito. ¿Qué desea hacer ahora?",
-            "Incidencia Guardada")
-        {
-            positiveButton("Ver status de incidencias") {
-                getStatus()
-            }
-            negativeButton("Regresar"){
-                this@CreateIncidenciaActivity.finish()
-            }
-        }.show().apply {
-            getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorPrimary) }
-            getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorDarkGray) }
-        }.setCancelable(false)
     }
 
     private fun showPopPhoto(){
@@ -554,10 +544,21 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.pop_bitacora_status)
 
-        val btnAdd = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
-        btnAdd.setOnClickListener {
+        val btnAddIncidencia = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
+        btnAddIncidencia.setOnClickListener {
+            dialog.dismiss()
+
+            finish()
+            startActivity(intent)
+        }
+
+        val btnAddStatus = dialog.findViewById<Button>(R.id.btnAddPopStatusIncidencias)
+        btnAddStatus.setOnClickListener {
             val intent = Intent(applicationContext, CreateStatusActivity::class.java)
             intent.putExtra("incidenciaId", idIncidencia)
+            intent.putExtra("persona",persona)
+            intent.putExtra("desarrollo",desarrollo)
+            intent.putExtra("codigoUnidad",codigoUnidad)
             startActivity(intent)
 
             dialog.dismiss()
@@ -567,7 +568,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         //show | hide button according user or colaborator
         val user = TableUser(this).getCurrentUserById(Constants.getUserId(this))
         if(!user.colaborador)
-            btnAdd.visibility = View.GONE
+            btnAddStatus.visibility = View.GONE
 
 
         val btnExit = dialog.findViewById<TextView>(R.id.txtCancelP)
@@ -586,6 +587,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                 intent.putExtra("desarrollo",desarrollo)
                 intent.putExtra("idStatus", listRegistroStatus[pos].Id)
                 intent.putExtra("incidenciaId", idIncidencia)
+                intent.putExtra("codigoUnidad",codigoUnidad)
                 startActivity(intent)
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{

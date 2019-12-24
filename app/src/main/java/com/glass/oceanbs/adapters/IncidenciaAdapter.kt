@@ -47,6 +47,7 @@ class IncidenciaAdapter(private val context: Context,
             itemView.txtStatus.text = incidencia.Status
             itemView.txtVigencia.text = incidencia.Vigencia
             itemView.txtFecha.text = incidencia.FechaAlta
+            itemView.txtFalla.text = incidencia.Falla
 
             when(incidencia.Status.toLowerCase()){
                 "registrada"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceBlue))}
@@ -55,7 +56,7 @@ class IncidenciaAdapter(private val context: Context,
                 "en proceso"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceYellow))}
                 "terminada"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceLightGreen))}
                 "entregada"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceDarkGreen))}
-                else->{}
+                "no aceptada", "no terminada", "no entregada"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidencePink))}
             }
 
             itemView.setOnClickListener {

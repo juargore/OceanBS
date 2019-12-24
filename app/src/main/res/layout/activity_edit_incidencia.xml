@@ -400,7 +400,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/rectangle_blue_button"
-                android:text="Actualizar Incidencia"
+                android:text="Guardar Incidencia"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>

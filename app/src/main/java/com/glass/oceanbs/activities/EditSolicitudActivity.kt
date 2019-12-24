@@ -8,15 +8,18 @@ import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
+import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Propietario
 import com.glass.oceanbs.models.Solicitud
 import okhttp3.*
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.support.v4.runOnUiThread
 import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
@@ -46,11 +49,18 @@ class EditSolicitudActivity : AppCompatActivity() {
     private lateinit var etObservacionesE: EditText
     private lateinit var btnSaveSolicitud: Button
 
+    private var listDesarrollos: ArrayList<GenericObj> = ArrayList()
+    private var listUnidades: ArrayList<GenericObj> = ArrayList()
+
     private var userId = ""
     private var solicitudId = ""
     private var desarrollo = ""
     private var persona = ""
     private var codigoUnidad = ""
+
+    private var fDesarrollosFirst = true
+    private var fUnidadesFirst = true
+
     private lateinit var cSolicitud: Solicitud
     private lateinit var cPropietario: Propietario
 
@@ -67,10 +77,9 @@ class EditSolicitudActivity : AppCompatActivity() {
         codigoUnidad = args.getString("codigoUnidad").toString()
 
         initComponents()
-        getCurrentSolicitud()
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "SetTextI18n")
     private fun initComponents(){
         layParentE = findViewById(R.id.layParentE)
         txtTitleDesarrolloE = findViewById(R.id.txtTitleDesarrolloE)
@@ -110,90 +119,8 @@ class EditSolicitudActivity : AppCompatActivity() {
 
         builder.setView(dialogView)
         progress = builder.create()
-    }
 
-    private fun fillFields(){
-        getPropietarioName(cSolicitud.IdProducto)
-
-        etCodigoE.setText(cSolicitud.Codigo)
-
-        val adapterDesarrollo = ArrayAdapter(this, R.layout.spinner_text, arrayOf(desarrollo))
-        spinDesarrolloE.adapter = adapterDesarrollo
-        spinDesarrolloE.isEnabled = false
-
-        val adapterUnidad = ArrayAdapter(this, R.layout.spinner_text, arrayOf(cSolicitud.CodigoUnidad))
-        spinUnidadE.adapter = adapterUnidad
-        spinUnidadE.isEnabled = false
-
-        etPropietarioE.setText(cSolicitud.NombrePropietario)
-
-        if(cSolicitud.ReportaPropietario.toInt() == 1){
-            chckBoxReporta.isChecked = true
-        }
-
-        fillDataFirstTime()
-    }
-
-
-    private fun fillDataFirstTime(){
-        etReportaE.setText(cSolicitud.NombrePR)
-        etTelMovilE.setText(cSolicitud.TelCelularPR)
-        etTelParticularE.setText(cSolicitud.TelParticularPR)
-        etEmailE.setText(cSolicitud.CorreoElectronicoPR)
-        etObservacionesE.setText(cSolicitud.Observaciones)
-
-        val relationList = arrayOf("Seleccionar", "Esposo(a)", "Hijo(a)", "Otro familiar", "Administrador", "Arrendatario", "Otro")
-        val adapterRelation = ArrayAdapter(this, R.layout.spinner_text, relationList)
-        spinRelacionE.adapter = adapterRelation
-        spinRelacionE.setSelection(cSolicitud.TipoRelacionPropietario.toInt())
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun fillDataAccordingCheck(){
-        if(chckBoxReporta.isChecked){
-            etReportaE.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
-            etTelMovilE.setText(cPropietario.telMovil)
-            etTelParticularE.setText(cPropietario.telParticular)
-            etEmailE.setText(cPropietario.correoElecP)
-            spinRelacionE.setSelection(0)
-        } else{
-            etReportaE.setText("")
-            etTelMovilE.setText("")
-            etTelParticularE.setText("")
-            etEmailE.setText("")
-        }
-    }
-
-    private fun getPropietarioName(idUnidad: String){
-        val client = OkHttpClient()
-        val builder = FormBody.Builder()
-            .add("WebService","ConsultaPropietarioIdUnidad")
-            .add("IdUnidad", idUnidad)
-            .build()
-
-        val request = Request.Builder().url(Constants.URL_PRODUCTO).post(builder).build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {}
-
-            @SuppressLint("SetTextI18n")
-            override fun onResponse(call: Call, response: Response) {
-                try {
-                    val j = JSONObject(response.body()!!.string())
-
-                    if(j.getInt("Error") == 0){
-                        cPropietario = Propietario(
-                            j.getString("Id"),
-                            j.getString("Nombre"),
-                            j.getString("ApellidoP"),
-                            j.getString("ApellidoM"),
-                            j.getString("TelMovil"),
-                            j.getString("TelCasa"),
-                            j.getString("CorreoElecP")
-                        )
-                    }
-                }catch (e: Error){ }
-            }
-        })
+        getCurrentSolicitud()
     }
 
     private fun getCurrentSolicitud(){
@@ -239,7 +166,7 @@ class EditSolicitudActivity : AppCompatActivity() {
                             )
 
                             progress.dismiss()
-                            fillFields()
+                            getListDesarrollos()
                         } else{
                             progress.dismiss()
                             Constants.snackbar(applicationContext, layParentE, js.getString("Mensaje"), Constants.Types.ERROR)
@@ -247,6 +174,243 @@ class EditSolicitudActivity : AppCompatActivity() {
                     }catch (e: Error){
                         progress.dismiss()
                     }
+                }
+            }
+        })
+    }
+
+
+    // get a list of all desarrollos in Server
+    private fun getListDesarrollos(){
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","ConsultaDesarrollosTodos")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_SUCURSALES).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
+
+                        if(jsonRes.getInt("Error") == 0){
+                            val arrayDesarrollos = jsonRes.getJSONArray("Datos")
+
+                            for(i in 0 until arrayDesarrollos.length()){
+                                val jsonObj : JSONObject = arrayDesarrollos.getJSONObject(i)
+
+                                listDesarrollos.add( GenericObj (
+                                    jsonObj.getString("Id"),
+                                    jsonObj.getString("Codigo"),
+                                    jsonObj.getString("Nombre"),
+                                    "${jsonObj.getString("Calle")} ${jsonObj.getString("NumExt")}",
+                                    jsonObj.getString("Fotografia")))
+                            }
+
+                            setUpSpinnerDesarrollos()
+                        }
+                    }catch (e: Error){ }
+                }
+            }
+        })
+    }
+
+
+    private fun setUpSpinnerDesarrollos(){
+        val desarrollosList: ArrayList<String> = ArrayList()
+
+        for (i in listDesarrollos)
+            desarrollosList.add(i.Nombre)
+
+        desarrollosList.add(0, "Seleccionar")
+
+        val adapterDesarrollo = ArrayAdapter(this, R.layout.spinner_text, desarrollosList)
+        spinDesarrolloE.adapter = adapterDesarrollo
+
+        spinDesarrolloE.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                if(pos != 0){
+                    if(fDesarrollosFirst){
+                        val strId: String = listDesarrollos[pos-1].Id
+                        getListUnidad(strId)
+                        fDesarrollosFirst = false
+                    } else{
+                        val strId: String = listDesarrollos[pos-1].Id
+                        getListUnidad(strId)
+                        resetAllEdittext()
+                    }
+                } else{
+                    listUnidades.clear()
+                    setUpSpinnerUnidad()
+                }
+            }
+        }
+
+        for(i in 0 until listDesarrollos.size){
+            if(cSolicitud.CodigoDesarrollo == listDesarrollos[i].Codigo)
+                spinDesarrolloE.setSelection(i+1)
+        }
+    }
+
+    // get list of unidad according the desarrollo id
+    private fun getListUnidad(idDesarrollo: String){
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","ConsultaUnidadesIdDesarrollo")
+            .add("IdDesarrollo", idDesarrollo)
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_PRODUCTO).post(builder).build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    val jsonRes = JSONObject(response.body()!!.string())
+
+                    if(jsonRes.getInt("Error") == 0){
+                        val arrayDesarrollos = jsonRes.getJSONArray("Datos")
+                        listUnidades.clear()
+
+                        for(i in 0 until arrayDesarrollos.length()){
+                            val jsonObj : JSONObject = arrayDesarrollos.getJSONObject(i)
+
+                            listUnidades.add(
+                                GenericObj(
+                                    jsonObj.getString("Id"),
+                                    jsonObj.getString("Codigo"),
+                                    jsonObj.getString("Nombre"),
+                                    jsonObj.getString("FechaEntrega")
+                                )
+                            )
+                        }
+
+                        runOnUiThread {
+                            etPropietarioE.setText("")
+                            setUpSpinnerUnidad() }
+                    }
+                }catch (e: Error){ }
+            }
+        })
+    }
+
+    private fun resetAllEdittext(){
+        etReportaE.setText("")
+        etTelMovilE.setText("")
+        etTelParticularE.setText("")
+        etEmailE.setText("")
+        chckBoxReporta.isChecked = false
+        spinRelacionE.setSelection(0)
+    }
+
+    // fill spinner unidad
+    private fun setUpSpinnerUnidad(){
+        val unidadesList: ArrayList<String> = ArrayList()
+
+        for (i in listUnidades)
+            unidadesList.add(i.Nombre)
+
+        unidadesList.add(0, "Seleccionar")
+        val adapterUnidad = ArrayAdapter(applicationContext, R.layout.spinner_text, unidadesList)
+
+        spinUnidadE.adapter = adapterUnidad
+        spinUnidadE.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                if(pos != 0){
+                    if(fUnidadesFirst){
+                        getPropietarioName(listUnidades[pos-1].Id)
+                        fUnidadesFirst = false
+                    } else{
+                        getPropietarioName(listUnidades[pos-1].Id)
+                        resetAllEdittext()
+                    }
+                } else{
+                    etPropietarioE.setText("")
+                    resetAllEdittext()
+                }
+            }
+        }
+
+        for(i in 0 until listUnidades.size){
+            if(cSolicitud.CodigoUnidad == listUnidades[i].Codigo)
+                spinUnidadE.setSelection(i+1)
+        }
+
+        fillDataFirstTime()
+    }
+
+
+    private fun fillDataFirstTime(){
+        etCodigoE.setText(cSolicitud.Codigo)
+
+        if(cSolicitud.ReportaPropietario.toInt() == 1){
+            chckBoxReporta.isChecked = true
+        }
+
+        etReportaE.setText(cSolicitud.NombrePR)
+        etTelMovilE.setText(cSolicitud.TelCelularPR)
+        etTelParticularE.setText(cSolicitud.TelParticularPR)
+        etEmailE.setText(cSolicitud.CorreoElectronicoPR)
+        etObservacionesE.setText(cSolicitud.Observaciones)
+
+        val relationList = arrayOf("Seleccionar", "Esposo(a)", "Hijo(a)", "Otro familiar", "Administrador", "Arrendatario", "Otro")
+        val adapterRelation = ArrayAdapter(this, R.layout.spinner_text, relationList)
+        spinRelacionE.adapter = adapterRelation
+        spinRelacionE.setSelection(cSolicitud.TipoRelacionPropietario.toInt())
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun fillDataAccordingCheck(){
+        if(chckBoxReporta.isChecked){
+            etReportaE.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
+            etTelMovilE.setText(cPropietario.telMovil)
+            etTelParticularE.setText(cPropietario.telParticular)
+            etEmailE.setText(cPropietario.correoElecP)
+            spinRelacionE.setSelection(0)
+        } else{
+            etReportaE.setText("")
+            etTelMovilE.setText("")
+            etTelParticularE.setText("")
+            etEmailE.setText("")
+        }
+    }
+
+    private fun getPropietarioName(idUnidad: String){
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","ConsultaPropietarioIdUnidad")
+            .add("IdUnidad", idUnidad)
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_PRODUCTO).post(builder).build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+
+            @SuppressLint("SetTextI18n")
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val j = JSONObject(response.body()!!.string())
+
+                        if(j.getInt("Error") == 0){
+                            cPropietario = Propietario(
+                                j.getString("Id"),
+                                j.getString("Nombre"),
+                                j.getString("ApellidoP"),
+                                j.getString("ApellidoM"),
+                                j.getString("TelMovil"),
+                                j.getString("TelCasa"),
+                                j.getString("CorreoElecP")
+                            )
+
+                            etPropietarioE.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
+                        }
+                    }catch (e: Error){ }
                 }
             }
         })
@@ -281,7 +445,7 @@ class EditSolicitudActivity : AppCompatActivity() {
             .add("WebService","GuardaSolicitudAG")
             .add("Id", cSolicitud.Id) // empty if new
             .add("Codigo", etCodigoE.text.toString()) //codigo
-            .add("IdProducto", cSolicitud.IdProducto) // unidad
+            .add("IdProducto", listUnidades[spinUnidadE.selectedItemPosition-1].Id) // unidad
             .add("ReportaPropietario", "$reporta") // 0 || 1
             .add("NombrePR", etReportaE.text.toString()) //nombre del propietario
             .add("TipoRelacionPropietario", "${spinRelacionE.selectedItemPosition}")
@@ -323,18 +487,6 @@ class EditSolicitudActivity : AppCompatActivity() {
             }
         })
     }
-
-    /*private fun showInfoDialog(){
-        alert("La solicitud se actualizó con éxito!",
-            "Solicitud Actualizada")
-        {
-            positiveButton(resources.getString(R.string.accept)) {
-                this@EditSolicitudActivity.finish()
-            }
-        }.show().apply {
-            getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
-        }.setCancelable(false)
-    }*/
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {

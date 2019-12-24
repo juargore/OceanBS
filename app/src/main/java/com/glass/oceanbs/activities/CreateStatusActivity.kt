@@ -80,6 +80,9 @@ class CreateStatusActivity : AppCompatActivity() {
     private var mCameraFileName3 = ""
 
     private var incidenciaId = ""
+    private var persona = ""
+    private var desarrollo = ""
+    private var codigoUnidad = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,11 +99,14 @@ class CreateStatusActivity : AppCompatActivity() {
 
         val extras = intent.extras
         incidenciaId = extras!!.getString("incidenciaId").toString()
+        persona = extras.getString("persona").toString()
+        desarrollo = extras.getString("desarrollo").toString()
+        codigoUnidad = extras.getString("codigoUnidad").toString()
 
         initComponents()
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "SetTextI18n")
     private fun initComponents(){
         layParentR = findViewById(R.id.layParentR)
         imgBackStatus = findViewById(R.id.imgBackStatusR)
@@ -118,6 +124,9 @@ class CreateStatusActivity : AppCompatActivity() {
         txtShowPhoto3 = findViewById(R.id.txtShowPhoto3)
         cardPhoto3 = findViewById(R.id.cardPhoto3)
         imgPhoto3 = findViewById(R.id.imgPhoto3)
+
+        txtTitleR.text = "$desarrollo $codigoUnidad"
+        txtSubTitleR.text = persona
 
         spinnerStatusR = findViewById(R.id.spinnerStatusR)
         spinnerRegistraR = findViewById(R.id.spinnerRegistraR)

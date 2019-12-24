@@ -94,21 +94,12 @@
         android:layout_below="@id/txtTitleIncidencias"
         android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:layout_above="@id/textView8"
-            android:layout_centerHorizontal="true"
-            app:srcCompat="@drawable/ic_empty" />
-
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="7dp"
             android:text="Sin Incidencias!"
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
@@ -121,9 +112,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textView8"
             android:layout_centerHorizontal="true"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
-            android:text="Actualmente no cuentas con incidencias creadas. Selecciona el botón + abajo ↓ para agregar una"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="No cuenta con incidencias registradas en esta solicitud.\nSeleccione + para registrar una incidencia."
             android:textAlignment="center" />
 
     </RelativeLayout>

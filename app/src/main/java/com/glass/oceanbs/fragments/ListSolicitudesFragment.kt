@@ -125,6 +125,7 @@ class ListSolicitudesFragment : Fragment() {
                                         jsonObj.getString("Id"),
                                         jsonObj.getString("FechaAlta"),
                                         jsonObj.getString("NombrePR"),
+                                        jsonObj.getString("NombrePropietario"),
                                         jsonObj.getString("NombreDesarrollo"),
                                         jsonObj.getString("CodigoUnidad"),
                                         jsonObj.getString("NombreUnidad")))
@@ -170,14 +171,15 @@ class ListSolicitudesFragment : Fragment() {
                 val intent = Intent(activity!!, ListIncidenciasActivity::class.java)
                 intent.putExtra("solicitudId", listSolicitudes[pos].Id)
                 intent.putExtra("desarrollo", listSolicitudes[pos].NombreDesarrollo)
-                intent.putExtra("persona", listSolicitudes[pos].NombrePR)
+                intent.putExtra("persona", listSolicitudes[pos].NombrePropietario)
+                intent.putExtra("codigoUnidad", listSolicitudes[pos].CodigoUnidad)
                 startActivity(intent)
             }
         }, object : ShortSolicitudAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
 
                 // on long click -> show pop up wih options
-                showPopOptions(context!!, listSolicitudes[pos].Id, listSolicitudes[pos].NombreDesarrollo, listSolicitudes[pos].NombrePR, listSolicitudes[pos].CodigoUnidad)
+                showPopOptions(context!!, listSolicitudes[pos].Id, listSolicitudes[pos].NombreDesarrollo, listSolicitudes[pos].NombrePropietario, listSolicitudes[pos].CodigoUnidad)
             }
         })
 

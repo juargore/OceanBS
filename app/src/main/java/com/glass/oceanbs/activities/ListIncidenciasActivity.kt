@@ -4,9 +4,14 @@ package com.glass.oceanbs.activities
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.Window
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -43,6 +48,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
     private var solicitudId = ""
     private var desarrollo = ""
     private var persona = ""
+    private var codigoUnidad = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,11 +60,12 @@ class ListIncidenciasActivity : AppCompatActivity() {
         solicitudId = args!!.getString("solicitudId").toString()
         desarrollo = args.getString("desarrollo").toString()
         persona = args.getString("persona").toString()
+        codigoUnidad = args.getString("codigoUnidad").toString()
 
         initComponents()
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "SetTextI18n")
     private fun initComponents(){
         txtTitleDesarrolloI = findViewById(R.id.txtTitleDesarrolloI)
         txtSubTitleDesarrolloI = findViewById(R.id.txtSubTitleDesarrolloI)
@@ -79,7 +86,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
         progress = builder.create()
         progress.setCancelable(false)
 
-        txtTitleDesarrolloI.text = desarrollo
+        txtTitleDesarrolloI.text = "$desarrollo $codigoUnidad"
         txtSubTitleDesarrolloI.text = persona
 
         fabNewIncidencia.setOnClickListener {
@@ -87,6 +94,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
             intent.putExtra("persona", persona)
             intent.putExtra("desarrollo", desarrollo)
             intent.putExtra("solicitudId", solicitudId)
+            intent.putExtra("codigoUnidad", codigoUnidad)
             startActivity(intent)
         }
 
@@ -128,6 +136,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
                                         j.getString("Id"),
                                         j.getString("FechaAlta"),
                                         j.getString("Clasificacion"),
+                                        j.getString("FallaReportada"),
                                         j.getString("Vigencia"),
                                         j.getString("Status")))
                             }
@@ -171,20 +180,43 @@ class ListIncidenciasActivity : AppCompatActivity() {
                 intent.putExtra("solicitudId", solicitudId)
                 intent.putExtra("persona", persona)
                 intent.putExtra("desarrollo", desarrollo)
+                intent.putExtra("codigoUnidad", codigoUnidad)
                 startActivity(intent)
             }
         }, object : IncidenciaAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                showDeleteDialog(listIncidencias[pos].Id)
+                //showDeleteDialog(listIncidencias[pos].Id)
+                showPopOptions(listIncidencias[pos].Id)
             }
         })
 
         rvIncidencias.adapter = adapter
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun showPopOptions(incidenciaId: String){
+        val dialog = Dialog(this, R.style.FullDialogTheme)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setContentView(R.layout.pop_options)
+
+        val delete = dialog.findViewById<TextView>(R.id.txtOpDel)
+        val edit = dialog.findViewById<TextView>(R.id.txtOpEdit)
+        val exit = dialog.findViewById<TextView>(R.id.txtOpCan)
+
+        delete.text = "Eliminar Incidencia"
+        edit.visibility = View.GONE
+
+        delete.setOnClickListener {
+            showDeleteDialog(incidenciaId); dialog.dismiss() }
+        exit.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+    }
+
     private fun showDeleteDialog(incidenciaId: String){
         alert(resources.getString(R.string.msg_confirm_deletion),
-            "Eliminar Incidencia")
+            "")
         {
             positiveButton(resources.getString(R.string.accept)) {
                 deleteIncidenciaByServer(incidenciaId)

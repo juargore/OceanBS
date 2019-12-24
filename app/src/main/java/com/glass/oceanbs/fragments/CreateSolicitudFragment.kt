@@ -173,6 +173,7 @@ class CreateSolicitudFragment : Fragment() {
 
                     if(jsonRes.getInt("Error") == 0){
                         val arrayDesarrollos = jsonRes.getJSONArray("Datos")
+                        listDesarrollos.clear()
 
                         for(i in 0 until arrayDesarrollos.length()){
                             val jsonObj : JSONObject = arrayDesarrollos.getJSONObject(i)
