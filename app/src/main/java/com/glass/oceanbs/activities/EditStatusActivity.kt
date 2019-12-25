@@ -311,19 +311,22 @@ class EditStatusActivity : AppCompatActivity() {
 
     private fun fillData(){
         Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia1}")
+            .placeholder(resources.getDrawable(R.drawable.ic_loading))
             .memoryPolicy(MemoryPolicy.NO_CACHE )
             .networkPolicy(NetworkPolicy.NO_CACHE)
-            .fit().error(R.drawable.ic_box).into(imgPhoto1ER)
+            .error(R.drawable.ic_box).into(imgPhoto1ER)
 
         Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia2}")
+            .placeholder(resources.getDrawable(R.drawable.ic_loading))
             .memoryPolicy(MemoryPolicy.NO_CACHE )
             .networkPolicy(NetworkPolicy.NO_CACHE)
-            .fit().error(R.drawable.ic_box).into(imgPhoto2ER)
+            .error(R.drawable.ic_box).into(imgPhoto2ER)
 
         Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia3}")
+            .placeholder(resources.getDrawable(R.drawable.ic_loading))
             .memoryPolicy(MemoryPolicy.NO_CACHE )
             .networkPolicy(NetworkPolicy.NO_CACHE)
-            .fit().error(R.drawable.ic_box).into(imgPhoto3ER)
+            .error(R.drawable.ic_box).into(imgPhoto3ER)
 
         etAltaE.setText(cStatus.FechaAlta)
         etModifER.setText(cStatus.FechaUltimaModif)

@@ -34,6 +34,9 @@ import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Incidencia
 import com.glass.oceanbs.models.ShortStatus
+import com.squareup.picasso.MemoryPolicy
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
 import okhttp3.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.textColor
@@ -159,7 +162,44 @@ class EditIncidenciaActivity : AppCompatActivity() {
         }
 
         getDataForSpinners(1)
+        getPhotoIncidencia()
         getIncidencia()
+    }
+
+    private fun getPhotoIncidencia(){
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","GetFotografiaIdIncidenciaNumStatus")
+            .add("IdIncidencia", idIncidencia)
+            .add("StatusIncidencia", "1")
+            .add("Campo", "Fotografia1")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_STATUS).post(builder).build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    progress.dismiss()
+                }
+            }
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jRes = JSONObject(response.body()!!.string())
+
+                        if(jRes.getInt("Error") == 0){
+                            Picasso.get().load("${Constants.URL_IMAGES_STATUS}${jRes.getString("Fotografia")}")
+                                .placeholder(resources.getDrawable(R.drawable.ic_loading))
+                                .memoryPolicy(MemoryPolicy.NO_CACHE )
+                                .networkPolicy(NetworkPolicy.NO_CACHE)
+                                .error(R.drawable.ic_box).into(imgPhotoEd)
+                        }
+                    }catch (e: Error){
+
+                    }
+                }
+            }
+        })
     }
 
     private fun getDataForSpinners(value: Int){
@@ -172,7 +212,11 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
         val request = Request.Builder().url(Constants.URL_CLASIFICACION).post(builder).build()
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {}
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    progress.dismiss()
+                }
+            }
 
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
@@ -229,12 +273,16 @@ class EditIncidenciaActivity : AppCompatActivity() {
         val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread { snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR) }
+                runOnUiThread {
+                    progress.dismiss()
+                    snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR)
+                }
             }
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("INC", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
                             val j = jsonRes.getJSONArray("Datos").getJSONObject(0)

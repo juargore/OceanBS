@@ -277,7 +277,6 @@ class CreateIncidenciaActivity : AppCompatActivity() {
 
     }
 
-
     private fun validateFullFields(): Boolean {
         val msg = "Este campo no puede estar vacío"
         return when {
@@ -308,7 +307,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         if(spinner1a.selectedItemPosition > 0)
             valor1a = listSpinner1a[spinner1a.selectedItemPosition-1].Id
 
-        val builder = FormBody.Builder()
+        /*val builder = FormBody.Builder()
             .add("WebService","GuardaIncidencia")
             .add("Id", "") // empty if new
             .add("Status", "1")
@@ -320,9 +319,39 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             .add("IdValorClasif3", valor1a)
             .add("FallaReportada", etFallaReportadaI.text.toString())
             .add("FallaReal", etFallaRealI.text.toString())
+            .add("Fotografia1", "")
+            .build()*/
+
+        val bitmapPhoto1 = imgPhoto.drawable.toBitmap()
+        val stream1 = ByteArrayOutputStream()
+        bitmapPhoto1.compress(Bitmap.CompressFormat.JPEG, 50, stream1)
+        val byteArray1 = stream1.toByteArray()
+
+        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg")
+
+        val requestBody : RequestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("WebService","GuardaIncidencia")
+            .addFormDataPart("Id", "") // empty if new | else -> ID
+            .addFormDataPart("Status", "1")
+            .addFormDataPart("Observaciones", etObservacionesI.text.toString())
+            .addFormDataPart("IdColaboradorAlta", userId)
+            .addFormDataPart("IdSolicitudAG", idSolicitud)
+            .addFormDataPart("IdValorClasif1", valor3m)
+            .addFormDataPart("IdValorClasif2", valor6m)
+            .addFormDataPart("IdValorClasif3", valor1a)
+            .addFormDataPart("FallaReportada", etFallaReportadaI.text.toString())
+            .addFormDataPart("FallaReal", etFallaRealI.text.toString())
+            .addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
             .build()
 
-        val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
+
+        val request = Request.Builder()
+            .url(Constants.URL_INCIDENCIAS)
+            .post(requestBody)
+            .build()
+
+        //val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {

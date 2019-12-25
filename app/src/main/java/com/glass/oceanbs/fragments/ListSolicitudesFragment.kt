@@ -149,6 +149,7 @@ class ListSolicitudesFragment : Fragment() {
         val builder = FormBody.Builder()
             .add("WebService","ConsultaSolicitudesAGIdUsuario")
             .add("IdUsuario", userId)
+            .add("FechaAlta", fecha)
             .add("EsColaborador", "1")
             .build()
 
@@ -166,7 +167,7 @@ class ListSolicitudesFragment : Fragment() {
                         else{
 
                             // create solicitud object and iterate json array
-                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
+                            //snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
 
                             val arraySolicitud = jsonRes.getJSONArray("Datos")
                             listSolicitudes.clear()

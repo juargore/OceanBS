@@ -73,8 +73,7 @@
                 android:background="@drawable/bottom_line_edittext"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:padding="8dp"
-                android:text="ACG" />
+                android:padding="8dp" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -92,8 +91,7 @@
                 android:background="@drawable/bottom_line_edittext"
                 android:ems="10"
                 android:inputType="number"
-                android:padding="8dp"
-                android:text="3221887546" />
+                android:padding="8dp" />
 
             <TextView
                 android:id="@+id/textView2"
