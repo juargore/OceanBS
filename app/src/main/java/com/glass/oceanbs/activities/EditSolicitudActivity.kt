@@ -121,7 +121,11 @@ class EditSolicitudActivity : AppCompatActivity() {
         builder.setView(dialogView)
         progress = builder.create()
 
-        getCurrentSolicitud()
+        if(Constants.internetConnected(this)){
+            getCurrentSolicitud()
+        } else
+            Constants.showPopUpNoInternet(this)
+        //getCurrentSolicitud()
     }
 
     private fun getCurrentSolicitud(){

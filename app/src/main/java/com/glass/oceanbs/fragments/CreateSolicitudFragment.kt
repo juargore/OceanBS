@@ -80,7 +80,11 @@ class CreateSolicitudFragment : Fragment() {
         StrictMode.setThreadPolicy(policy)
 
         initComponents(rootView)
-        getSuggestedCode()
+        if(Constants.internetConnected(activity!!)){
+            getSuggestedCode()
+        } else
+            Constants.showPopUpNoInternet(activity!!)
+        //getSuggestedCode()
 
         return rootView
     }
@@ -91,7 +95,7 @@ class CreateSolicitudFragment : Fragment() {
 
         layParentN = view.findViewById(R.id.layParentN)
         etCodigoN = view.findViewById(R.id.etCodigoN)
-        spinDesarrolloN = view.findViewById(R.id.spinDesarrolloN)
+        spinDesarrolloN = view.findViewById<Spinner>(R.id.spinDesarrolloN)
         spinUnidadN = view.findViewById(R.id.spinUnidadN)
         etPropietarioN = view.findViewById(R.id.etPropietarioN)
         chckBoxReportaN = view.findViewById(R.id.chckBoxReporta)

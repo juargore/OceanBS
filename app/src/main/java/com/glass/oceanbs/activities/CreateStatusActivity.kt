@@ -144,8 +144,14 @@ class CreateStatusActivity : AppCompatActivity() {
         builder.setView(dialogView)
         progress = builder.create()
 
-        setListeners()
-        getDataForSpinners()
+        if(Constants.internetConnected(this)){
+            setListeners()
+            getDataForSpinners()
+        } else
+            Constants.showPopUpNoInternet(this)
+
+        //setListeners()
+        //getDataForSpinners()
     }
 
     private fun setListeners(){

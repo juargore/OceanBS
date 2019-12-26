@@ -100,7 +100,11 @@ class ListIncidenciasActivity : AppCompatActivity() {
 
         imgBackIncidencias.setOnClickListener { this.finish() }
 
-        getIncidencias()
+        if(Constants.internetConnected(this)){
+            getIncidencias()
+        } else
+            Constants.showPopUpNoInternet(this)
+        //getIncidencias()
     }
 
     private fun getIncidencias(){

@@ -161,9 +161,16 @@ class EditIncidenciaActivity : AppCompatActivity() {
                 sendDataToServer()
         }
 
-        getDataForSpinners(1)
+        if(Constants.internetConnected(this)){
+            getDataForSpinners(1)
+            getPhotoIncidencia()
+            getIncidencia()
+        } else
+            Constants.showPopUpNoInternet(this)
+
+        /*getDataForSpinners(1)
         getPhotoIncidencia()
-        getIncidencia()
+        getIncidencia()*/
     }
 
     private fun getPhotoIncidencia(){
@@ -702,7 +709,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
 
     private fun showDeleteDialog(view: View, idStatus: String){
         alert(resources.getString(R.string.msg_confirm_deletion),
-            "Eliminar Status de Incidencia")
+            "")
         {
             positiveButton(resources.getString(R.string.accept)) {
                 deleteStatusRegistro(view, idStatus)

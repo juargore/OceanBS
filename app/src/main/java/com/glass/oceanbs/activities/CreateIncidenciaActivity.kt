@@ -157,7 +157,11 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                 sendDataToServer()
         }
 
-        getDataForSpinners(1)
+        if(Constants.internetConnected(this)){
+            getDataForSpinners(1)
+        } else
+            Constants.showPopUpNoInternet(this)
+        //getDataForSpinners(1)
     }
 
     private fun getDataForSpinners(value: Int){
@@ -618,7 +622,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
 
     private fun showDeleteDialog(view: View, idStatus: String){
         alert(resources.getString(R.string.msg_confirm_deletion),
-            "Eliminar Status de Incidencia")
+            "")
         {
             positiveButton(resources.getString(R.string.accept)) {
                 deleteStatusRegistro(view, idStatus)

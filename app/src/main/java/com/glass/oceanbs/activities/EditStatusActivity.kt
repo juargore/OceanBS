@@ -156,8 +156,14 @@ class EditStatusActivity : AppCompatActivity() {
         txtTitleER.text = "$desarrollo $codigoUnidad"
         txtSubTitleER.text = persona
 
-        setListeners()
-        getDataForSpinners()
+        if(Constants.internetConnected(this)){
+            setListeners()
+            getDataForSpinners()
+        } else
+            Constants.showPopUpNoInternet(this)
+
+        //setListeners()
+        //getDataForSpinners()
     }
 
     private fun setListeners(){
@@ -171,7 +177,19 @@ class EditStatusActivity : AppCompatActivity() {
         txtShowPhoto2ER.setOnClickListener { showPopPhoto(2) }
         txtShowPhoto3ER.setOnClickListener { showPopPhoto(3) }
 
-        btnUpdateStatusER.setOnClickListener { sendDataToServer() }
+        btnUpdateStatusER.setOnClickListener {
+            when {
+                spinnerRegistraER.selectedItemPosition == 0 -> {
+                    snackbar(applicationContext, layParentER, "El colaborador que registra es obligatorio", Constants.Types.ERROR)
+                }
+                spinnerAtiendeER.selectedItemPosition == 0 -> {
+                    snackbar(applicationContext, layParentER, "El colaborador que atiende es obligatorio", Constants.Types.ERROR)
+                }
+                else -> {
+                    sendDataToServer()
+                }
+            }
+        }
     }
 
     private fun getDataForSpinners(){
@@ -427,7 +445,7 @@ class EditStatusActivity : AppCompatActivity() {
 
                         if(jsonRes.getInt("Error") == 0){
 
-                            snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
+                            snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshIncidencias(applicationContext, true)
                             Constants.updateRefreshStatus(applicationContext, true)
 

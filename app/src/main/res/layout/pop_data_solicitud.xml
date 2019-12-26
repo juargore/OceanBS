@@ -173,7 +173,10 @@
             android:layout_height="35dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/rectangle_blue_button"
-            android:text="Agregar Incidencias"
+            android:drawableLeft="@drawable/ic_add_small"
+            android:drawablePadding="-15dp"
+            android:paddingLeft="15dp"
+            android:text="Nueva Incidencia"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -183,6 +186,6 @@
             android:text="Salir sin agregar Incidencias"
             android:textAlignment="center"
             android:textColor="@color/colorAccent"
-            android:textSize="16sp" />
+            android:textSize="17sp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

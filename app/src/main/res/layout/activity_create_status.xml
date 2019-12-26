@@ -427,8 +427,7 @@
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/rectangle_blue_button"
                 android:text="Guardar Status de Incidencia"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
+                android:textColor="@android:color/white" />
         </LinearLayout>
     </ScrollView>
 
