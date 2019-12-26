@@ -1,4 +1,4 @@
-@file:Suppress("SpellCheckingInspection", "DEPRECATION", "PrivatePropertyName")
+@file:Suppress("SpellCheckingInspection", "DEPRECATION", "PrivatePropertyName", "LocalVariableName")
 
 package com.glass.oceanbs.activities
 
@@ -290,7 +290,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun sendDataToServer(){
         progress.show()
-        titleProgress.text = "Enviando Información"
+        titleProgress.text = "Enviando información"
 
         val userId = Constants.getUserId(this)
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
@@ -306,21 +306,6 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         var valor1a = ""
         if(spinner1a.selectedItemPosition > 0)
             valor1a = listSpinner1a[spinner1a.selectedItemPosition-1].Id
-
-        /*val builder = FormBody.Builder()
-            .add("WebService","GuardaIncidencia")
-            .add("Id", "") // empty if new
-            .add("Status", "1")
-            .add("Observaciones", etObservacionesI.text.toString())
-            .add("IdColaboradorAlta", userId)
-            .add("IdSolicitudAG", idSolicitud)
-            .add("IdValorClasif1", valor3m)
-            .add("IdValorClasif2", valor6m)
-            .add("IdValorClasif3", valor1a)
-            .add("FallaReportada", etFallaReportadaI.text.toString())
-            .add("FallaReal", etFallaRealI.text.toString())
-            .add("Fotografia1", "")
-            .build()*/
 
         val bitmapPhoto1 = imgPhoto.drawable.toBitmap()
         val stream1 = ByteArrayOutputStream()

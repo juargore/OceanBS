@@ -115,7 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="sans-serif-light"
-                        android:text="Fotografía"
+                        android:text="@string/fotografia"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
@@ -251,6 +251,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 android:weightSum="2">
 
                 <LinearLayout
@@ -323,7 +324,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
-                    android:text="Falla reportada"
+                    android:text="Falla Reportada"
                     android:textColor="@color/colorBlack"
                     android:textStyle="bold" />
 
@@ -340,13 +341,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/textView40"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Falla real" />
+                    android:text="Falla Real" />
 
                 <EditText
                     android:id="@+id/etFallaRealEdI"

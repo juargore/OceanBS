@@ -313,7 +313,7 @@ class EditSolicitudActivity : AppCompatActivity() {
         val unidadesList: ArrayList<String> = ArrayList()
 
         for (i in listUnidades)
-            unidadesList.add(i.Nombre)
+            unidadesList.add(i.Codigo)
 
         unidadesList.add(0, "Seleccionar")
         val adapterUnidad = ArrayAdapter(applicationContext, R.layout.spinner_text, unidadesList)
@@ -436,7 +436,7 @@ class EditSolicitudActivity : AppCompatActivity() {
     private fun sendDataToServer(){
         progress.show()
         progress.setCancelable(false)
-        titleProgress.text = "Enviando Información"
+        titleProgress.text = "Enviando información"
 
         val reporta : Int = if(chckBoxReporta.isChecked){1}else{0}
         userId = Constants.getUserId(this)

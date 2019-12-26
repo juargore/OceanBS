@@ -328,8 +328,8 @@ class EditStatusActivity : AppCompatActivity() {
             .networkPolicy(NetworkPolicy.NO_CACHE)
             .error(R.drawable.ic_box).into(imgPhoto3ER)
 
-        etAltaE.setText(cStatus.FechaAlta)
-        etModifER.setText(cStatus.FechaUltimaModif)
+        //etAltaE.setText(cStatus.FechaAlta)
+        //etModifER.setText(cStatus.FechaUltimaModif)
         etObservacionesER.setText(cStatus.Observaciones)
 
         fillSpinners()
@@ -364,7 +364,7 @@ class EditStatusActivity : AppCompatActivity() {
     private fun sendDataToServer(){
         progress.show()
         progress.setCancelable(false)
-        titleProgress.text = "Enviando Información"
+        titleProgress.text = "Enviando información"
 
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
 

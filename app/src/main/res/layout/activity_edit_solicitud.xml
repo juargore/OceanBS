@@ -437,8 +437,8 @@
                     android:gravity="top|left"
                     android:inputType="textMultiLine"
                     android:lines="4"
-                    android:maxLines="4"
-                    android:minLines="4"
+                    android:maxLines="3"
+                    android:minLines="3"
                     android:singleLine="false" />
 
                 <Button

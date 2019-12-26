@@ -59,7 +59,7 @@
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/welcome"
                 android:textAlignment="center"
                 android:textColor="@color/colorBlack"
@@ -79,7 +79,8 @@
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="-4dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/user_code"
                 android:textColor="@color/colorDarkGray" />
 
@@ -97,6 +98,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="-4dp"
                 android:layout_marginBottom="20dp"
                 android:text="@string/phone_number"
                 android:textColor="@color/colorDarkGray" />
@@ -115,7 +117,7 @@
                 android:id="@+id/btnLogIn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="25dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/rectangle_blue_button"
                 android:text="@string/log_in"
                 android:textColor="@android:color/white"
@@ -128,6 +130,14 @@
                 android:text="@string/ocean_software"
                 android:textAlignment="center"
                 android:textColor="@color/colorDarkGray"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/txtVersion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textAlignment="center"
                 android:textSize="12sp" />
         </LinearLayout>
     </ScrollView>

@@ -313,11 +313,10 @@ class EditIncidenciaActivity : AppCompatActivity() {
     }
 
     private fun fillData(){
-
-        etFechaAltaEdI.setText(cIncidencia.FechaAlta)
-        etFechaModifEdI.setText(cIncidencia.FechaUltimaModif)
+        //etFechaAltaEdI.setText(cIncidencia.FechaAlta)
+        //etFechaModifEdI.setText(cIncidencia.FechaUltimaModif)
         etFallaRealEdI.setText(cIncidencia.FallaReal)
-        etFallaReportadaEdI.setText(cIncidencia.FallaReportada)
+        //etFallaReportadaEdI.setText(cIncidencia.FallaReportada)
         etObservacionesEdI.setText(cIncidencia.Observaciones)
     }
 
@@ -429,7 +428,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun sendDataToServer(){
         progress.show()
-        titleProgress.text = "Enviando Información"
+        titleProgress.text = "Enviando información"
 
         val userId = Constants.getUserId(this)
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()

@@ -3,7 +3,7 @@
     <string name="crecento_group">Grupo Crecento</string>
 
     <!-- Strings for Login Activity -->
-    <string name="welcome">CRECENTO\nPOSTVenta App\nBienvenido</string>
+    <string name="welcome">Grupo Crecento\nPOSTVenta App\nBienvenido</string>
     <string name="user_code">Código del Colaborador / Propietario</string>
     <string name="phone_number">Teléfono Móvil</string>
     <string name="remember_credentials">Recordar credenciales</string>
@@ -22,5 +22,9 @@
         Servidor.\n\nPor favor connecte el dispositivo a una red e intente de nuevo</string>
 
     <string name="bitacora"><u>Bitácora Status de Incidencia</u></string>
+    <string name="fotografia"><u>Fotografía</u></string>
+    <string name="fotografia1"><u>Fotografía1</u></string>
+    <string name="fotografia2"><u>Fotografía2</u></string>
+    <string name="fotografia3"><u>Fotografía3</u></string>
 
 </resources>

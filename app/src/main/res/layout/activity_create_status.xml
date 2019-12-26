@@ -115,7 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="sans-serif-light"
-                        android:text="Fotografía 1"
+                        android:text="@string/fotografia1"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
@@ -156,7 +156,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="sans-serif-light"
-                        android:text="Fotografía 2"
+                        android:text="@string/fotografia2"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
@@ -195,7 +195,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="sans-serif-light"
-                        android:text="Fotografía 3"
+                        android:text="@string/fotografia3"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />

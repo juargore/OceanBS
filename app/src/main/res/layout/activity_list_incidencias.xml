@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginBottom="7dp"
-            android:text="Sin Incidencias!"
+            android:text="Sin Incidencias"
             android:textAlignment="center"
             android:textColor="@color/colorPrimary"
             android:textSize="15sp"

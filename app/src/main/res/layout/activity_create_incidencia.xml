@@ -115,7 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="sans-serif-light"
-                        android:text="Fotografía"
+                        android:text="@string/fotografia"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
@@ -342,7 +342,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/textView40"

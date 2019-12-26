@@ -44,7 +44,7 @@ class ShortSolicitudAdapter(private val context: Context,
         fun setData(position: Int, shortSolicitud: ShortSolicitud, eventItemClick: InterfaceOnClick, eventItemLongClick: InterfaceOnLongClick){
 
             itemView.txtNombreDesarrolloS.text = shortSolicitud.NombreDesarrollo
-            itemView.txtNombrePRS.text = shortSolicitud.NombrePR
+            itemView.txtNombrePRS.text = shortSolicitud.NombrePropietario
             itemView.txtCodigoUnidadS.text = shortSolicitud.CodigoUnidad
             itemView.txtFechaAltaS.text = "Fecha: ${shortSolicitud.FechaAlta}"
 

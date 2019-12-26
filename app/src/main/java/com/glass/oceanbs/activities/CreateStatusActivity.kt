@@ -159,7 +159,19 @@ class CreateStatusActivity : AppCompatActivity() {
         txtShowPhoto2.setOnClickListener { showPopPhoto(2) }
         txtShowPhoto3.setOnClickListener { showPopPhoto(3) }
 
-        btnSaveStatusR.setOnClickListener { sendDataToServer() }
+        btnSaveStatusR.setOnClickListener {
+            when {
+                spinnerRegistraR.selectedItemPosition == 0 -> {
+                    snackbar(applicationContext, layParentR, "El colaborador que registra es obligatorio", Constants.Types.ERROR)
+                }
+                spinnerAtiendeR.selectedItemPosition == 0 -> {
+                    snackbar(applicationContext, layParentR, "El colaborador que atiende es obligatorio", Constants.Types.ERROR)
+                }
+                else -> {
+                    sendDataToServer()
+                }
+            }
+        }
     }
 
     private fun getDataForSpinners(){
@@ -258,7 +270,7 @@ class CreateStatusActivity : AppCompatActivity() {
     private fun sendDataToServer(){
         progress.show()
         progress.setCancelable(false)
-        titleProgress.text = "Enviando Información"
+        titleProgress.text = "Enviando información"
 
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
 

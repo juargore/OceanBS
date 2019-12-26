@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.StrictMode
 import android.text.Html
@@ -44,7 +45,7 @@ class LoginActivity : AppCompatActivity()  {
         initComponents()
     }
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "SetTextI18n")
     private fun initComponents(){
         parentLayout = findViewById(R.id.parentLayoutLogin)
         etCode = findViewById(R.id.etCode)
@@ -58,6 +59,10 @@ class LoginActivity : AppCompatActivity()  {
 
         builder.setView(dialogView)
         progress = builder.create()
+
+        packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES).apply {
+            findViewById<TextView>(R.id.txtVersion).text = "versión $versionName"
+        }
 
         setListeners()
     }

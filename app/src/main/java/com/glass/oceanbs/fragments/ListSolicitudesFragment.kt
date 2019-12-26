@@ -314,7 +314,7 @@ class ListSolicitudesFragment : Fragment() {
                             progress.dismiss()
                             snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             listSolicitudes.clear()
-                            getSolicitudesByDate("")
+                            getSolicitudesByDate(today)
                         }
                     } catch (e: java.lang.Error){
                         progress.dismiss()

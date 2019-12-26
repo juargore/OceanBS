@@ -307,7 +307,7 @@ class CreateSolicitudFragment : Fragment() {
         val unidadesList: ArrayList<String> = ArrayList()
 
         for (i in listUnidades)
-            unidadesList.add(i.Nombre)
+            unidadesList.add(i.Codigo)
 
         unidadesList.add(0, "Seleccionar")
         val adapterUnidad = ArrayAdapter(context!!, R.layout.spinner_text, unidadesList)
@@ -387,7 +387,7 @@ class CreateSolicitudFragment : Fragment() {
     private fun sendDataToServer(){
         progress.show()
         progress.setCancelable(false)
-        titleProgress.text = "Enviando Información"
+        titleProgress.text = "Enviando información"
 
         val reporta : Int = if(chckBoxReportaN.isChecked){1}else{0}
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
@@ -465,8 +465,8 @@ class CreateSolicitudFragment : Fragment() {
         //unidad.text = "Unidad ${spinUnidadN.selectedItem}"
         unidad.text = "Unidad ${listUnidades[spinUnidadN.selectedItemPosition-1].Codigo}"
         fecha.text = "Entregado: ${listUnidades[spinUnidadN.selectedItemPosition-1].extra1}"
-        propietario.text = "Propietario ${etPropietarioN.text}"
-        celular.text = "Celular ${etTelMovilN.text}"
+        propietario.text = "Propietario\n${etPropietarioN.text}"
+        celular.text = "${etTelMovilN.text}"
         email.text = etEmailN.text.toString()
 
         val btnAdd = dialog.findViewById<Button>(R.id.btnAddIncidencias)
@@ -490,6 +490,7 @@ class CreateSolicitudFragment : Fragment() {
             intent.putExtra("solicitudId", solicitudId)
             intent.putExtra("desarrollo", spinDesarrolloN.selectedItem.toString())
             intent.putExtra("persona", etReportaN.text.toString())
+            intent.putExtra("codigoUnidad", listUnidades[spinUnidadN.selectedItemPosition-1].Codigo)
             startActivity(intent)
         }
 
@@ -501,6 +502,7 @@ class CreateSolicitudFragment : Fragment() {
         super.setUserVisibleHint(isVisibleToUser)
         if(view != null){
             if(isVisibleToUser){
+                etObservacionesN.setText("")
                 val ft = fragmentManager?.beginTransaction()
                 ft?.detach(this)?.attach(this)?.commit()
             }
