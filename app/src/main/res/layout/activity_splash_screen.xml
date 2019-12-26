@@ -11,7 +11,7 @@
 
     <ImageView
         android:id="@+id/imgCenter"
-        android:layout_width="180dp"
+        android:layout_width="160dp"
         android:layout_height="180dp"
         android:layout_marginBottom="5dp"
         app:srcCompat="@drawable/logo_ocean_bs" />
