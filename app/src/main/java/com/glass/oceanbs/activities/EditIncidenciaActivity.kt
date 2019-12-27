@@ -8,6 +8,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -41,6 +42,7 @@ import okhttp3.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.textColor
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -89,6 +91,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
     private var persona = ""
     private var desarrollo = ""
     private var codigoUnidad = ""
+    private var defaultImage = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -167,10 +170,6 @@ class EditIncidenciaActivity : AppCompatActivity() {
             getIncidencia()
         } else
             Constants.showPopUpNoInternet(this)
-
-        /*getDataForSpinners(1)
-        getPhotoIncidencia()
-        getIncidencia()*/
     }
 
     private fun getPhotoIncidencia(){
@@ -193,8 +192,11 @@ class EditIncidenciaActivity : AppCompatActivity() {
                 runOnUiThread {
                     try {
                         val jRes = JSONObject(response.body()!!.string())
+                        Log.e("FOTO", jRes.toString())
 
                         if(jRes.getInt("Error") == 0){
+                            defaultImage = jRes.getString("Fotografia").replace(" ","") == ""
+
                             Picasso.get().load("${Constants.URL_IMAGES_STATUS}${jRes.getString("Fotografia")}")
                                 .placeholder(resources.getDrawable(R.drawable.ic_loading))
                                 .memoryPolicy(MemoryPolicy.NO_CACHE )
@@ -322,8 +324,8 @@ class EditIncidenciaActivity : AppCompatActivity() {
     private fun fillData(){
         //etFechaAltaEdI.setText(cIncidencia.FechaAlta)
         //etFechaModifEdI.setText(cIncidencia.FechaUltimaModif)
-        etFallaRealEdI.setText(cIncidencia.FallaReal)
-        //etFallaReportadaEdI.setText(cIncidencia.FallaReportada)
+        //etFallaRealEdI.setText(cIncidencia.FallaReal)
+        etFallaReportadaEdI.setText(cIncidencia.FallaReportada)
         etObservacionesEdI.setText(cIncidencia.Observaciones)
     }
 
@@ -452,21 +454,37 @@ class EditIncidenciaActivity : AppCompatActivity() {
         if(spinner1aEd.selectedItemPosition > 0)
             valor1a = listSpinner1a[spinner1aEd.selectedItemPosition-1].Id
 
-        val builder = FormBody.Builder()
-            .add("WebService","GuardaIncidencia")
-            .add("Id", cIncidencia.Id) // empty if new | else -> ID
-            .add("Status", "1")
-            .add("Observaciones", etObservacionesEdI.text.toString())
-            .add("IdColaboradorAlta", userId)
-            .add("IdSolicitudAG", idSolicitud)
-            .add("IdValorClasif1", valor3m)
-            .add("IdValorClasif2", valor6m)
-            .add("IdValorClasif3", valor1a)
-            .add("FallaReportada", etFallaReportadaEdI.text.toString())
-            .add("FallaReal", etFallaRealEdI.text.toString())
-            .build()
+        val bitmapPhoto1 = imgPhotoEd.drawable.toBitmap()
+        val stream1 = ByteArrayOutputStream()
+        bitmapPhoto1.compress(Bitmap.CompressFormat.JPEG, 50, stream1)
+        val byteArray1 = stream1.toByteArray()
 
-        val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
+        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg")
+
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("WebService","GuardaIncidencia")
+            .addFormDataPart("Id", cIncidencia.Id) // empty if new | else -> ID
+            .addFormDataPart("Status", "1")
+            .addFormDataPart("Observaciones", etObservacionesEdI.text.toString())
+            .addFormDataPart("IdColaboradorAlta", userId)
+            .addFormDataPart("IdSolicitudAG", idSolicitud)
+            .addFormDataPart("IdValorClasif1", valor3m)
+            .addFormDataPart("IdValorClasif2", valor6m)
+            .addFormDataPart("IdValorClasif3", valor1a)
+            .addFormDataPart("FallaReportada", etFallaReportadaEdI.text.toString())
+            .addFormDataPart("FallaReal", etFallaRealEdI.text.toString())
+
+        if(defaultImage){
+            requestBody.addFormDataPart("Fotografia1", "")
+            Log.e("--","No se envio la imagen")
+        } else {
+            requestBody.addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
+            Log.e("--","Si se envio la imagen")
+        }
+
+
+        val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(requestBody.build()).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
@@ -477,7 +495,6 @@ class EditIncidenciaActivity : AppCompatActivity() {
                         if(jsonRes.getInt("Error") == 0){
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshIncidencias(applicationContext, true)
-                            //showSuccessDialog()
                             getStatus()
                         } else
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
@@ -566,6 +583,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
                     imgPhotoEd.setImageBitmap(bitmap)
+                    defaultImage = false
 
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -579,6 +597,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
             if (file.exists()) {
                 val uriImage = Uri.fromFile(File(mCameraFileName))
                 imgPhotoEd.setImageURI(uriImage)
+                defaultImage = false
             }
         }
     }

@@ -468,7 +468,7 @@ class CreateSolicitudFragment : Fragment() {
         direccion.text = listDesarrollos[spinDesarrolloN.selectedItemPosition-1].extra1
         //unidad.text = "Unidad ${spinUnidadN.selectedItem}"
         unidad.text = "Unidad ${listUnidades[spinUnidadN.selectedItemPosition-1].Codigo}"
-        fecha.text = "Entregado: ${listUnidades[spinUnidadN.selectedItemPosition-1].extra1}"
+        fecha.text = "Entregada: ${listUnidades[spinUnidadN.selectedItemPosition-1].extra1}"
         propietario.text = "Propietario\n${etPropietarioN.text}"
         celular.text = "${etTelMovilN.text}"
         email.text = etEmailN.text.toString()
@@ -506,11 +506,16 @@ class CreateSolicitudFragment : Fragment() {
         super.setUserVisibleHint(isVisibleToUser)
         if(view != null){
             if(isVisibleToUser){
+
                 etObservacionesN.setText("")
+                etPropietarioN.error = null
+                etReportaN.error = null
+                etTelMovilN.error = null
+                etEmailN.error = null
+
                 val ft = fragmentManager?.beginTransaction()
                 ft?.detach(this)?.attach(this)?.commit()
             }
         }
     }
-
 }

@@ -86,6 +86,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
     private var persona = ""
     private var desarrollo = ""
     private var codigoUnidad = ""
+    private var defaultImage = true
 
     companion object {
         private const val IMAGE_DIRECTORY = "/demonuts"
@@ -318,7 +319,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
 
         val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg")
 
-        val requestBody : RequestBody = MultipartBody.Builder()
+        val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("WebService","GuardaIncidencia")
             .addFormDataPart("Id", "") // empty if new | else -> ID
@@ -331,16 +332,16 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             .addFormDataPart("IdValorClasif3", valor1a)
             .addFormDataPart("FallaReportada", etFallaReportadaI.text.toString())
             .addFormDataPart("FallaReal", etFallaRealI.text.toString())
-            .addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
-            .build()
 
+        if(defaultImage)
+            requestBody.addFormDataPart("Fotografia1", "")
+        else
+            requestBody.addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
 
         val request = Request.Builder()
             .url(Constants.URL_INCIDENCIAS)
-            .post(requestBody)
+            .post(requestBody.build())
             .build()
-
-        //val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
@@ -442,6 +443,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
                     imgPhoto.setImageBitmap(bitmap)
+                    defaultImage = false
 
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -455,6 +457,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             if (file.exists()) {
                 val uriImage = Uri.fromFile(File(mCameraFileName))
                 imgPhoto.setImageURI(uriImage)
+                defaultImage = false
 
                 //val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
                 //mCameraFileName = saveImage(bitmap)

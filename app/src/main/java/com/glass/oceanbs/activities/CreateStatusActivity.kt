@@ -84,6 +84,10 @@ class CreateStatusActivity : AppCompatActivity() {
     private var desarrollo = ""
     private var codigoUnidad = ""
 
+    private var defaultImage1 = true
+    private var defaultImage2 = true
+    private var defaultImage3 = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_status)
@@ -307,25 +311,36 @@ class CreateStatusActivity : AppCompatActivity() {
             idColaborador2 = listColaboradores2[spinnerRegistraR.selectedItemPosition-1].Id
 
         //val requestBody : RequestBody
-        val requestBody : RequestBody = MultipartBody.Builder()
+        val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("WebService","GuardaStatusIncidencia")
             .addFormDataPart("Id", "") // empty if new | else -> ID
             .addFormDataPart("Status", "1")
             .addFormDataPart("Observaciones", etObservacionesR.text.toString())
             .addFormDataPart("IdIncidencia", incidenciaId)
-            .addFormDataPart("IdColaborador1", idColaborador1)
-            .addFormDataPart("IdColaborador2", idColaborador2)
+            .addFormDataPart("IdColaborador1", idColaborador2)
+            .addFormDataPart("IdColaborador2", idColaborador1)
             .addFormDataPart("StatusIncidencia", spinnerStatusR.selectedItemPosition.toString())
-            .addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
-            .addFormDataPart("Fotografia2", "image2.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray2))
-            .addFormDataPart("Fotografia3", "image3.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray3))
-            .build()
+
+        if(defaultImage1)
+            requestBody.addFormDataPart("Fotografia1", "")
+        else
+            requestBody.addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
+
+        if(defaultImage2)
+            requestBody.addFormDataPart("Fotografia2", "")
+        else
+            requestBody.addFormDataPart("Fotografia2", "image2.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray2))
+
+        if(defaultImage3)
+            requestBody.addFormDataPart("Fotografia3", "")
+        else
+            requestBody.addFormDataPart("Fotografia3", "image3.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray3))
 
 
         val request = Request.Builder()
             .url(Constants.URL_INCIDENCIAS)
-            .post(requestBody)
+            .post(requestBody.build())
             .build()
 
         client.newCall(request).enqueue(object : Callback {
@@ -339,7 +354,7 @@ class CreateStatusActivity : AppCompatActivity() {
 
                         if(jsonRes.getInt("Error") == 0){
 
-                            snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
+                            snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshIncidencias(applicationContext, true)
                             Constants.updateRefreshStatus(applicationContext, true)
 
@@ -460,9 +475,9 @@ class CreateStatusActivity : AppCompatActivity() {
                     val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
 
                     when(SELECTED){
-                        1->{imgPhoto1.setImageBitmap(bitmap)}
-                        2->{imgPhoto2.setImageBitmap(bitmap)}
-                        else->{imgPhoto3.setImageBitmap(bitmap)}
+                        1->{imgPhoto1.setImageBitmap(bitmap); defaultImage1 = false}
+                        2->{imgPhoto2.setImageBitmap(bitmap); defaultImage2 = false}
+                        else->{imgPhoto3.setImageBitmap(bitmap); defaultImage3 = false}
                     }
 
                 } catch (e: IOException) {
@@ -477,19 +492,19 @@ class CreateStatusActivity : AppCompatActivity() {
                     val file = File(mCameraFileName1)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName1))
-                        imgPhoto1.setImageURI(uriImage) }
+                        imgPhoto1.setImageURI(uriImage); defaultImage1 = false }
                 }
                 2->{
                     val file = File(mCameraFileName2)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName2))
-                        imgPhoto2.setImageURI(uriImage) }
+                        imgPhoto2.setImageURI(uriImage); defaultImage2 = false }
                 }
                 else->{
                     val file = File(mCameraFileName3)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName3))
-                        imgPhoto3.setImageURI(uriImage) }
+                        imgPhoto3.setImageURI(uriImage); defaultImage3 = false }
                 }
             }
         }

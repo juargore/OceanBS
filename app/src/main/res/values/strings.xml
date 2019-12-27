@@ -17,9 +17,8 @@
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
 
-    <string name="title_no_internet">Sin internet</string>
-    <string name="desc_no_internet">La App necesita conectarse a internet para poder descargar la última información del
-        Servidor.\n\nPor favor connecte el dispositivo a una red e intente de nuevo</string>
+    <string name="title_no_internet">La aplicación requiere internet para su operación.</string>
+    <string name="desc_no_internet">Por favor, verifique su conexión a internet a través de una red de wifi o la activación datos móviles e intente nuevamente.</string>
 
     <string name="bitacora"><u>Bitácora Status de Incidencia</u></string>
     <string name="fotografia"><u>Fotografía</u></string>
