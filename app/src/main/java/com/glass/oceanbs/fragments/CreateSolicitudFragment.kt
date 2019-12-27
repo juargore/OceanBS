@@ -84,7 +84,6 @@ class CreateSolicitudFragment : Fragment() {
             getSuggestedCode()
         } else
             Constants.showPopUpNoInternet(activity!!)
-        //getSuggestedCode()
 
         return rootView
     }
@@ -337,19 +336,10 @@ class CreateSolicitudFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun fillDataAccordingCheck(){
         if(chckBoxReportaN.isChecked){
-            //etReportaN.isEnabled = false
             etReportaN.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
-
-            //etTelMovilN.isEnabled = false
             etTelMovilN.setText(cPropietario.telMovil)
-
-            //etTelParticularN.isEnabled = false
             etTelParticularN.setText(cPropietario.telParticular)
-
-            //etEmailN.isEnabled = false
             etEmailN.setText(cPropietario.correoElecP)
-
-            //spinRelacionN.isEnabled = false
             spinRelacionN.setSelection(0)
         } else{
             resetAllEdittext()
@@ -359,15 +349,10 @@ class CreateSolicitudFragment : Fragment() {
     // reset values in each edittext below
     private fun resetAllEdittext(){
         etReportaN.setText("")
-        //etReportaN.isEnabled = true
         etTelMovilN.setText("")
-        //etTelMovilN.isEnabled = true
         etTelParticularN.setText("")
-        //etTelParticularN.isEnabled = true
         etEmailN.setText("")
-        //etEmailN.isEnabled = true
         spinRelacionN.setSelection(0)
-        //spinRelacionN.isEnabled = true
         chckBoxReportaN.isChecked = false
     }
 

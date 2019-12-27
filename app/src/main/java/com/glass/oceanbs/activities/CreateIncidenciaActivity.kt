@@ -613,7 +613,8 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                showDeleteDialog(layParentIn, listRegistroStatus[pos].Id)
+                if(user.colaborador)
+                    showDeleteDialog(layParentIn, listRegistroStatus[pos].Id)
             }
         })
 

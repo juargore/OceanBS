@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.text.Html
 import android.text.TextUtils
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
@@ -98,6 +99,7 @@ class LoginActivity : AppCompatActivity()  {
                 runOnUiThread {
                     try{
                         val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("LOGIN", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") > 0)
                             snackbar(applicationContext, parentLayout, jsonRes.getString("Mensaje"), Constants.Types.ERROR)

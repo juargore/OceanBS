@@ -18,6 +18,7 @@ import android.os.StrictMode
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -27,6 +28,7 @@ import androidx.core.graphics.drawable.toBitmap
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
+import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Status
 import com.squareup.picasso.MemoryPolicy
@@ -165,9 +167,6 @@ class EditStatusActivity : AppCompatActivity() {
             getDataForSpinners()
         } else
             Constants.showPopUpNoInternet(this)
-
-        //setListeners()
-        //getDataForSpinners()
     }
 
     private fun setListeners(){
@@ -385,7 +384,26 @@ class EditStatusActivity : AppCompatActivity() {
                 break
             }
         }
+
+
+        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this))
+
+        if(!user.colaborador)
+            disableFieldsIfPropietario()
     }
+
+    private fun disableFieldsIfPropietario(){
+        cardPhoto1ER.isEnabled = false
+        cardPhoto2ER.isEnabled = false
+        cardPhoto3ER.isEnabled = false
+
+        spinnerStatusER.isEnabled = false
+        spinnerAtiendeER.isEnabled = false
+        etObservacionesER.isEnabled = false
+
+        btnUpdateStatusER.visibility = View.GONE
+    }
+
 
     @SuppressLint("SetTextI18n")
     @Suppress("LocalVariableName", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
