@@ -3,8 +3,9 @@
 package com.glass.oceanbs.models
 
 data class User (
-    var id: String,
-    var colaborador: Boolean,
+    var tipoUsuario: Int, //1-Propietario | 2-Colaborador
+    var idPropietario: String,
+    var idColaborador: String,
     var codigo: String,
     var nombre: String,
     var apellidoP: String,

@@ -70,6 +70,17 @@ object Constants {
         return prefs.getString("userId", "")!!
     }
 
+    fun setTipoUsuario(context: Context, tipoUsuario: Int){
+        val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
+        editor.putInt("tipo", tipoUsuario)
+        editor.apply()
+    }
+
+    fun getTipoUsuario(context: Context): Int{
+        val prefs = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE)
+        return prefs.getInt("tipo", 1)
+    }
+
     fun setKeepLogin(context: Context, value: Boolean){
         val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
         editor.putBoolean("remember", value)

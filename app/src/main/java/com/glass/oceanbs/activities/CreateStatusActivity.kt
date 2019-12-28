@@ -265,10 +265,16 @@ class CreateStatusActivity : AppCompatActivity() {
         val adapterColab2 = ArrayAdapter(this, R.layout.spinner_text, listColab2)
         spinnerAtiendeR.adapter = adapterColab2
 
-        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this))
+        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this), Constants.getTipoUsuario(this))
+
+        val userId: String
+        userId = if(user.tipoUsuario == 1)
+            user.idPropietario
+        else
+            user.idColaborador
 
         for(i in 0 until listColaboradores1.size){
-            if(user.id == listColaboradores1[i].Id)
+            if(userId == listColaboradores1[i].Id)
                 spinnerRegistraR.setSelection(i+1)
         }
 

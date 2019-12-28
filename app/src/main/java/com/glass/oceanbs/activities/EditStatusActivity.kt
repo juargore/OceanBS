@@ -385,10 +385,7 @@ class EditStatusActivity : AppCompatActivity() {
             }
         }
 
-
-        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this))
-
-        if(!user.colaborador)
+        if(Constants.getTipoUsuario(this) == 1)
             disableFieldsIfPropietario()
     }
 

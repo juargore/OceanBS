@@ -107,15 +107,21 @@ class LoginActivity : AppCompatActivity()  {
 
                             // create object User and save it in SQLite DB
                             val user = User(
-                                jsonRes.getString("Id"),
-                                jsonRes.getBoolean("Colaborador"),
+                                jsonRes.getInt("TipoUsuario"),
+                                jsonRes.getString("IdPropietario"),
+                                jsonRes.getString("IdColaborador"),
                                 jsonRes.getString("Codigo"),
                                 jsonRes.getString("Nombre"),
                                 jsonRes.getString("ApellidoP"),
                                 jsonRes.getString("ApellidoM"))
 
-                            TableUser(applicationContext).insertNewOrExistingUser(user)
-                            Constants.setUserId(applicationContext, user.id)
+                            TableUser(applicationContext).insertNewOrExistingUser(user, user.tipoUsuario)
+                            Constants.setTipoUsuario(applicationContext, user.tipoUsuario)
+
+                            if(user.tipoUsuario == 1)
+                                Constants.setUserId(applicationContext, user.idPropietario)
+                            else
+                                Constants.setUserId(applicationContext, user.idColaborador)
 
                             if(chckBoxLogin.isChecked)
                                 Constants.setKeepLogin(applicationContext, true)

@@ -161,10 +161,23 @@ class CreateSolicitudFragment : Fragment() {
 
     // get a list of all desarrollos in Server
     private fun getListDesarrollos(){
+
         val client = OkHttpClient()
-        val builder = FormBody.Builder()
-            .add("WebService","ConsultaDesarrollosTodos")
-            .build()
+
+        val builder: FormBody = if(Constants.getTipoUsuario(context!!) == 1){
+
+            // propietario
+            FormBody.Builder()
+                .add("WebService","ConsultaDesarrollosIdPropietario")
+                .add("IdPropietario",Constants.getUserId(context!!))
+                .build()
+        } else{
+
+            // colaborador
+            FormBody.Builder()
+                .add("WebService","ConsultaDesarrollosTodos")
+                .build()
+        }
 
         val request = Request.Builder().url(Constants.URL_SUCURSALES).post(builder).build()
 
@@ -198,11 +211,25 @@ class CreateSolicitudFragment : Fragment() {
 
     // get list of unidad according the desarrollo id
     private fun getListUnidad(idDesarrollo: String){
+
         val client = OkHttpClient()
-        val builder = FormBody.Builder()
-            .add("WebService","ConsultaUnidadesIdDesarrollo")
-            .add("IdDesarrollo", idDesarrollo)
-            .build()
+
+        val builder: FormBody = if(Constants.getTipoUsuario(context!!) == 1){
+
+            // propietario
+            FormBody.Builder()
+                .add("WebService","ConsultaUnidadesIdDesarrolloIdPropietario")
+                .add("IdDesarrollo", idDesarrollo)
+                .add("IdPropietario",Constants.getUserId(context!!))
+                .build()
+        } else{
+
+            // colaborador
+            FormBody.Builder()
+                .add("WebService","ConsultaUnidadesIdDesarrollo")
+                .add("IdDesarrollo", idDesarrollo)
+                .build()
+        }
 
         val request = Request.Builder().url(Constants.URL_PRODUCTO).post(builder).build()
         client.newCall(request).enqueue(object : Callback {

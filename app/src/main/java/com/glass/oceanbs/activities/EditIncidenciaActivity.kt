@@ -439,7 +439,9 @@ class EditIncidenciaActivity : AppCompatActivity() {
         progress.show()
         titleProgress.text = "Enviando información"
 
-        val userId = Constants.getUserId(this)
+        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this), Constants.getTipoUsuario(this))
+        val userId= user.idColaborador
+
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
 
         var valor3m = ""
@@ -690,8 +692,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
         }
 
         //show | hide button according user or colaborator
-        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this))
-        if(!user.colaborador)
+        if(Constants.getTipoUsuario(this) == 2)
             btnAddStatus.visibility = View.GONE
 
 

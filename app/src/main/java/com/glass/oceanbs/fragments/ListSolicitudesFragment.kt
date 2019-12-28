@@ -31,6 +31,7 @@ import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.EditSolicitudActivity
 import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.adapters.ShortSolicitudAdapter
+import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.ShortSolicitud
 import okhttp3.*
 import org.jetbrains.anko.support.v4.alert
@@ -145,12 +146,15 @@ class ListSolicitudesFragment : Fragment() {
         progress.show()
         userId = Constants.getUserId(context!!)
 
+        val user = TableUser(context!!).getCurrentUserById(Constants.getUserId(context!!), Constants.getTipoUsuario(context!!))
+
         val client = OkHttpClient()
         val builder = FormBody.Builder()
             .add("WebService","ConsultaSolicitudesAGIdUsuario")
-            .add("IdUsuario", userId)
+            .add("TipoUsuario", user.tipoUsuario.toString())
+            .add("IdPropietario", user.idPropietario)
+            .add("IdColaborador", user.idColaborador)
             .add("FechaAlta", fecha)
-            .add("EsColaborador", "1")
             .build()
 
         val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
