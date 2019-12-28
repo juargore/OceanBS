@@ -395,8 +395,11 @@ class EditStatusActivity : AppCompatActivity() {
         cardPhoto3ER.isEnabled = false
 
         spinnerStatusER.isEnabled = false
+        spinnerStatusER.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
         spinnerAtiendeER.isEnabled = false
+        spinnerAtiendeER.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
         etObservacionesER.isEnabled = false
+        etObservacionesER.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
 
         btnUpdateStatusER.visibility = View.GONE
     }

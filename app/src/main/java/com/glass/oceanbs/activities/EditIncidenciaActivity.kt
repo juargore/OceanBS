@@ -692,7 +692,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
         }
 
         //show | hide button according user or colaborator
-        if(Constants.getTipoUsuario(this) == 2)
+        if(Constants.getTipoUsuario(this) == 1)
             btnAddStatus.visibility = View.GONE
 
 
@@ -717,7 +717,8 @@ class EditIncidenciaActivity : AppCompatActivity() {
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                showDeleteDialog(layParentEdIn, listRegistroStatus[pos].Id)
+                if(Constants.getTipoUsuario(applicationContext) == 2)
+                    showDeleteDialog(layParentEdIn, listRegistroStatus[pos].Id)
             }
         })
 

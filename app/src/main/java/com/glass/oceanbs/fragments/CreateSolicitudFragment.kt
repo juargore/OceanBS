@@ -80,10 +80,10 @@ class CreateSolicitudFragment : Fragment() {
         StrictMode.setThreadPolicy(policy)
 
         initComponents(rootView)
-        if(Constants.internetConnected(activity!!)){
+        /*if(Constants.internetConnected(activity!!)){
             getSuggestedCode()
         } else
-            Constants.showPopUpNoInternet(activity!!)
+            Constants.showPopUpNoInternet(activity!!)*/
 
         return rootView
     }
@@ -295,6 +295,12 @@ class CreateSolicitudFragment : Fragment() {
                         runOnUiThread {
                             etPropietarioN.setText(
                                 "${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
+
+                            if(Constants.getTipoUsuario(context!!) == 1){
+                                // propietario
+                                chckBoxReportaN.isChecked = true
+                                fillDataAccordingCheck()
+                            }
                         }
                     }
                 }catch (e: Error){ }
@@ -318,9 +324,16 @@ class CreateSolicitudFragment : Fragment() {
         val adapterDesarrollo = ArrayAdapter(context!!, R.layout.spinner_text, desarrollosList)
 
         spinDesarrolloN.adapter = adapterDesarrollo
+
+        if(Constants.getTipoUsuario(context!!) == 1 && listDesarrollos.size == 1){
+            // propietario
+            spinDesarrolloN.setSelection(1)
+        }
+
         spinDesarrolloN.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+
                 if(pos != 0){
                     val strId: String = listDesarrollos[pos-1].Id
                     getListUnidad(strId)
@@ -328,6 +341,7 @@ class CreateSolicitudFragment : Fragment() {
                     listUnidades.clear()
                     setUpSpinnerUnidad()
                 }
+
             }
         }
     }
@@ -343,6 +357,12 @@ class CreateSolicitudFragment : Fragment() {
         val adapterUnidad = ArrayAdapter(context!!, R.layout.spinner_text, unidadesList)
 
         spinUnidadN.adapter = adapterUnidad
+
+        if(Constants.getTipoUsuario(context!!) == 1 && listUnidades.size == 1){
+            // propietario
+            spinUnidadN.setSelection(1)
+        }
+
         spinUnidadN.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
@@ -368,6 +388,21 @@ class CreateSolicitudFragment : Fragment() {
             etTelParticularN.setText(cPropietario.telParticular)
             etEmailN.setText(cPropietario.correoElecP)
             spinRelacionN.setSelection(0)
+
+            if(Constants.getTipoUsuario(context!!) == 1){
+
+                // propietario
+                chckBoxReportaN.isEnabled = false
+                etReportaN.isEnabled = false
+                etReportaN.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                spinRelacionN.isEnabled = false
+                spinRelacionN.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                etTelMovilN.isEnabled = false
+                etTelMovilN.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                etEmailN.isEnabled = false
+                etEmailN.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+            }
+
         } else{
             resetAllEdittext()
         }
@@ -514,10 +549,23 @@ class CreateSolicitudFragment : Fragment() {
         dialog.setCancelable(false)
     }
 
+
+    override fun onPause() {
+        super.onPause()
+        spinDesarrolloN.setSelection(0)
+        etPropietarioN.setText("")
+        resetAllEdittext()
+    }
+
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if(view != null){
             if(isVisibleToUser){
+
+                if(Constants.internetConnected(activity!!)){
+                    getSuggestedCode()
+                } else
+                    Constants.showPopUpNoInternet(activity!!)
 
                 etObservacionesN.setText("")
                 etPropietarioN.error = null
