@@ -24,6 +24,7 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.mustRefreshSolicitudes
 import com.glass.oceanbs.Constants.snackbar
@@ -49,6 +50,7 @@ class ListSolicitudesFragment : Fragment() {
     private lateinit var layFailFS: LinearLayout
     private lateinit var layParentS: LinearLayout
     private lateinit var rvSolicitudes: RecyclerView
+    private lateinit var swipeRefresh: SwipeRefreshLayout
 
     private lateinit var cardFecha: CardView
     private lateinit var txtFecha: TextView
@@ -82,6 +84,7 @@ class ListSolicitudesFragment : Fragment() {
         laySuccessFS = view.findViewById(R.id.laySuccessFS)
         layFailFS = view.findViewById(R.id.layFailFS)
         rvSolicitudes = view.findViewById(R.id.rvSolicitudes)
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
 
         cardFecha = view.findViewById(R.id.cardFecha)
         txtFecha = view.findViewById(R.id.txtFecha)
@@ -110,6 +113,15 @@ class ListSolicitudesFragment : Fragment() {
         builder.setView(dialogView)
         progress = builder.create()
         progress.setCancelable(false)
+
+        swipeRefresh.setOnRefreshListener {
+            if(Constants.internetConnected(activity!!)){
+                getSolicitudesByDate(today)
+            } else{
+                Constants.showPopUpNoInternet(activity!!)
+            }
+            swipeRefresh.isRefreshing = false
+        }
 
         // after init -> get solicitudes if network available
         if(Constants.internetConnected(activity!!)){

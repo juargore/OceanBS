@@ -262,7 +262,8 @@
                             android:editable="false"
                             android:ems="10"
                             android:enabled="false"
-                            android:inputType="textPersonName" />
+                            android:inputType="textPersonName"
+                            android:textColor="@color/colorBlack" />
                     </LinearLayout>
                 </LinearLayout>
 

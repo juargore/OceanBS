@@ -25,6 +25,7 @@ import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.activities.MainActivity
+import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Propietario
 import com.squareup.picasso.Picasso
@@ -395,12 +396,15 @@ class CreateSolicitudFragment : Fragment() {
                 chckBoxReportaN.isEnabled = false
                 etReportaN.isEnabled = false
                 etReportaN.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                etReportaN.setTextColor(resources.getColor(R.color.colorBlack))
                 spinRelacionN.isEnabled = false
                 spinRelacionN.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
                 etTelMovilN.isEnabled = false
                 etTelMovilN.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                etTelMovilN.setTextColor(resources.getColor(R.color.colorBlack))
                 etEmailN.isEnabled = false
                 etEmailN.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                etEmailN.setTextColor(resources.getColor(R.color.colorBlack))
             }
 
         } else{
@@ -443,6 +447,11 @@ class CreateSolicitudFragment : Fragment() {
         val reporta : Int = if(chckBoxReportaN.isChecked){1}else{0}
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
 
+        val user = TableUser(context!!).getCurrentUserById(Constants.getUserId(context!!), Constants.getTipoUsuario(context!!))
+        val idColaborador = user.idColaborador
+
+        Log.e("--", "ID Colaborador: $idColaborador")
+
         val builder = FormBody.Builder()
             .add("WebService","GuardaSolicitudAG")
             .add("Id", "") // empty if new
@@ -455,7 +464,7 @@ class CreateSolicitudFragment : Fragment() {
             .add("TelParticularPR", etTelParticularN.text.toString())
             .add("CorreoElectronicoPR", etEmailN.text.toString())
             .add("Observaciones", etObservacionesN.text.toString())
-            .add("IdColaborador1", userId)
+            .add("IdColaborador1", idColaborador)
             .add("Status", "1") // active | inactive
             .build()
 

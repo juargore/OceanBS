@@ -15,11 +15,13 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
+import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Propietario
 import com.glass.oceanbs.models.Solicitud
 import okhttp3.*
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.support.v4.runOnUiThread
 import org.jetbrains.anko.textColor
 import org.json.JSONObject
@@ -188,10 +190,23 @@ class EditSolicitudActivity : AppCompatActivity() {
 
     // get a list of all desarrollos in Server
     private fun getListDesarrollos(){
+
         val client = OkHttpClient()
-        val builder = FormBody.Builder()
-            .add("WebService","ConsultaDesarrollosTodos")
-            .build()
+
+        val builder: FormBody = if(Constants.getTipoUsuario(this) == 1){
+
+            // propietario
+            FormBody.Builder()
+                .add("WebService","ConsultaDesarrollosIdPropietario")
+                .add("IdPropietario",Constants.getUserId(this))
+                .build()
+        } else{
+
+            // colaborador
+            FormBody.Builder()
+                .add("WebService","ConsultaDesarrollosTodos")
+                .build()
+        }
 
         val request = Request.Builder().url(Constants.URL_SUCURSALES).post(builder).build()
 
@@ -236,6 +251,11 @@ class EditSolicitudActivity : AppCompatActivity() {
         val adapterDesarrollo = ArrayAdapter(this, R.layout.spinner_text, desarrollosList)
         spinDesarrolloE.adapter = adapterDesarrollo
 
+        if(Constants.getTipoUsuario(this) == 1 && listDesarrollos.size == 1){
+            // propietario
+            spinDesarrolloE.setSelection(1)
+        }
+
         spinDesarrolloE.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
@@ -264,11 +284,25 @@ class EditSolicitudActivity : AppCompatActivity() {
 
     // get list of unidad according the desarrollo id
     private fun getListUnidad(idDesarrollo: String){
+
         val client = OkHttpClient()
-        val builder = FormBody.Builder()
-            .add("WebService","ConsultaUnidadesIdDesarrollo")
-            .add("IdDesarrollo", idDesarrollo)
-            .build()
+
+        val builder: FormBody = if(Constants.getTipoUsuario(this) == 1){
+
+            // propietario
+            FormBody.Builder()
+                .add("WebService","ConsultaUnidadesIdDesarrolloIdPropietario")
+                .add("IdDesarrollo", idDesarrollo)
+                .add("IdPropietario",Constants.getUserId(this))
+                .build()
+        } else{
+
+            // colaborador
+            FormBody.Builder()
+                .add("WebService","ConsultaUnidadesIdDesarrollo")
+                .add("IdDesarrollo", idDesarrollo)
+                .build()
+        }
 
         val request = Request.Builder().url(Constants.URL_PRODUCTO).post(builder).build()
         client.newCall(request).enqueue(object : Callback {
@@ -323,6 +357,12 @@ class EditSolicitudActivity : AppCompatActivity() {
         val adapterUnidad = ArrayAdapter(applicationContext, R.layout.spinner_text, unidadesList)
 
         spinUnidadE.adapter = adapterUnidad
+
+        if(Constants.getTipoUsuario(this) == 1 && listUnidades.size == 1){
+            // propietario
+            spinUnidadE.setSelection(1)
+        }
+
         spinUnidadE.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
@@ -378,6 +418,22 @@ class EditSolicitudActivity : AppCompatActivity() {
             etTelParticularE.setText(cPropietario.telParticular)
             etEmailE.setText(cPropietario.correoElecP)
             spinRelacionE.setSelection(0)
+
+            if(Constants.getTipoUsuario(this) == 1 ){
+                // propietario
+                chckBoxReporta.isEnabled = false
+                etReportaE.isEnabled = false
+                etReportaE.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                etReportaE.setTextColor(resources.getColor(R.color.colorBlack))
+                spinRelacionE.isEnabled = false
+                spinRelacionE.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                etTelMovilE.isEnabled = false
+                etTelMovilE.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                etTelMovilE.setTextColor(resources.getColor(R.color.colorBlack))
+                etEmailE.isEnabled = false
+                etEmailE.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+                etEmailE.setTextColor(resources.getColor(R.color.colorBlack))
+            }
         } else{
             etReportaE.setText("")
             etTelMovilE.setText("")
@@ -415,6 +471,10 @@ class EditSolicitudActivity : AppCompatActivity() {
                             )
 
                             etPropietarioE.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
+                            if(Constants.getTipoUsuario(applicationContext) == 1){
+                                chckBoxReporta.isChecked = true
+                                fillDataAccordingCheck()
+                            }
                         }
                     }catch (e: Error){ }
                 }
@@ -445,6 +505,9 @@ class EditSolicitudActivity : AppCompatActivity() {
         val reporta : Int = if(chckBoxReporta.isChecked){1}else{0}
         userId = Constants.getUserId(this)
 
+        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this), Constants.getTipoUsuario(this))
+        val idColaborador = user.idColaborador
+
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
 
         val builder = FormBody.Builder()
@@ -459,7 +522,7 @@ class EditSolicitudActivity : AppCompatActivity() {
             .add("TelParticularPR", etTelParticularE.text.toString())
             .add("CorreoElectronicoPR", etEmailE.text.toString())
             .add("Observaciones", etObservacionesE.text.toString())
-            .add("IdColaborador1", userId)
+            .add("IdColaborador1", idColaborador)
             .add("Status", "1") // active / inactive
             .build()
 

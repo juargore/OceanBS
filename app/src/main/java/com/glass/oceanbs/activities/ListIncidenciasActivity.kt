@@ -18,6 +18,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
@@ -39,6 +40,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
     private lateinit var laySuccessI: RelativeLayout
     private lateinit var layFailI: RelativeLayout
     private lateinit var progress : AlertDialog
+    private lateinit var swipeInc: SwipeRefreshLayout
 
     private lateinit var rvIncidencias: RecyclerView
     private lateinit var fabNewIncidencia: FloatingActionButton
@@ -73,6 +75,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
         layParentI = findViewById(R.id.layParentI)
         laySuccessI = findViewById(R.id.laySuccessI)
         layFailI = findViewById(R.id.layFailI)
+        swipeInc = findViewById(R.id.swipeInc)
 
         rvIncidencias = findViewById(R.id.rvIncidencias)
         fabNewIncidencia = findViewById(R.id.fabNewIncidencia)
@@ -100,11 +103,19 @@ class ListIncidenciasActivity : AppCompatActivity() {
 
         imgBackIncidencias.setOnClickListener { this.finish() }
 
+        swipeInc.setOnRefreshListener {
+            if(Constants.internetConnected(this)){
+                getIncidencias()
+            } else
+                Constants.showPopUpNoInternet(this)
+
+            swipeInc.isRefreshing = false
+        }
+
         if(Constants.internetConnected(this)){
             getIncidencias()
         } else
             Constants.showPopUpNoInternet(this)
-        //getIncidencias()
     }
 
     private fun getIncidencias(){

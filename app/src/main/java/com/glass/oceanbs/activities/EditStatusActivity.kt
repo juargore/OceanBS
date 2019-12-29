@@ -400,6 +400,7 @@ class EditStatusActivity : AppCompatActivity() {
         spinnerAtiendeER.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
         etObservacionesER.isEnabled = false
         etObservacionesER.background = resources.getDrawable(R.drawable.rectangle_round_corner_gray_fill)
+        etObservacionesER.setTextColor(resources.getColor(R.color.colorBlack))
 
         btnUpdateStatusER.visibility = View.GONE
     }
