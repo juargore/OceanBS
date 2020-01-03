@@ -19,7 +19,9 @@ import org.jetbrains.anko.backgroundColor
 
 object Constants {
 
-    private const val URL_PARENT = "http://oceanbs01.com/models/"
+    //private const val URL_PARENT = "http://oceanbs01.com/models/"
+    private const val URL_PARENT = "http://oceanbs04.com/models/"
+
     const val URL_USER = "${URL_PARENT}catalogos/CCatColaborador.php"
     const val URL_SOLICITUDES = "${URL_PARENT}registros/CRegSolicitudAG.php"
     const val URL_SUCURSALES = "${URL_PARENT}catalogos/CCatSucursal.php"
