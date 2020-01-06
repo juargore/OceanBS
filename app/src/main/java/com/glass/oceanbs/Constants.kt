@@ -19,19 +19,20 @@ import org.jetbrains.anko.backgroundColor
 
 object Constants {
 
-    //private const val URL_PARENT = "http://oceanbs01.com/models/"
-    private const val URL_PARENT = "http://oceanbs04.com/models/"
+    //private const val URL_PARENT = "http://oceanbs01.com/"
+    private const val URL_PARENT = "http://oceanbs04.com/"
 
-    const val URL_USER = "${URL_PARENT}catalogos/CCatColaborador.php"
-    const val URL_SOLICITUDES = "${URL_PARENT}registros/CRegSolicitudAG.php"
-    const val URL_SUCURSALES = "${URL_PARENT}catalogos/CCatSucursal.php"
-    const val URL_PRODUCTO = "${URL_PARENT}catalogos/CCatProducto.php"
-    const val URL_INCIDENCIAS = "${URL_PARENT}registros/CRegIncidencia.php"
-    const val URL_STATUS = "${URL_PARENT}registros/CRegStatusIncidencia.php"
-    const val URL_CLASIFICACION = "${URL_PARENT}catalogos/CCatValorClasificacion.php"
+    const val URL_USER = "${URL_PARENT}models/catalogos/CCatColaborador.php"
+    const val URL_SOLICITUDES = "${URL_PARENT}models/registros/CRegSolicitudAG.php"
+    const val URL_SUCURSALES = "${URL_PARENT}models/catalogos/CCatSucursal.php"
+    const val URL_PRODUCTO = "${URL_PARENT}models/catalogos/CCatProducto.php"
+    const val URL_INCIDENCIAS = "${URL_PARENT}models/registros/CRegIncidencia.php"
+    const val URL_STATUS = "${URL_PARENT}models/registros/CRegStatusIncidencia.php"
+    const val URL_CLASIFICACION = "${URL_PARENT}models/catalogos/CCatValorClasificacion.php"
 
-    const val URL_IMAGES = "http://oceanbs04.com/uploads/catalogos/sucursales/"
-    const val URL_IMAGES_STATUS = "http://oceanbs01.com/uploads/crecento/statusincidencias/"
+    const val URL_IMAGES = "${URL_PARENT}uploads/catalogos/sucursales/"
+    //const val URL_IMAGES_STATUS = "http://oceanbs01.com/uploads/crecento/statusincidencias/"
+    const val URL_IMAGES_STATUS = "${URL_PARENT}uploads/crecento/statusincidencias/"
 
     private const val DATABASE_SP = "oceanbs"
 
