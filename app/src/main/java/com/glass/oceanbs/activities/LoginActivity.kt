@@ -22,6 +22,7 @@ import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.User
+import com.google.firebase.iid.FirebaseInstanceId
 import okhttp3.*
 import org.jetbrains.anko.toast
 import org.json.JSONObject
@@ -44,6 +45,8 @@ class LoginActivity : AppCompatActivity()  {
 
         supportActionBar?.hide()
         initComponents()
+
+        //FirebaseInstanceId.getInstance().token.toString()
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
@@ -167,6 +170,42 @@ class LoginActivity : AppCompatActivity()  {
             }
             else -> true
         }
+    }
+
+    private fun sendFirebaseToken(){
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","ConsultaSolicitudesAGIdUsuario")
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body()!!.string())
+                        Log.e("RES", jsonRes.toString())
+
+                        if(jsonRes.getInt("Error") > 0)
+                            //snackbar(applicationContext, layParentMain, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
+                        else{
+                            // TODO
+                        }
+
+                    } catch (e: Error){
+                        //snackbar(applicationContext!!, layParentMain, e.message.toString(), Constants.Types.ERROR)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    //snackbar(applicationContext!!, layParentMain, e.message.toString(), Constants.Types.ERROR)
+                }
+            }
+        })
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {

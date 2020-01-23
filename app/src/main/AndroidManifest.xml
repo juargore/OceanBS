@@ -19,6 +19,16 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
+        <service
+            android:name=".services.ServiceFirebaseMessaging"
+            android:permission=""
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+
         <activity android:name=".activities.SplashScreenActivity"
                 android:screenOrientation="portrait">
             <intent-filter>

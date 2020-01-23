@@ -327,6 +327,31 @@ class EditIncidenciaActivity : AppCompatActivity() {
         //etFallaRealEdI.setText(cIncidencia.FallaReal)
         etFallaReportadaEdI.setText(cIncidencia.FallaReportada)
         etObservacionesEdI.setText(cIncidencia.Observaciones)
+
+        if(Constants.getTipoUsuario(this) == 1){
+
+            // propietario -> disable all fields
+            imgPhotoEd.isEnabled = false
+            imgPhotoEd.isClickable = false
+
+            spinner3mEd.isEnabled = false
+            spinner3mEd.isClickable = false
+
+            spinner6mEd.isEnabled = false
+            spinner6mEd.isClickable = false
+
+            spinner1aEd.isEnabled = false
+            spinner1aEd.isClickable = false
+
+            etFallaReportadaEdI.isEnabled = false
+            etFallaReportadaEdI.isClickable = false
+
+            etObservacionesEdI.isEnabled = false
+            etObservacionesEdI.isClickable = false
+
+            btnUpdateIncidenciaEdI.isEnabled = false
+            btnUpdateIncidenciaEdI.isClickable = false
+        }
     }
 
     private fun setUpSpinners(){
@@ -349,7 +374,6 @@ class EditIncidenciaActivity : AppCompatActivity() {
                 }
             }
         }
-
 
         val list6m: ArrayList<String> = ArrayList()
         list6m.add(0, "Seleccionar")

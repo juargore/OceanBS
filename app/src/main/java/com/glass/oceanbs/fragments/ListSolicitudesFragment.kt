@@ -53,6 +53,7 @@ class ListSolicitudesFragment : Fragment() {
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
     private lateinit var cardFecha: CardView
+    private lateinit var cardTodas: CardView
     private lateinit var txtFecha: TextView
 
     private var listSolicitudes: ArrayList<ShortSolicitud> = ArrayList()
@@ -87,6 +88,7 @@ class ListSolicitudesFragment : Fragment() {
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
 
         cardFecha = view.findViewById(R.id.cardFecha)
+        cardTodas = view.findViewById(R.id.cardTodas)
         txtFecha = view.findViewById(R.id.txtFecha)
 
 
@@ -104,6 +106,7 @@ class ListSolicitudesFragment : Fragment() {
         txtFecha.text = today
 
         cardFecha.setOnClickListener { showDatePicker(txtFecha) }
+        //cardTodas.setOnClickListener { getSolicitudesByDate("0000-00-00") }
 
         // set up progress dialg
         val builder = AlertDialog.Builder(context!!, R.style.HalfDialogTheme)
