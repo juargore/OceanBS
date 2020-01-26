@@ -29,6 +29,7 @@ object Constants {
     const val URL_INCIDENCIAS = "${URL_PARENT}models/registros/CRegIncidencia.php"
     const val URL_STATUS = "${URL_PARENT}models/registros/CRegStatusIncidencia.php"
     const val URL_CLASIFICACION = "${URL_PARENT}models/catalogos/CCatValorClasificacion.php"
+    const val URL_IMAGES_CARROUSEL = "${URL_PARENT}models/catalogos/CCatEmpresa.php"
 
     const val URL_IMAGES = "${URL_PARENT}uploads/catalogos/sucursales/"
     //const val URL_IMAGES_STATUS = "http://oceanbs01.com/uploads/crecento/statusincidencias/"

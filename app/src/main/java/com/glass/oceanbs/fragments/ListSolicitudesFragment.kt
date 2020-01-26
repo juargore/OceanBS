@@ -106,7 +106,7 @@ class ListSolicitudesFragment : Fragment() {
         txtFecha.text = today
 
         cardFecha.setOnClickListener { showDatePicker(txtFecha) }
-        //cardTodas.setOnClickListener { getSolicitudesByDate("0000-00-00") }
+        cardTodas.setOnClickListener { getSolicitudesByDate("") }
 
         // set up progress dialg
         val builder = AlertDialog.Builder(context!!, R.style.HalfDialogTheme)
@@ -185,9 +185,11 @@ class ListSolicitudesFragment : Fragment() {
                             snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         else{
 
-                            // create solicitud object and iterate json array
-                            //snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
+                            //If fecha is ALL -> reset date to today
+                            if(fecha == "")
+                                txtFecha.text = today
 
+                            // create solicitud object and iterate json array
                             val arraySolicitud = jsonRes.getJSONArray("Datos")
                             listSolicitudes.clear()
 
