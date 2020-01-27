@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "765638791851",
+    "firebase_url": "https://crecento-postventa-app.firebaseio.com",
+    "project_id": "crecento-postventa-app",
+    "storage_bucket": "crecento-postventa-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765638791851:android:1640ad26cc0953f6fb1dee",
+        "android_client_info": {
+          "package_name": "com.glass.oceanbs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "765638791851-56b1p1a6093fqf3aoe5bmulfta4rcch6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxq7l3emP5wzP7TN8oJPINIOJjpHFCfQU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "765638791851-56b1p1a6093fqf3aoe5bmulfta4rcch6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

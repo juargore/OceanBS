@@ -96,6 +96,17 @@ object Constants {
         return prefs.getBoolean("remember", false)
     }
 
+    fun mustRefreshToken(context: Context): Boolean{
+        val prefs = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE)
+        return prefs.getBoolean("refreshToken", false)
+    }
+
+    fun updateRefreshToken(context: Context, value: Boolean){
+        val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
+        editor.putBoolean("refreshToken", value)
+        editor.apply()
+    }
+
     fun mustRefreshSolicitudes(context: Context): Boolean{
         val prefs = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE)
         return prefs.getBoolean("refreshSolicitudes", false)

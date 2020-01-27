@@ -22,6 +22,7 @@ import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.User
+import com.google.firebase.FirebaseApp
 import com.google.firebase.iid.FirebaseInstanceId
 import okhttp3.*
 import org.jetbrains.anko.toast
@@ -39,6 +40,7 @@ class LoginActivity : AppCompatActivity()  {
     private lateinit var btnLogIn: Button
     private lateinit var chckBoxLogin: CheckBox
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -47,6 +49,7 @@ class LoginActivity : AppCompatActivity()  {
         initComponents()
 
         //FirebaseInstanceId.getInstance().token.toString()
+        FirebaseApp.initializeApp(this)
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
@@ -73,7 +76,6 @@ class LoginActivity : AppCompatActivity()  {
 
     private fun setListeners(){
         btnLogIn.setOnClickListener {
-
             if(Constants.internetConnected(this)){
                 if(validateFullFields())
                     sendCredentialsToServer()
@@ -135,6 +137,7 @@ class LoginActivity : AppCompatActivity()  {
                             if(v != null) v.gravity = Gravity.CENTER
                             t.show()
 
+                            sendFirebaseToken()
                             this@LoginActivity.finish()
 
                             // start new activity main
@@ -174,24 +177,37 @@ class LoginActivity : AppCompatActivity()  {
 
     private fun sendFirebaseToken(){
 
+        val gcmToken = FirebaseInstanceId.getInstance().token.toString()
+        //Log.e("--", "Token: $gcmToken")
+
+        val tipoUsuario = Constants.getTipoUsuario(applicationContext)
+        val cUser = TableUser(applicationContext)
+            .getCurrentUserById(Constants.getUserId(applicationContext), Constants.getTipoUsuario(applicationContext))
+
         val client = OkHttpClient()
         val builder = FormBody.Builder()
-            .add("WebService","ConsultaSolicitudesAGIdUsuario")
+            .add("WebService","GuardaToken")
+            .add("TipoUsuario",tipoUsuario.toString())
+            .add("IdPropietario",cUser.idPropietario)
+            .add("IdColaborador",cUser.idColaborador)
+            .add("Token",gcmToken)
             .build()
 
-        val request = Request.Builder().url(Constants.URL_SOLICITUDES).post(builder).build()
+        val request = Request.Builder().url(Constants.URL_USER).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body()!!.string())
-                        Log.e("RES", jsonRes.toString())
+                        Log.e("RES token", jsonRes.toString())
 
-                        if(jsonRes.getInt("Error") > 0)
-                            //snackbar(applicationContext, layParentMain, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
+                        if(jsonRes.getInt("Error") > 0){
+                            Log.e("",jsonRes.getString("Mensaje"))
+                            Constants.updateRefreshToken(applicationContext, true)
+                        }
                         else{
-                            // TODO
+                            Constants.updateRefreshToken(applicationContext, false)
                         }
 
                     } catch (e: Error){
