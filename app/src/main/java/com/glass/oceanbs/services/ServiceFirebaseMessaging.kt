@@ -8,7 +8,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
+import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
+import com.glass.oceanbs.activities.ListIncidenciasActivity
+import com.glass.oceanbs.activities.LoginActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.jetbrains.anko.notificationManager
@@ -43,13 +46,21 @@ class ServiceFirebaseMessaging : FirebaseMessagingService() {
             .setSmallIcon(R.drawable.ic_launcher)
             .setAutoCancel(true)
 
-        /*val notificationIntent = Intent(applicationContext, NotificationActivity::class.java)
+        if(Constants.getKeepLogin(applicationContext)){
+            val notificationIntent = Intent(applicationContext, ListIncidenciasActivity::class.java)
+            notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        } else{
+            val notificationIntent = Intent(applicationContext, LoginActivity::class.java)
+            notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+
+        val notificationIntent = Intent(applicationContext, ListIncidenciasActivity::class.java)
         notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
 
         val pendingIntent = PendingIntent.getActivity(applicationContext, 0, notificationIntent, 0)
         notificationBuilder.setContentIntent(pendingIntent)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(0, notificationBuilder.build()*/
+        notificationManager.notify(0, notificationBuilder.build())
     }
 }
