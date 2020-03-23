@@ -178,7 +178,7 @@ class LoginActivity : AppCompatActivity()  {
     private fun sendFirebaseToken(){
 
         val gcmToken = FirebaseInstanceId.getInstance().token.toString()
-        //Log.e("--", "Token: $gcmToken")
+        Log.e("--", "Token: $gcmToken")
 
         val tipoUsuario = Constants.getTipoUsuario(applicationContext)
         val cUser = TableUser(applicationContext)

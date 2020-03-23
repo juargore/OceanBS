@@ -3,6 +3,7 @@
 package com.glass.oceanbs.activities
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -10,12 +11,14 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -59,10 +62,13 @@ class ListIncidenciasActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         val args = intent.extras
-        solicitudId = args!!.getString("solicitudId").toString()
-        desarrollo = args.getString("desarrollo").toString()
-        persona = args.getString("persona").toString()
-        codigoUnidad = args.getString("codigoUnidad").toString()
+
+        try {
+            solicitudId = args!!.getString("solicitudId").toString()
+            desarrollo = args.getString("desarrollo").toString()
+            persona = args.getString("persona").toString()
+            codigoUnidad = args.getString("codigoUnidad").toString()
+        } catch (e: Exception){}
 
         initComponents()
     }
@@ -101,7 +107,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        imgBackIncidencias.setOnClickListener { this.finish() }
+        imgBackIncidencias.setOnClickListener { backIntent() }
 
         swipeInc.setOnRefreshListener {
             if(Constants.internetConnected(this)){
@@ -288,6 +294,29 @@ class ListIncidenciasActivity : AppCompatActivity() {
         })
     }
 
+    override fun onBackPressed() {
+        backIntent()
+    }
+
+    @SuppressLint("NewApi")
+    private fun backIntent(){
+
+        val mngr: ActivityManager =
+            getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        val taskList: List<ActivityManager.RunningTaskInfo> = mngr.getRunningTasks(10)
+
+        if (taskList[0].numActivities == 1 && taskList[0].topActivity?.className.equals(this.javaClass.name)) {
+
+            this@ListIncidenciasActivity.finish()
+
+            val intent = Intent(this@ListIncidenciasActivity, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+
+        } else
+            this.finish()
+    }
 
     override fun onResume() {
         super.onResume()

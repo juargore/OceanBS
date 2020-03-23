@@ -43,21 +43,24 @@ class ServiceFirebaseMessaging : FirebaseMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(NotificationCompat.BigTextStyle())
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setSmallIcon(R.drawable.ic_launcher)
+            .setSmallIcon(R.drawable.logo_ocean_bs)
             .setAutoCancel(true)
 
+        val notificationIntent: Intent
+
         if(Constants.getKeepLogin(applicationContext)){
-            val notificationIntent = Intent(applicationContext, ListIncidenciasActivity::class.java)
+            notificationIntent = Intent(applicationContext, ListIncidenciasActivity::class.java)
             notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            notificationIntent.putExtra("solicitudId", remoteMessage.data["solicitudId"])
+            notificationIntent.putExtra("desarrollo",remoteMessage.data["desarrollo"])
+            notificationIntent.putExtra("persona",remoteMessage.data["persona"])
+            notificationIntent.putExtra("codigoUnidad",remoteMessage.data["codigoUnidad"])
         } else{
-            val notificationIntent = Intent(applicationContext, LoginActivity::class.java)
+            notificationIntent = Intent(applicationContext, LoginActivity::class.java)
             notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
 
-        val notificationIntent = Intent(applicationContext, ListIncidenciasActivity::class.java)
-        notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-
-        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         notificationBuilder.setContentIntent(pendingIntent)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

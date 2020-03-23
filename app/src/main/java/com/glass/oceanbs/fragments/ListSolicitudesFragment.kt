@@ -145,13 +145,19 @@ class ListSolicitudesFragment : Fragment() {
         val picker = DatePickerDialog(context!!, R.style.AppTheme_CustomDatePickerAccent,
             DatePickerDialog.OnDateSetListener { _, year, month, day ->
 
+                val realDay = day
+                var strDay = realDay.toString()
+
                 val realMonth = month+1
                 var strMonth = realMonth.toString()
                 if(realMonth < 10)
                     strMonth = "0$realMonth"
 
-                txtView.text = "$year-$strMonth-$day"
-                getSolicitudesByDate("$year-$strMonth-$day")
+                if(realDay < 10)
+                    strDay = "0$realDay"
+
+                txtView.text = "$year-$strMonth-$strDay"
+                getSolicitudesByDate("$year-$strMonth-$strDay")
 
             }, year1, month1, day1)
         picker.show()
