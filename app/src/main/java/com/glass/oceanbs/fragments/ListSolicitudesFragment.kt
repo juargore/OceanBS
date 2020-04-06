@@ -102,7 +102,12 @@ class ListSolicitudesFragment : Fragment() {
         if(realMonth < 10)
             strMonth = "0$realMonth"
 
-        today = "$year-$strMonth-$day"
+        val realDay = day
+        var strDay = day.toString()
+        if(realDay < 10)
+            strDay = "0$realDay"
+
+        today = "$year-$strMonth-$strDay"
         txtFecha.text = today
 
         cardFecha.setOnClickListener { showDatePicker(txtFecha) }
@@ -164,6 +169,7 @@ class ListSolicitudesFragment : Fragment() {
     }
 
     private fun getSolicitudesByDate(fecha: String){
+        Log.e("--", fecha)
         progress.show()
         userId = Constants.getUserId(context!!)
 
@@ -184,6 +190,7 @@ class ListSolicitudesFragment : Fragment() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
+                        //Log.e("RES1", response.body()!!.string())
                         val jsonRes = JSONObject(response.body()!!.string())
                         Log.e("RES", jsonRes.toString())
 
