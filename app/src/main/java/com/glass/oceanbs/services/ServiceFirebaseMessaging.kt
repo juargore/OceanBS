@@ -67,7 +67,7 @@ class ServiceFirebaseMessaging : FirebaseMessagingService() {
 
             notificationIntent.putExtra("title", remoteMessage.data["title"])
             notificationIntent.putExtra("body",remoteMessage.notification?.body)
-            notificationIntent.putExtra("image",remoteMessage.notification?.imageUrl)
+            notificationIntent.putExtra("image",remoteMessage.data["image"])
             notificationIntent.putExtra("fromServer", false)
         } else{
             notificationIntent = Intent(applicationContext, LoginActivity::class.java)

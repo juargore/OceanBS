@@ -13,7 +13,7 @@
         android:layout_height="160dp"
         android:layout_marginBottom="12dp"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/photo2" />
+        app:srcCompat="@drawable/ebano" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -71,8 +71,9 @@
 
             <ImageView
                 android:id="@+id/imgN"
-                android:layout_width="match_parent"
+                android:layout_width="100dp"
                 android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="10dp"
                 app:srcCompat="@drawable/ic_empty" />
 
@@ -164,7 +165,7 @@
         <Button
             android:id="@+id/btnEnteradoN"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/rectangle_blue_button"
             android:text="ENTERADO"

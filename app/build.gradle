@@ -11,8 +11,8 @@ android {
         applicationId "com.glass.oceanbs"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 12
-        versionName "1.0.43a"
+        versionCode 13
+        versionName "1.0.41a"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

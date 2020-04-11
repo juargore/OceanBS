@@ -83,7 +83,8 @@ class NotificationActivity : AppCompatActivity() {
 
     private fun setListeners(){
         btnEnteradoN.setOnClickListener {
-            this.finish()
+            // close all activities and app
+            finishAffinity()
         }
 
         btnRevSolN.setOnClickListener {
@@ -97,6 +98,7 @@ class NotificationActivity : AppCompatActivity() {
             else
                 Intent(this@NotificationActivity, LoginActivity::class.java)
 
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
             this.finish()
         }
@@ -121,7 +123,7 @@ class NotificationActivity : AppCompatActivity() {
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
-            .setContentText("$t1 $t2 $t3 $t4 $t5")
+            .setContentText("$t3 $t4")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(NotificationCompat.BigTextStyle())
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
