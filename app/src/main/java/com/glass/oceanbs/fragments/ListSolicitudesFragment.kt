@@ -252,9 +252,9 @@ class ListSolicitudesFragment : Fragment() {
     private fun setUpRecyclerView(){
         rvSolicitudes.layoutManager = LinearLayoutManager(context)
 
-        val sortedList = listSolicitudes.sortedByDescending { it.FechaAlta }
+        //val sortedList = listSolicitudes.sortedByDescending { it.FechaAlta }
 
-        val adapter = ShortSolicitudAdapter(context!!, ArrayList(sortedList), object : ShortSolicitudAdapter.InterfaceOnClick{
+        val adapter = ShortSolicitudAdapter(context!!, listSolicitudes, object : ShortSolicitudAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
 
                 // on click -> open Incidencias screen

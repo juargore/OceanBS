@@ -1,6 +1,7 @@
 package com.glass.oceanbs.services
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -35,17 +36,19 @@ class ServiceFirebaseMessaging : FirebaseMessagingService() {
             mChannel.description = description
             mChannel.enableLights(true)
             mChannel.lightColor = Color.RED
-            mChannel.enableVibration(true)
+            //mChannel.enableVibration(false)
             mChannel.setShowBadge(false)
             notificationManager.createNotificationChannel(mChannel)
         }
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_SOUND)
+            //.setVibrate(longArrayOf(0.toLong()))
             .setContentTitle(remoteMessage.notification?.title)
             .setContentText(remoteMessage.notification?.body)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(NotificationCompat.BigTextStyle())
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            //.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setSmallIcon(R.drawable.logo_ocean_bs)
             .setAutoCancel(true)
 
