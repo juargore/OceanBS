@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.StrictMode
-import android.text.Html
 import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
@@ -23,12 +22,10 @@ import com.glass.oceanbs.R
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.User
 import com.google.firebase.FirebaseApp
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import okhttp3.*
-import org.jetbrains.anko.toast
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.Error
 
 class LoginActivity : AppCompatActivity()  {
 
@@ -52,6 +49,7 @@ class LoginActivity : AppCompatActivity()  {
         FirebaseApp.initializeApp(this)
     }
 
+    @Suppress("DEPRECATION")
     @SuppressLint("InflateParams", "SetTextI18n")
     private fun initComponents(){
         parentLayout = findViewById(R.id.parentLayoutLogin)
@@ -100,10 +98,11 @@ class LoginActivity : AppCompatActivity()  {
         val request = Request.Builder().url(Constants.URL_USER).post(builder).build()
 
         client.newCall(request).enqueue(object : Callback{
+            @Suppress("DEPRECATION")
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try{
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         Log.e("LOGIN", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") > 0)
@@ -133,7 +132,7 @@ class LoginActivity : AppCompatActivity()  {
 
                             // show a welcome message to the user
                             val t = Toast.makeText(applicationContext, "Bienvenido \n${user.nombre} ${user.apellidoP} ${user.apellidoM}", Toast.LENGTH_LONG)
-                            val v = t.view.findViewById<TextView>(android.R.id.message)
+                            val v = t.view?.findViewById<TextView>(android.R.id.message)
                             if(v != null) v.gravity = Gravity.CENTER
                             t.show()
 
@@ -176,10 +175,18 @@ class LoginActivity : AppCompatActivity()  {
     }
 
     private fun sendFirebaseToken(){
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    if (task.result != null && !TextUtils.isEmpty(task.result)) {
+                        val token: String = task.result!!
+                        storeFirebaseTokenOnServer(token)
+                    }
+                }
+            }
+    }
 
-        val gcmToken = FirebaseInstanceId.getInstance().token.toString()
-        Log.e("--", "Token: $gcmToken")
-
+    private fun storeFirebaseTokenOnServer(gcmToken: String) {
         val tipoUsuario = Constants.getTipoUsuario(applicationContext)
         val cUser = TableUser(applicationContext)
             .getCurrentUserById(Constants.getUserId(applicationContext), Constants.getTipoUsuario(applicationContext))
@@ -199,7 +206,7 @@ class LoginActivity : AppCompatActivity()  {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         Log.e("RES token", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") > 0){

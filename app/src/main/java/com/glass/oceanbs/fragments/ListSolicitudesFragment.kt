@@ -21,6 +21,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,11 +34,9 @@ import com.glass.oceanbs.activities.EditSolicitudActivity
 import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.adapters.ShortSolicitudAdapter
 import com.glass.oceanbs.database.TableUser
+import com.glass.oceanbs.extensions.alert
 import com.glass.oceanbs.models.ShortSolicitud
 import okhttp3.*
-import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.runOnUiThread
-import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
 import java.util.*
@@ -114,7 +113,7 @@ class ListSolicitudesFragment : Fragment() {
         cardTodas.setOnClickListener { getSolicitudesByDate("") }
 
         // set up progress dialg
-        val builder = AlertDialog.Builder(context!!, R.style.HalfDialogTheme)
+        val builder = AlertDialog.Builder(requireContext(), R.style.HalfDialogTheme)
         val inflat = this.layoutInflater
         val dialogView = inflat.inflate(R.layout.progress, null)
 
@@ -123,19 +122,19 @@ class ListSolicitudesFragment : Fragment() {
         progress.setCancelable(false)
 
         swipeRefresh.setOnRefreshListener {
-            if(Constants.internetConnected(activity!!)){
+            if(Constants.internetConnected(requireActivity())){
                 getSolicitudesByDate(today)
             } else{
-                Constants.showPopUpNoInternet(activity!!)
+                Constants.showPopUpNoInternet(requireActivity())
             }
             swipeRefresh.isRefreshing = false
         }
 
         // after init -> get solicitudes if network available
-        if(Constants.internetConnected(activity!!)){
+        if(Constants.internetConnected(requireActivity())){
             getSolicitudesByDate(today)
         } else{
-            Constants.showPopUpNoInternet(activity!!)
+            Constants.showPopUpNoInternet(requireActivity())
         }
     }
 
@@ -147,8 +146,7 @@ class ListSolicitudesFragment : Fragment() {
         val month1    = cldr.get(Calendar.MONTH)
         val year1 = cldr.get(Calendar.YEAR)
 
-        val picker = DatePickerDialog(context!!, R.style.AppTheme_CustomDatePickerAccent,
-            DatePickerDialog.OnDateSetListener { _, year, month, day ->
+        val picker = DatePickerDialog(requireContext(), R.style.AppTheme_CustomDatePickerAccent, { _, year, month, day ->
 
                 val realDay = day
                 var strDay = realDay.toString()
@@ -171,9 +169,9 @@ class ListSolicitudesFragment : Fragment() {
     private fun getSolicitudesByDate(fecha: String){
         Log.e("--", fecha)
         progress.show()
-        userId = Constants.getUserId(context!!)
+        userId = Constants.getUserId(requireContext())
 
-        val user = TableUser(context!!).getCurrentUserById(Constants.getUserId(context!!), Constants.getTipoUsuario(context!!))
+        val user = TableUser(requireContext()).getCurrentUserById(Constants.getUserId(requireContext()), Constants.getTipoUsuario(requireContext()))
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
@@ -188,14 +186,13 @@ class ListSolicitudesFragment : Fragment() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                runOnUiThread {
+                activity?.runOnUiThread {
                     try {
-                        //Log.e("RES1", response.body()!!.string())
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         Log.e("RES", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") > 0)
-                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
+                            snackbar(requireContext(), layParentS, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         else{
 
                             //If fecha is ALL -> reset date to today
@@ -230,20 +227,20 @@ class ListSolicitudesFragment : Fragment() {
                                 layFailFS.visibility = View.VISIBLE
                             }
 
-                            Constants.updateRefreshSolicitudes(context!!, false)
+                            Constants.updateRefreshSolicitudes(requireContext(), false)
                         }; progress.dismiss()
 
                     } catch (e: Error){
                         progress.dismiss()
-                        snackbar(context!!, layParentS, e.message.toString(), Constants.Types.ERROR)
+                        snackbar(requireContext(), layParentS, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread {
+                activity?.runOnUiThread {
                     progress.dismiss()
-                    snackbar(context!!, layParentS, e.message.toString(), Constants.Types.ERROR)
+                    snackbar(requireContext(), layParentS, e.message.toString(), Constants.Types.ERROR)
                 }
             }
         })
@@ -254,11 +251,11 @@ class ListSolicitudesFragment : Fragment() {
 
         //val sortedList = listSolicitudes.sortedByDescending { it.FechaAlta }
 
-        val adapter = ShortSolicitudAdapter(context!!, listSolicitudes, object : ShortSolicitudAdapter.InterfaceOnClick{
+        val adapter = ShortSolicitudAdapter(requireContext(), listSolicitudes, object : ShortSolicitudAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
 
                 // on click -> open Incidencias screen
-                val intent = Intent(activity!!, ListIncidenciasActivity::class.java)
+                val intent = Intent(requireActivity(), ListIncidenciasActivity::class.java)
                 intent.putExtra("solicitudId", listSolicitudes[pos].Id)
                 intent.putExtra("desarrollo", listSolicitudes[pos].NombreDesarrollo)
                 intent.putExtra("persona", listSolicitudes[pos].NombrePropietario)
@@ -269,7 +266,7 @@ class ListSolicitudesFragment : Fragment() {
             override fun onItemLongClick(pos: Int) {
 
                 // on long click -> show pop up wih options
-                showPopOptions(context!!, listSolicitudes[pos].Id, listSolicitudes[pos].NombreDesarrollo, listSolicitudes[pos].NombrePropietario, listSolicitudes[pos].CodigoUnidad)
+                showPopOptions(requireContext(), listSolicitudes[pos].Id, listSolicitudes[pos].NombreDesarrollo, listSolicitudes[pos].NombrePropietario, listSolicitudes[pos].CodigoUnidad)
             }
         })
 
@@ -309,7 +306,15 @@ class ListSolicitudesFragment : Fragment() {
     }
 
     private fun showDeleteDialog(solicitudId: String){
-        alert(resources.getString(R.string.msg_confirm_deletion),
+        activity?.alert {
+            title.text = ""
+            message.text = getString(R.string.msg_confirm_deletion)
+            cancelButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+            acceptClickListener {
+                deleteSolicludByServer(solicitudId)
+            }
+        }
+        /*alert(resources.getString(R.string.msg_confirm_deletion),
             "")
         {
             positiveButton(resources.getString(R.string.accept)) {
@@ -319,7 +324,7 @@ class ListSolicitudesFragment : Fragment() {
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
-        }
+        }*/
     }
 
     private fun deleteSolicludByServer(solicitudId: String){
@@ -335,26 +340,26 @@ class ListSolicitudesFragment : Fragment() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread {
+                activity?.runOnUiThread {
                     progress.dismiss()
-                    snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde", Constants.Types.ERROR) }
+                    snackbar(requireContext(), layParentS, "No es posible eliminar esta solicitud. Intente más tarde", Constants.Types.ERROR) }
             }
 
             override fun onResponse(call: Call, response: Response) {
-                runOnUiThread {
+                activity?.runOnUiThread {
                     try{
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         if(jsonRes.getInt("Error") == 0){
 
                             // successfully deleted on Server -> refresh fragment
                             progress.dismiss()
-                            snackbar(context!!, layParentS, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
+                            snackbar(requireContext(), layParentS, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             listSolicitudes.clear()
                             getSolicitudesByDate(today)
                         }
                     } catch (e: java.lang.Error){
                         progress.dismiss()
-                        snackbar(context!!, layParentS, "No es posible eliminar esta solicitud. Intente más tarde", Constants.Types.ERROR)
+                        snackbar(requireContext(), layParentS, "No es posible eliminar esta solicitud. Intente más tarde", Constants.Types.ERROR)
                     }
                 }
             }
@@ -363,17 +368,18 @@ class ListSolicitudesFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if(mustRefreshSolicitudes(context!!)){
+        if(mustRefreshSolicitudes(requireContext())){
             listSolicitudes.clear()
             getSolicitudesByDate(today)
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if(view != null){
             if(isVisibleToUser){
-                if(mustRefreshSolicitudes(context!!)){
+                if(mustRefreshSolicitudes(requireContext())){
                     listSolicitudes.clear()
                     getSolicitudesByDate(today)
                 }

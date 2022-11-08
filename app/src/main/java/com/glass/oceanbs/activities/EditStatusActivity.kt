@@ -28,13 +28,13 @@ import androidx.core.graphics.drawable.toBitmap
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
-import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Status
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -210,7 +210,7 @@ class EditStatusActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
 
@@ -298,7 +298,7 @@ class EditStatusActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
-                    val jsonRes = JSONObject(response.body()!!.string())
+                    val jsonRes = JSONObject(response.body!!.string())
                     Log.e("RES", jsonRes.toString())
 
                     if(jsonRes.getInt("Error") == 0){
@@ -330,6 +330,7 @@ class EditStatusActivity : AppCompatActivity() {
         })
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun fillData(){
         defaultImage1 = cStatus.Fotografia1.replace(" ","") == ""
         defaultImage2 = cStatus.Fotografia2.replace(" ","") == ""
@@ -389,6 +390,7 @@ class EditStatusActivity : AppCompatActivity() {
             disableFieldsIfPropietario()
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun disableFieldsIfPropietario(){
         cardPhoto1ER.isEnabled = false
         cardPhoto2ER.isEnabled = false
@@ -430,7 +432,7 @@ class EditStatusActivity : AppCompatActivity() {
         bitmapPhoto3.compress(Bitmap.CompressFormat.JPEG, 50, stream3)
         val byteArray3 = stream3.toByteArray()
 
-        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg")
+        val MEDIA_TYPE_JPG = "image/jpeg".toMediaTypeOrNull()
 
         // get id colaborador according spinners
         var idColaborador1 = ""
@@ -479,7 +481,7 @@ class EditStatusActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         Log.e("RES",  jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
@@ -591,6 +593,7 @@ class EditStatusActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
+    @Deprecated("Deprecated in Java")
     public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

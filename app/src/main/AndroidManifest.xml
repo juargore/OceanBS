@@ -20,7 +20,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
 
-        <activity android:name=".activities.NotificationActivity">
+        <activity android:name=".activities.NotificationActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.glass.oceanbs.activities.NotificationActivity" />
 
@@ -31,7 +32,8 @@
         <service
             android:name=".services.ServiceFirebaseMessaging"
             android:permission=""
-            tools:ignore="ExportedService">
+            tools:ignore="ExportedService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -40,6 +42,7 @@
         <activity
             android:name=".activities.SplashScreenActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,6 +53,7 @@
         <activity
             android:name=".activities.LoginActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,6 +64,7 @@
         <activity
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -70,6 +75,7 @@
         <activity
             android:name=".activities.EditSolicitudActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -80,6 +86,7 @@
         <activity
             android:name=".activities.ListIncidenciasActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -90,6 +97,7 @@
         <activity
             android:name=".activities.CreateIncidenciaActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -100,6 +108,7 @@
         <activity
             android:name=".activities.CreateStatusActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -110,6 +119,7 @@
         <activity
             android:name=".activities.EditIncidenciaActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -120,6 +130,7 @@
         <activity
             android:name=".activities.EditStatusActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

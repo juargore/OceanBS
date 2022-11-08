@@ -8,27 +8,25 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
-import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.activities.LoginActivity
 import com.glass.oceanbs.activities.NotificationActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import org.jetbrains.anko.notificationManager
 
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 class ServiceFirebaseMessaging : FirebaseMessagingService() {
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
         val channelId = "oceanbs_channel_01"
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-
+            val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val name = "oceanbs_channel"
             val description = "This is OceanBs Channel"
             val importance = NotificationManager.IMPORTANCE_HIGH
@@ -36,19 +34,16 @@ class ServiceFirebaseMessaging : FirebaseMessagingService() {
             mChannel.description = description
             mChannel.enableLights(true)
             mChannel.lightColor = Color.RED
-            //mChannel.enableVibration(false)
             mChannel.setShowBadge(false)
             notificationManager.createNotificationChannel(mChannel)
         }
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_SOUND)
-            //.setVibrate(longArrayOf(0.toLong()))
             .setContentTitle(remoteMessage.notification?.title)
             .setContentText(remoteMessage.notification?.body)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(NotificationCompat.BigTextStyle())
-            //.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setSmallIcon(R.drawable.logo_ocean_bs)
             .setAutoCancel(true)
 

@@ -11,14 +11,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,11 +25,10 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.IncidenciaAdapter
+import com.glass.oceanbs.extensions.alert
 import com.glass.oceanbs.models.ShortIncidencia
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okhttp3.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
 
@@ -68,7 +66,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
             desarrollo = args.getString("desarrollo").toString()
             persona = args.getString("persona").toString()
             codigoUnidad = args.getString("codigoUnidad").toString()
-        } catch (e: Exception){}
+        } catch (_: Exception){}
 
         initComponents()
     }
@@ -140,7 +138,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
 
                         if(jsonRes.getInt("Error") > 0)
                             snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
@@ -236,7 +234,15 @@ class ListIncidenciasActivity : AppCompatActivity() {
     }
 
     private fun showDeleteDialog(incidenciaId: String){
-        alert(resources.getString(R.string.msg_confirm_deletion),
+        alert {
+            title.text = ""
+            message.text = getString(R.string.msg_confirm_deletion)
+            cancelButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+            acceptClickListener {
+                deleteIncidenciaByServer(incidenciaId)
+            }
+        }
+        /*alert(resources.getString(R.string.msg_confirm_deletion),
             "")
         {
             positiveButton(resources.getString(R.string.accept)) {
@@ -246,7 +252,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
-        }
+        }*/
     }
 
     private fun deleteIncidenciaByServer(incidenciaId: String){
@@ -271,7 +277,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread{
                     try{
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         if(jsonRes.getInt("Error") == 0){
 
                             // successfully deleted on Server -> refresh list
@@ -294,6 +300,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
         })
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         backIntent()
     }

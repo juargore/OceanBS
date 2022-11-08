@@ -2,6 +2,7 @@
 
 package com.glass.oceanbs
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -13,9 +14,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.glass.oceanbs.extensions.alert
 import com.google.android.material.snackbar.Snackbar
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.backgroundColor
 
 object Constants {
 
@@ -42,9 +42,9 @@ object Constants {
 
         when(type){
             Types.GENERAL ->{ }
-            Types.ERROR ->{ sview.backgroundColor = context.resources.getColor(R.color.colorIncidencePink) }
-            Types.SUCCESS ->{  sview.backgroundColor = context.resources.getColor(R.color.colorIncidenceLightGreen)}
-            Types.INFO ->{ sview.backgroundColor = context.resources.getColor(R.color.colorPrimary)}
+            Types.ERROR ->{ sview.setBackgroundColor(context.resources.getColor(R.color.colorIncidencePink)) }
+            Types.SUCCESS ->{  sview.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceLightGreen)) }
+            Types.INFO ->{ sview.setBackgroundColor(context.resources.getColor(R.color.colorPrimary)) }
         }
 
         tv.setTextColor(Color.BLACK)
@@ -145,17 +145,22 @@ object Constants {
         return isNetworkConnected(activity)
     }
 
+    @SuppressLint("MissingPermission")
     private fun isNetworkConnected(context: Context): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
         return cm!!.activeNetworkInfo != null
     }
 
     fun showPopUpNoInternet(activity: Activity){
-        activity.alert(activity.resources.getString(R.string.desc_no_internet),
+        activity.alert {
+            title.text = activity.resources.getString(R.string.title_no_internet)
+            message.text = activity.resources.getString(R.string.desc_no_internet)
+        }
+        /*activity.alert(activity.resources.getString(R.string.desc_no_internet),
             activity.resources.getString(R.string.title_no_internet))
         {
             positiveButton(activity.resources.getString(R.string.accept)) {}
-        }.show().setCancelable(true)
+        }.show().setCancelable(true)*/
     }
 
     /* functions to check the permissions for the general App */

@@ -1,21 +1,19 @@
 package com.glass.oceanbs.activities
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.media.RingtoneManager
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_notification.*
-import org.jetbrains.anko.notificationManager
 
 @Suppress("DEPRECATION")
 class NotificationActivity : AppCompatActivity() {
@@ -67,9 +65,10 @@ class NotificationActivity : AppCompatActivity() {
         setListeners()
         setInformation()
 
-        createNotificationCopy()
+        createNotificationCopy(applicationContext)
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun setInformation(){
         txtTitleN.text = title
         Picasso.get().load(image).error(resources.getDrawable(R.drawable.logo_ocean_bs)).fit().into(imgN)
@@ -92,9 +91,7 @@ class NotificationActivity : AppCompatActivity() {
 
             //Open Main or Login Activity
             val remember = Constants.getKeepLogin(this)
-            val intent: Intent
-
-            intent = if(remember)
+            val intent: Intent = if(remember)
                 Intent(this@NotificationActivity, MainActivity::class.java)
             else
                 Intent(this@NotificationActivity, LoginActivity::class.java)
@@ -105,17 +102,15 @@ class NotificationActivity : AppCompatActivity() {
         }
     }
 
-    private fun createNotificationCopy() {
+    private fun createNotificationCopy(context: Context) {
         val channelId = "oceanbs_channel_01"
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val name = "oceanbs_channel"
             val description = "This is OceanBs Channel"
             val importance = NotificationManager.IMPORTANCE_HIGH
             val mChannel = NotificationChannel(channelId, name, importance)
-            //mChannel.vibrationPattern = longArrayOf(0.toLong())
-            //mChannel.enableVibration(true)
             mChannel.description = description
             mChannel.enableLights(true)
             mChannel.lightColor = Color.RED
@@ -125,13 +120,10 @@ class NotificationActivity : AppCompatActivity() {
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setDefaults(Notification.DEFAULT_LIGHTS and Notification.DEFAULT_SOUND)
-          //.setVibrate(longArrayOf(0.toLong()))
-            //.setVibrate(null)
             .setContentTitle(title)
             .setContentText("$t3 $t4")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setStyle(NotificationCompat.BigTextStyle())
-            //.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setSmallIcon(R.drawable.logo_ocean_bs)
             .setAutoCancel(true)
 
@@ -139,5 +131,6 @@ class NotificationActivity : AppCompatActivity() {
         notificationManager.notify(0, notificationBuilder.build())
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() { }
 }

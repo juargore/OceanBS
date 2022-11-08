@@ -9,10 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.glass.oceanbs.R
-import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.ShortStatus
 import kotlinx.android.synthetic.main.card_status_incidencia.view.*
-import org.jetbrains.anko.backgroundDrawable
 
 class BitacoraStatusAdapter(private val context: Context,
                             private val listStatus: ArrayList<ShortStatus>,
@@ -43,7 +41,7 @@ class BitacoraStatusAdapter(private val context: Context,
 
     inner class ItemViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView){
 
-        @SuppressLint("DefaultLocale")
+        @SuppressLint("DefaultLocale", "UseCompatLoadingForDrawables")
         fun setData(position: Int, status: ShortStatus, eventItemClick: InterfaceOnClick, eventItemLongClick: InterfaceOnLongClick){
 
             itemView.txtFechaAlta.text = status.FechaAlta
@@ -59,7 +57,7 @@ class BitacoraStatusAdapter(private val context: Context,
                 8, 9, 10 -> { context.resources.getDrawable(R.drawable.progress_pink) }
                 else-> { context.resources.getDrawable(R.drawable.progress_base) }
             }
-            itemView.layFill.backgroundDrawable = fColor
+            itemView.layFill.setBackgroundDrawable(fColor)
 
             itemView.layBack.post {
                 val totalWidth = itemView.layBack.width

@@ -32,6 +32,7 @@ import com.glass.oceanbs.R
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -199,7 +200,7 @@ class CreateStatusActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
 
@@ -267,8 +268,7 @@ class CreateStatusActivity : AppCompatActivity() {
 
         val user = TableUser(this).getCurrentUserById(Constants.getUserId(this), Constants.getTipoUsuario(this))
 
-        val userId: String
-        userId = if(user.tipoUsuario == 1)
+        val userId: String = if(user.tipoUsuario == 1)
             user.idPropietario
         else
             user.idColaborador
@@ -305,7 +305,7 @@ class CreateStatusActivity : AppCompatActivity() {
         bitmapPhoto3.compress(Bitmap.CompressFormat.JPEG, 50, stream3)
         val byteArray3 = stream3.toByteArray()
 
-        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg")
+        val MEDIA_TYPE_JPG = "image/jpeg".toMediaTypeOrNull()
 
         // get id colaborador according spinners
         var idColaborador1 = ""
@@ -355,7 +355,7 @@ class CreateStatusActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         Log.e("RES",  jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
@@ -469,6 +469,7 @@ class CreateStatusActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
+    @Deprecated("Deprecated in Java")
     public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

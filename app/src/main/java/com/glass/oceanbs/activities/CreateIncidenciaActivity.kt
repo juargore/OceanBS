@@ -11,11 +11,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.media.MediaScannerConnection
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.text.TextUtils
@@ -25,7 +22,9 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,21 +32,18 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
 import com.glass.oceanbs.database.TableUser
+import com.glass.oceanbs.extensions.alert
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.ShortStatus
 import okhttp3.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.textColor
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.Error
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 class CreateIncidenciaActivity : AppCompatActivity() {
 
@@ -88,9 +84,9 @@ class CreateIncidenciaActivity : AppCompatActivity() {
     private var codigoUnidad = ""
     private var defaultImage = true
 
-    companion object {
+    /*companion object {
         private const val IMAGE_DIRECTORY = "/demonuts"
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -180,7 +176,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
                             val arrayClasif = jsonRes.getJSONArray("Datos")
@@ -214,7 +210,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
                             3 -> setUpSpinners()
                         }
 
-                    } catch (e: Error){}
+                    } catch (_: Error){}
                 }
             }
         })
@@ -318,8 +314,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         val stream1 = ByteArrayOutputStream()
         bitmapPhoto1.compress(Bitmap.CompressFormat.JPEG, 50, stream1)
         val byteArray1 = stream1.toByteArray()
-
-        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg")
+        val MEDIA_TYPE_JPG = "image/jpeg".toMediaTypeOrNull()
 
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
@@ -349,7 +344,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
                             idIncidencia = jsonRes.getString("Id")
@@ -434,6 +429,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         startActivityForResult(intent, CAMERA)
     }
 
+    @Deprecated("Deprecated in Java")
     public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -467,7 +463,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveImage(myBitmap: Bitmap):String {
+    /*private fun saveImage(myBitmap: Bitmap):String {
         val bytes = ByteArrayOutputStream()
 
         val a = Bitmap.createScaledBitmap(myBitmap, myBitmap.width/3, myBitmap.height/3, true)
@@ -501,7 +497,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         }
 
         return ""
-    }
+    }*/
 
 
     private fun getStatus(){
@@ -526,7 +522,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         listRegistroStatus.clear()
 
                         if(jsonRes.getInt("Error") > 0)
@@ -626,7 +622,15 @@ class CreateIncidenciaActivity : AppCompatActivity() {
     }
 
     private fun showDeleteDialog(view: View, idStatus: String){
-        alert(resources.getString(R.string.msg_confirm_deletion),
+        alert {
+            title.text = ""
+            message.text = getString(R.string.msg_confirm_deletion)
+            cancelButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+            acceptClickListener {
+                deleteStatusRegistro(view, idStatus)
+            }
+        }
+        /*alert(resources.getString(R.string.msg_confirm_deletion),
             "")
         {
             positiveButton(resources.getString(R.string.accept)) {
@@ -636,7 +640,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
-        }
+        }*/
     }
 
     private fun deleteStatusRegistro(view: View, idStatus: String){
@@ -660,7 +664,7 @@ class CreateIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread{
                     try{
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         Log.e("--", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){

@@ -7,7 +7,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -20,10 +19,6 @@ import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Propietario
 import com.glass.oceanbs.models.Solicitud
 import okhttp3.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.backgroundDrawable
-import org.jetbrains.anko.support.v4.runOnUiThread
-import org.jetbrains.anko.textColor
 import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -148,7 +143,7 @@ class EditSolicitudActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val js = JSONObject(response.body()!!.string())
+                        val js = JSONObject(response.body!!.string())
 
                         if(js.getInt("Error") == 0){
                             val j = js.getJSONArray("Datos").getJSONObject(0)
@@ -215,7 +210,7 @@ class EditSolicitudActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
                             val arrayDesarrollos = jsonRes.getJSONArray("Datos")
@@ -233,7 +228,7 @@ class EditSolicitudActivity : AppCompatActivity() {
 
                             setUpSpinnerDesarrollos()
                         }
-                    }catch (e: Error){ }
+                    }catch (_: Error){ }
                 }
             }
         })
@@ -309,7 +304,7 @@ class EditSolicitudActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
                 try {
-                    val jsonRes = JSONObject(response.body()!!.string())
+                    val jsonRes = JSONObject(response.body!!.string())
 
                     if(jsonRes.getInt("Error") == 0){
                         val arrayDesarrollos = jsonRes.getJSONArray("Datos")
@@ -332,7 +327,7 @@ class EditSolicitudActivity : AppCompatActivity() {
                             etPropietarioE.setText("")
                             setUpSpinnerUnidad() }
                     }
-                }catch (e: Error){ }
+                }catch (_: Error){ }
             }
         })
     }
@@ -410,7 +405,7 @@ class EditSolicitudActivity : AppCompatActivity() {
         spinRelacionE.setSelection(cSolicitud.TipoRelacionPropietario.toInt())
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
     private fun fillDataAccordingCheck(){
         if(chckBoxReporta.isChecked){
             etReportaE.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
@@ -457,7 +452,7 @@ class EditSolicitudActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val j = JSONObject(response.body()!!.string())
+                        val j = JSONObject(response.body!!.string())
 
                         if(j.getInt("Error") == 0){
                             cPropietario = Propietario(
@@ -476,7 +471,7 @@ class EditSolicitudActivity : AppCompatActivity() {
                                 fillDataAccordingCheck()
                             }
                         }
-                    }catch (e: Error){ }
+                    }catch (_: Error){ }
                 }
             }
         })
@@ -532,7 +527,7 @@ class EditSolicitudActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
                             Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)

@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,7 @@ import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
 import com.glass.oceanbs.database.TableUser
+import com.glass.oceanbs.extensions.alert
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.Incidencia
 import com.glass.oceanbs.models.ShortStatus
@@ -39,8 +41,7 @@ import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import okhttp3.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.textColor
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -188,10 +189,11 @@ class EditIncidenciaActivity : AppCompatActivity() {
                     progress.dismiss()
                 }
             }
+            @SuppressLint("UseCompatLoadingForDrawables")
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jRes = JSONObject(response.body()!!.string())
+                        val jRes = JSONObject(response.body!!.string())
                         Log.e("FOTO", jRes.toString())
 
                         if(jRes.getInt("Error") == 0){
@@ -203,7 +205,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
                                 .networkPolicy(NetworkPolicy.NO_CACHE)
                                 .error(R.drawable.ic_box).into(imgPhotoEd)
                         }
-                    }catch (e: Error){
+                    }catch (_: Error){
 
                     }
                 }
@@ -230,7 +232,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
                             val arrayClasif = jsonRes.getJSONArray("Datos")
@@ -264,7 +266,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
                             3 -> setUpSpinners()
                         }
 
-                    } catch (e: Error){}
+                    } catch (_: Error){}
                 }
             }
         })
@@ -290,7 +292,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         Log.e("INC", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){
@@ -485,7 +487,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
         bitmapPhoto1.compress(Bitmap.CompressFormat.JPEG, 50, stream1)
         val byteArray1 = stream1.toByteArray()
 
-        val MEDIA_TYPE_JPG = MediaType.parse("image/jpeg")
+        val MEDIA_TYPE_JPG = "image/jpeg".toMediaTypeOrNull()
 
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
@@ -516,7 +518,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
 
                         if(jsonRes.getInt("Error") == 0){
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
@@ -598,6 +600,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
         startActivityForResult(intent, CAMERA)
     }
 
+    @Deprecated("Deprecated in Java")
     public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -650,7 +653,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         listRegistroStatus.clear()
 
                         if(jsonRes.getInt("Error") > 0)
@@ -753,7 +756,16 @@ class EditIncidenciaActivity : AppCompatActivity() {
     }
 
     private fun showDeleteDialog(view: View, idStatus: String){
-        alert(resources.getString(R.string.msg_confirm_deletion),
+        alert {
+            title.text = ""
+            message.text = getString(R.string.msg_confirm_deletion)
+            cancelButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+            acceptClickListener {
+                deleteStatusRegistro(view, idStatus)
+            }
+        }
+
+        /*alert(resources.getString(R.string.msg_confirm_deletion),
             "")
         {
             positiveButton(resources.getString(R.string.accept)) {
@@ -763,7 +775,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
         }.show().apply {
             getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
             getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
-        }
+        }*/
     }
 
 
@@ -786,7 +798,7 @@ class EditIncidenciaActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread{
                     try{
-                        val jsonRes = JSONObject(response.body()!!.string())
+                        val jsonRes = JSONObject(response.body!!.string())
                         Log.e("--", jsonRes.toString())
 
                         if(jsonRes.getInt("Error") == 0){

@@ -8,6 +8,7 @@
     <color name="colorDarkGray">#636363</color>
     <color name="colorLightGray">#C3C3C3</color>
     <color name="colorLighterGray">#F2F2F2</color>
+    <color name="colorWhite">#FFFFFF</color>
 
     <color name="colorIncidenceBlue">#99d9ea</color>
     <color name="colorIncidenceOrange">#ff7f27</color>

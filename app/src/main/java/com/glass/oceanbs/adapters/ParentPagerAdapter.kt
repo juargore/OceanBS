@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.glass.oceanbs.adapters
 
 import android.content.Context
@@ -20,7 +22,7 @@ class ParentPagerAdapter(var context: Context, manager: FragmentManager) : Fragm
         return 2
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
+    override fun getPageTitle(position: Int): CharSequence {
         return when(position){
             0-> "Mis Solicitudes"
             else -> "Nueva Solicitud"

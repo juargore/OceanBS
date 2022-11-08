@@ -1,9 +1,9 @@
-@file:Suppress("PrivatePropertyName")
+@file:Suppress("PrivatePropertyName", "DEPRECATION")
 
 package com.glass.oceanbs.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.view.Window
@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
 
     private val DISPLAY_LENGTH = 2000
@@ -29,14 +30,11 @@ class SplashScreenActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         Handler().postDelayed({
-
             val remember = Constants.getKeepLogin(this)
-            val intent: Intent
-
-            if(remember)
-                intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
+            val intent: Intent = if(remember)
+                Intent(this@SplashScreenActivity, MainActivity::class.java)
             else
-                intent = Intent(this@SplashScreenActivity, LoginActivity::class.java)
+                Intent(this@SplashScreenActivity, LoginActivity::class.java)
 
             startActivity(intent)
 

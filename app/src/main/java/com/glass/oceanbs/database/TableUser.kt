@@ -5,9 +5,7 @@ package com.glass.oceanbs.database
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
 import com.glass.oceanbs.models.User
 import java.util.*
 
@@ -72,7 +70,7 @@ class TableUser(context: Context) {
             db.delete(TABLE_USER, "$ID_COLABORADOR =? ", arrayOf(userId))
     }
 
-    @SuppressLint("Recycle")
+    @SuppressLint("Recycle", "Range")
     fun getCurrentUserById(userId: String, tipoUusario: Int) : User {
 
         // 1- Propietario | 2- Colaborador
