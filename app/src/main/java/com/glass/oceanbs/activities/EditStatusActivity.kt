@@ -100,7 +100,6 @@ class EditStatusActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_status)
-
         supportActionBar?.hide()
 
         Constants.checkPermission(this,
@@ -110,12 +109,13 @@ class EditStatusActivity : AppCompatActivity() {
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
-        val extras = intent.extras
-        idStatus = extras!!.getString("idStatus").toString()
-        incidenciaId = extras.getString("incidenciaId").toString()
-        persona = extras.getString("persona").toString()
-        desarrollo = extras.getString("desarrollo").toString()
-        codigoUnidad = extras.getString("codigoUnidad").toString()
+        intent.extras?.let {
+            idStatus = it.getString("idStatus").toString()
+            incidenciaId = it.getString("incidenciaId").toString()
+            persona = it.getString("persona").toString()
+            desarrollo = it.getString("desarrollo").toString()
+            codigoUnidad = it.getString("codigoUnidad").toString()
+        }
 
         initComponents()
     }
@@ -147,7 +147,6 @@ class EditStatusActivity : AppCompatActivity() {
         spinnerAtiendeER = findViewById(R.id.spinnerAtiendeER)
         etObservacionesER = findViewById(R.id.etObservacionesER)
         btnUpdateStatusER = findViewById(R.id.btnUpdateStatusER)
-
 
         // set up progress dialg
         val builder = AlertDialog.Builder(this, R.style.HalfDialogTheme)

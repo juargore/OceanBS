@@ -33,6 +33,7 @@ import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.extensions.alert
+import com.glass.oceanbs.extensions.hide
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.ShortStatus
 import okhttp3.*
@@ -623,13 +624,13 @@ class CreateIncidenciaActivity : AppCompatActivity() {
 
     private fun showDeleteDialog(view: View, idStatus: String){
         alert {
-            title.text = ""
+            title.hide()
             message.text = getString(R.string.msg_confirm_deletion)
-            cancelButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
             acceptClickListener {
                 deleteStatusRegistro(view, idStatus)
             }
-        }
+            cancelClickListener { }
+        }.show()
         /*alert(resources.getString(R.string.msg_confirm_deletion),
             "")
         {

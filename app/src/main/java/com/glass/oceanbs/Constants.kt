@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.glass.oceanbs.extensions.alert
+import com.glass.oceanbs.extensions.hide
 import com.google.android.material.snackbar.Snackbar
 
 object Constants {
@@ -29,13 +30,22 @@ object Constants {
     const val URL_INCIDENCIAS = "${URL_PARENT}models/registros/CRegIncidencia.php"
     const val URL_STATUS = "${URL_PARENT}models/registros/CRegStatusIncidencia.php"
     const val URL_CLASIFICACION = "${URL_PARENT}models/catalogos/CCatValorClasificacion.php"
-    const val URL_IMAGES_CARROUSEL = "${URL_PARENT}models/catalogos/CCatEmpresa.php"
+    const val URL_IMAGES_CAROUSEL = "${URL_PARENT}models/catalogos/CCatEmpresa.php"
     const val URL_IMAGES = "${URL_PARENT}uploads/catalogos/sucursales/"
     const val URL_IMAGES_STATUS = "${URL_PARENT}uploads/crecento/statusincidencias/"
 
+    const val GET_CAROUSEL = "ConsultaCarruselApp"
+
+    const val WEB_SERVICE = "WebService"
+    const val ERROR = "Error"
+    const val MESSAGE = "Mensaje"
+    const val DATA = "Datos"
+    const val PHOTO = "Fotografia"
+    const val PHOTOS = "photos"
+
     private const val DATABASE_SP = "oceanbs"
 
-    fun snackbar(context: Context, view: View, message: String, type: Types = Types.GENERAL){
+    fun snackbar(context: Context, view: View, message: String, type: Types = Types.GENERAL) {
         val snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
         val sview = snack.view
         val tv = sview.findViewById<TextView>(R.id.snackbar_text)
@@ -155,7 +165,9 @@ object Constants {
         activity.alert {
             title.text = activity.resources.getString(R.string.title_no_internet)
             message.text = activity.resources.getString(R.string.desc_no_internet)
-        }
+            cancelButton.hide()
+            acceptButton.hide()
+        }.show()
         /*activity.alert(activity.resources.getString(R.string.desc_no_internet),
             activity.resources.getString(R.string.title_no_internet))
         {

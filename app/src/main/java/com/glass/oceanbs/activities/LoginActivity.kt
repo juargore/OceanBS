@@ -140,7 +140,7 @@ class LoginActivity : AppCompatActivity()  {
                             this@LoginActivity.finish()
 
                             // start new activity main
-                            startActivity(Intent(applicationContext, MainActivity::class.java))
+                            startActivity(Intent(applicationContext, NewMainActivity::class.java))
                         }
 
                     } catch (e: Error){

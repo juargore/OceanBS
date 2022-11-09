@@ -35,6 +35,7 @@ import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.adapters.ShortSolicitudAdapter
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.extensions.alert
+import com.glass.oceanbs.extensions.hide
 import com.glass.oceanbs.models.ShortSolicitud
 import okhttp3.*
 import org.json.JSONObject
@@ -307,13 +308,13 @@ class ListSolicitudesFragment : Fragment() {
 
     private fun showDeleteDialog(solicitudId: String){
         activity?.alert {
-            title.text = ""
+            title.hide()
             message.text = getString(R.string.msg_confirm_deletion)
-            cancelButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
             acceptClickListener {
                 deleteSolicludByServer(solicitudId)
             }
-        }
+            cancelClickListener { }
+        }?.show()
         /*alert(resources.getString(R.string.msg_confirm_deletion),
             "")
         {

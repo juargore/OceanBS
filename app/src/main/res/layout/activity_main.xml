@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
-
     <RelativeLayout
         android:id="@+id/layParentMain"
         android:layout_width="match_parent"
@@ -17,7 +16,7 @@
             android:id="@+id/fabExit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_marginStart="3dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
@@ -27,7 +26,8 @@
             app:fabCustomSize="42dp"
             app:fabSize="auto"
             app:maxImageSize="18dp"
-            app:srcCompat="@drawable/ic_exit" />
+            app:srcCompat="@drawable/ic_exit"
+            tools:ignore="ContentDescription,RelativeOverlap" />
 
         <com.synnapps.carouselview.CarouselView
             android:id="@+id/carouselView"

@@ -26,6 +26,7 @@ import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.IncidenciaAdapter
 import com.glass.oceanbs.extensions.alert
+import com.glass.oceanbs.extensions.hide
 import com.glass.oceanbs.models.ShortIncidencia
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okhttp3.*
@@ -235,13 +236,13 @@ class ListIncidenciasActivity : AppCompatActivity() {
 
     private fun showDeleteDialog(incidenciaId: String){
         alert {
-            title.text = ""
+            title.hide()
             message.text = getString(R.string.msg_confirm_deletion)
-            cancelButton.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
             acceptClickListener {
                 deleteIncidenciaByServer(incidenciaId)
             }
-        }
+            cancelClickListener { }
+        }.show()
         /*alert(resources.getString(R.string.msg_confirm_deletion),
             "")
         {

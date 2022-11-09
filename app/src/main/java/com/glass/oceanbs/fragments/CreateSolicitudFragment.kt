@@ -513,7 +513,7 @@ class CreateSolicitudFragment : Fragment() {
 
         val photo = dialog.findViewById<ImageView>(R.id.rPhoto)
         val desarrollo = dialog.findViewById<TextView>(R.id.rDesarrollo)
-        val direccion = dialog.findViewById<TextView>(R.id.rDirección)
+        val direccion = dialog.findViewById<TextView>(R.id.rDireccion)
         val unidad = dialog.findViewById<TextView>(R.id.rUnidad)
         val fecha = dialog.findViewById<TextView>(R.id.rFechaEntrega)
         val propietario = dialog.findViewById<TextView>(R.id.rPropietario)
