@@ -4,14 +4,10 @@ package com.glass.oceanbs.activities
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.MotionEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.database.TableUser
@@ -23,7 +19,7 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class EditSolicitudActivity : AppCompatActivity() {
+class EditSolicitudActivity : BaseActivity() {
 
     private lateinit var progress : AlertDialog
     private lateinit var titleProgress: TextView
@@ -550,13 +546,5 @@ class EditSolicitudActivity : AppCompatActivity() {
                 }
             }
         })
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (currentFocus != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
-        }
-        return super.dispatchTouchEvent(ev)
     }
 }

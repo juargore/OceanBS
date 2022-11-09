@@ -82,6 +82,17 @@ object Constants {
         return prefs.getString("userId", "")!!
     }
 
+    fun setUserName(context: Context, name: String){
+        val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
+        editor.putString("userName", name)
+        editor.apply()
+    }
+
+    fun getUserName(context: Context): String{
+        val prefs = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE)
+        return prefs.getString("userName", "")!!
+    }
+
     fun setTipoUsuario(context: Context, tipoUsuario: Int){
         val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
         editor.putInt("tipo", tipoUsuario)

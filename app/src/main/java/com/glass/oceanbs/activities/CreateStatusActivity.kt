@@ -8,7 +8,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -19,11 +18,8 @@ import android.os.Handler
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.util.Log
-import android.view.MotionEvent
 import android.view.Window
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.graphics.drawable.toBitmap
 import com.glass.oceanbs.Constants
@@ -31,6 +27,7 @@ import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
+import com.glass.oceanbs.models.OWNER
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
@@ -40,9 +37,8 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
-class CreateStatusActivity : AppCompatActivity() {
+class CreateStatusActivity : BaseActivity() {
 
     private lateinit var progress : AlertDialog
     private lateinit var titleProgress: TextView
@@ -268,7 +264,7 @@ class CreateStatusActivity : AppCompatActivity() {
 
         val user = TableUser(this).getCurrentUserById(Constants.getUserId(this), Constants.getTipoUsuario(this))
 
-        val userId: String = if(user.tipoUsuario == 1)
+        val userId: String = if (user.tipoUsuario == OWNER)
             user.idPropietario
         else
             user.idColaborador
@@ -459,14 +455,6 @@ class CreateStatusActivity : AppCompatActivity() {
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outUri)
         startActivityForResult(intent, CAMERA)
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (currentFocus != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
-        }
-        return super.dispatchTouchEvent(ev)
     }
 
     @Deprecated("Deprecated in Java")

@@ -4,7 +4,6 @@ package com.glass.oceanbs.activities
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -12,14 +11,12 @@ import android.os.StrictMode
 import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
-import android.view.MotionEvent
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.database.TableUser
+import com.glass.oceanbs.models.OWNER
 import com.glass.oceanbs.models.User
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
@@ -27,7 +24,7 @@ import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 
-class LoginActivity : AppCompatActivity()  {
+class LoginActivity : BaseActivity()  {
 
     private lateinit var progress : AlertDialog
     private lateinit var etCode: EditText
@@ -41,11 +38,8 @@ class LoginActivity : AppCompatActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
         supportActionBar?.hide()
         initComponents()
-
-        //FirebaseInstanceId.getInstance().token.toString()
         FirebaseApp.initializeApp(this)
     }
 
@@ -74,17 +68,17 @@ class LoginActivity : AppCompatActivity()  {
 
     private fun setListeners(){
         btnLogIn.setOnClickListener {
-            if(Constants.internetConnected(this)){
-                if(validateFullFields())
+            if (Constants.internetConnected(this)) {
+                if (validateFullFields())
                     sendCredentialsToServer()
-            } else
+            } else {
                 Constants.showPopUpNoInternet(this)
+            }
         }
     }
 
     private fun sendCredentialsToServer(){
         progress.show()
-
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
@@ -96,7 +90,6 @@ class LoginActivity : AppCompatActivity()  {
         .build()
 
         val request = Request.Builder().url(Constants.URL_USER).post(builder).build()
-
         client.newCall(request).enqueue(object : Callback{
             @Suppress("DEPRECATION")
             override fun onResponse(call: Call, response: Response) {
@@ -119,32 +112,35 @@ class LoginActivity : AppCompatActivity()  {
                                 jsonRes.getString("ApellidoP"),
                                 jsonRes.getString("ApellidoM"))
 
-                            TableUser(applicationContext).insertNewOrExistingUser(user, user.tipoUsuario)
-                            Constants.setTipoUsuario(applicationContext, user.tipoUsuario)
+                            TableUser(this@LoginActivity).insertNewOrExistingUser(user, user.tipoUsuario)
+                            Constants.setTipoUsuario(this@LoginActivity, user.tipoUsuario)
 
-                            if(user.tipoUsuario == 1)
-                                Constants.setUserId(applicationContext, user.idPropietario)
+                            if (user.tipoUsuario == OWNER)
+                                Constants.setUserId(this@LoginActivity, user.idPropietario)
                             else
-                                Constants.setUserId(applicationContext, user.idColaborador)
+                                Constants.setUserId(this@LoginActivity, user.idColaborador)
 
-                            if(chckBoxLogin.isChecked)
-                                Constants.setKeepLogin(applicationContext, true)
+                            if (chckBoxLogin.isChecked)
+                                Constants.setKeepLogin(this@LoginActivity, true)
 
                             // show a welcome message to the user
-                            val t = Toast.makeText(applicationContext, "Bienvenido \n${user.nombre} ${user.apellidoP} ${user.apellidoM}", Toast.LENGTH_LONG)
+                            val userName = "${user.nombre} ${user.apellidoP} ${user.apellidoM}"
+                            val t = Toast.makeText(this@LoginActivity, "Bienvenido \n$userName", Toast.LENGTH_LONG)
                             val v = t.view?.findViewById<TextView>(android.R.id.message)
-                            if(v != null) v.gravity = Gravity.CENTER
+                            if (v != null) v.gravity = Gravity.CENTER
                             t.show()
+
+                            Constants.setUserName(this@LoginActivity, userName)
 
                             sendFirebaseToken()
                             this@LoginActivity.finish()
 
                             // start new activity main
-                            startActivity(Intent(applicationContext, NewMainActivity::class.java))
+                            startActivity(Intent(this@LoginActivity, NewMainActivity::class.java))
                         }
 
                     } catch (e: Error){
-                        snackbar(applicationContext, parentLayout, e.message.toString(), Constants.Types.ERROR)
+                        snackbar(this@LoginActivity, parentLayout, e.message.toString(), Constants.Types.ERROR)
                     }
 
                     progress.dismiss()
@@ -229,13 +225,5 @@ class LoginActivity : AppCompatActivity()  {
                 }
             }
         })
-    }
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if (currentFocus != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
-        }
-        return super.dispatchTouchEvent(ev)
     }
 }

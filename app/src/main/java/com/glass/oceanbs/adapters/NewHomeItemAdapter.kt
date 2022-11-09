@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.R
+import com.glass.oceanbs.activities.AftermarketActivity
 import com.glass.oceanbs.activities.MainActivity
 import com.glass.oceanbs.models.ItemNewHome
 import kotlinx.android.synthetic.main.card_item_new_home.view.*
@@ -40,7 +41,7 @@ class NewHomeItemAdapter(
 
             when (position) {
                 0 -> intent = Intent(context, MainActivity::class.java)
-                1 -> intent = Intent(context, MainActivity::class.java)
+                1 -> intent = Intent(context, AftermarketActivity::class.java)
                 else -> url = item.url
             }
 

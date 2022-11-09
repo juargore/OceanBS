@@ -1,7 +1,6 @@
 package com.glass.oceanbs.activities
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.glass.oceanbs.Constants.PHOTOS
 import com.glass.oceanbs.R
@@ -12,9 +11,12 @@ import com.squareup.picasso.Picasso
 import com.synnapps.carouselview.ImageListener
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private var photosList = listOf<String>()
+    private var imageListener: ImageListener = ImageListener { position, imageView ->
+        Picasso.get().load(photosList[position]).fit().into(imageView)
+    }
 
     companion object {
         private lateinit var mTabsParent: TabLayout
@@ -48,10 +50,6 @@ class MainActivity : AppCompatActivity() {
         mViewPagerParent.adapter = ParentPagerAdapter(this, supportFragmentManager)
         mViewPagerParent.offscreenPageLimit = 2
         mTabsParent.setupWithViewPager(viewPagerParent)
-    }
-
-    private var imageListener: ImageListener = ImageListener { position, imageView ->
-        Picasso.get().load(photosList[position]).fit().into(imageView)
     }
 
     private fun setImagesInCarousel() {

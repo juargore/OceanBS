@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import com.glass.oceanbs.models.OWNER
 import com.glass.oceanbs.models.User
 import java.util.*
 
@@ -53,7 +54,7 @@ class TableUser(context: Context) {
     fun insertNewOrExistingUser(user: User, tipoUsuario: Int){
 
         // first, delete all data linked to current User
-        if(tipoUsuario == 1)
+        if (tipoUsuario == OWNER)
             deleteUserById(user.idPropietario, tipoUsuario)
         else
             deleteUserById(user.idColaborador, tipoUsuario)
@@ -64,7 +65,7 @@ class TableUser(context: Context) {
     }
 
     private fun deleteUserById(userId: String, tipoUsuario: Int){
-        if(tipoUsuario == 1)
+        if (tipoUsuario == OWNER)
             db.delete(TABLE_USER, "$ID_PROPIETARIO =? ", arrayOf(userId))
         else
             db.delete(TABLE_USER, "$ID_COLABORADOR =? ", arrayOf(userId))

@@ -20,13 +20,16 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
+            android:name=".activities.AftermarketActivity"
+            android:exported="true"
+            android:label="@string/title_activity_aftermarket"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
             android:name=".activities.NewMainActivity"
             android:exported="true"
             android:label="@string/title_activity_new_main"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
         </activity>
         <activity
             android:name=".activities.NotificationActivity"

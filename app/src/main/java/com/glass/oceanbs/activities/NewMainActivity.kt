@@ -3,7 +3,6 @@ package com.glass.oceanbs.activities
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.GET_CAROUSEL
 import com.glass.oceanbs.Constants.DATA
@@ -13,8 +12,10 @@ import com.glass.oceanbs.Constants.PHOTO
 import com.glass.oceanbs.Constants.PHOTOS
 import com.glass.oceanbs.Constants.URL_IMAGES_CAROUSEL
 import com.glass.oceanbs.Constants.WEB_SERVICE
+import com.glass.oceanbs.Constants.getUserName
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.NewHomeItemAdapter
+import com.glass.oceanbs.extensions.getDateFormatted
 import com.glass.oceanbs.extensions.showExitDialog
 import com.glass.oceanbs.models.ItemNewHome
 import com.squareup.picasso.Picasso
@@ -24,7 +25,7 @@ import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 
-class NewMainActivity : AppCompatActivity() {
+class NewMainActivity : BaseActivity() {
 
     private val photosList: ArrayList<String> = ArrayList()
     private var imageListener: ImageListener = ImageListener { position, imageView ->
@@ -37,10 +38,16 @@ class NewMainActivity : AppCompatActivity() {
         supportActionBar?.hide()
         getTopImagesFromServer()
         setUpRecycler()
+        setViews()
+    }
+
+    private fun setViews() {
+        txtDate.text = getDateFormatted(this)
+        txtUserName.text = getUserName(this)
+        fabExit.setOnClickListener { showExitDialog() }
     }
 
     private fun setUpRecycler() {
-        fabExit.setOnClickListener { showExitDialog() }
         with(NewHomeItemAdapter(getList())) {
             rvMain.adapter = this
             this.onItemClicked = { intent, url ->

@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
@@ -19,9 +18,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,7 +38,6 @@ import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ListSolicitudesFragment : Fragment() {
 
@@ -60,22 +56,16 @@ class ListSolicitudesFragment : Fragment() {
     private var userId = ""
     private var today = ""
 
-    companion object{
-        fun newInstance(): ListSolicitudesFragment {
-            return ListSolicitudesFragment()
-        }
+    companion object {
+        fun newInstance() = ListSolicitudesFragment()
     }
 
     @SuppressLint("InflateParams")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         val rootView = inflater.inflate(R.layout.fragment_list_solicitudes, container, false)
-
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
-
         initComponents(rootView)
-
         return rootView
     }
 
@@ -104,7 +94,7 @@ class ListSolicitudesFragment : Fragment() {
 
         val realDay = day
         var strDay = day.toString()
-        if(realDay < 10)
+        if (realDay < 10)
             strDay = "0$realDay"
 
         today = "$year-$strMonth-$strDay"
@@ -140,7 +130,6 @@ class ListSolicitudesFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun showDatePicker(txtView : TextView){
         val cldr = Calendar.getInstance()
         val day1  = cldr.get(Calendar.DAY_OF_MONTH)

@@ -9,4 +9,8 @@ data class User (
     var codigo: String,
     var nombre: String,
     var apellidoP: String,
-    var apellidoM: String)
+    var apellidoM: String
+)
+
+const val OWNER = 1
+const val COLLABORATOR = 2

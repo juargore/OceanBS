@@ -63,24 +63,14 @@ class CreateSolicitudFragment : Fragment() {
     private lateinit var cPropietario: Propietario
 
     companion object{
-        fun newInstance(): CreateSolicitudFragment {
-            return CreateSolicitudFragment()
-        }
+        fun newInstance() = CreateSolicitudFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         val rootView = inflater.inflate(R.layout.fragment_create_solicitud, container, false)
-
         policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
-
         initComponents(rootView)
-        /*if(Constants.internetConnected(activity!!)){
-            getSuggestedCode()
-        } else
-            Constants.showPopUpNoInternet(activity!!)*/
-
         return rootView
     }
 
@@ -204,7 +194,7 @@ class CreateSolicitudFragment : Fragment() {
                             setUpFirstSpinners()
                         }
                     }
-                }catch (_: Error){ }
+                } catch (_: Error){ }
             }
         })
     }
@@ -260,7 +250,7 @@ class CreateSolicitudFragment : Fragment() {
                             resetAllEdittext()
                             setUpSpinnerUnidad() }
                     }
-                }catch (_: Error){ }
+                } catch (_: Error){ }
             }
         })
     }
@@ -333,11 +323,10 @@ class CreateSolicitudFragment : Fragment() {
         spinDesarrolloN.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-
-                if(pos != 0){
+                if (pos != 0) {
                     val strId: String = listDesarrollos[pos-1].Id
                     getListUnidad(strId)
-                } else{
+                } else {
                     listUnidades.clear()
                     setUpSpinnerUnidad()
                 }
@@ -365,9 +354,8 @@ class CreateSolicitudFragment : Fragment() {
 
         spinUnidadN.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
-
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                if(pos != 0){
+                if (pos != 0){
                     if(chckBoxReportaN.isChecked)
                         resetAllEdittext()
 

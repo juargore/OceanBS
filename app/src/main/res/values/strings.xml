@@ -3,6 +3,29 @@
     <string name="crecento_group">Grupo Crecento</string>
     <string name="confirm_exit_desc">¿Está seguro que desea salir de la aplicación?</string>
 
+    <!-- Date -->
+    <string name="date_formatted">%s, %s de %s de %s</string>
+    <string name="date_monday">lunes</string>
+    <string name="date_tuesday">martes</string>
+    <string name="date_wednesday">miércoles</string>
+    <string name="date_thursday">jueves</string>
+    <string name="date_friday">viernes</string>
+    <string name="date_saturday">sábado</string>
+    <string name="date_sunday">domingo</string>
+
+    <string name="month_january">enero</string>
+    <string name="month_february">febrero</string>
+    <string name="month_march">marzo</string>
+    <string name="month_april">abril</string>
+    <string name="month_may">mayo</string>
+    <string name="month_june">junio</string>
+    <string name="month_july">julio</string>
+    <string name="month_august">agosto</string>
+    <string name="month_september">septiembre</string>
+    <string name="month_october">octubre</string>
+    <string name="month_november">noviembre</string>
+    <string name="month_december">diciembre</string>
+
     <!-- Strings for Login Activity -->
     <string name="welcome">Grupo Crecento\nPOSTVenta App\nBienvenido</string>
     <string name="user_code">Código del Propietario / Colaborador</string>
@@ -37,5 +60,15 @@
 
     <!-- New Main Activity -->
     <string name="new_welcome_crecento">Bienvenido a Grupo Crecento</string>
+    <string name="new_aftermarket_tracing">Seguimiento</string>
+    <string name="new_aftermarket_conversation">Coversación</string>
+    <string name="new_aftermarket_summary">Resumen</string>
+    <string name="new_aftermarket_construction">Construcción</string>
+    <string name="new_aftermarket_documentation">Documentación</string>
+    <string name="new_aftermarket_history">History</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_aftermarket">AftermarketActivity</string>
 
 </resources>
