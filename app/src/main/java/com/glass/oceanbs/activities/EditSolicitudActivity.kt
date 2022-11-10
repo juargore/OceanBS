@@ -12,6 +12,7 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
+import com.glass.oceanbs.models.OWNER
 import com.glass.oceanbs.models.Propietario
 import com.glass.oceanbs.models.Solicitud
 import okhttp3.*
@@ -184,7 +185,7 @@ class EditSolicitudActivity : BaseActivity() {
 
         val client = OkHttpClient()
 
-        val builder: FormBody = if(Constants.getTipoUsuario(this) == 1){
+        val builder: FormBody = if (Constants.getTipoUsuario(this) == OWNER) {
 
             // propietario
             FormBody.Builder()
@@ -242,7 +243,7 @@ class EditSolicitudActivity : BaseActivity() {
         val adapterDesarrollo = ArrayAdapter(this, R.layout.spinner_text, desarrollosList)
         spinDesarrolloE.adapter = adapterDesarrollo
 
-        if(Constants.getTipoUsuario(this) == 1 && listDesarrollos.size == 1){
+        if (Constants.getTipoUsuario(this) == OWNER && listDesarrollos.size == 1) {
             // propietario
             spinDesarrolloE.setSelection(1)
         }
@@ -278,7 +279,7 @@ class EditSolicitudActivity : BaseActivity() {
 
         val client = OkHttpClient()
 
-        val builder: FormBody = if(Constants.getTipoUsuario(this) == 1){
+        val builder: FormBody = if (Constants.getTipoUsuario(this) == OWNER) {
 
             // propietario
             FormBody.Builder()
@@ -349,7 +350,7 @@ class EditSolicitudActivity : BaseActivity() {
 
         spinUnidadE.adapter = adapterUnidad
 
-        if(Constants.getTipoUsuario(this) == 1 && listUnidades.size == 1){
+        if (Constants.getTipoUsuario(this) == OWNER && listUnidades.size == 1) {
             // propietario
             spinUnidadE.setSelection(1)
         }
@@ -410,7 +411,7 @@ class EditSolicitudActivity : BaseActivity() {
             etEmailE.setText(cPropietario.correoElecP)
             spinRelacionE.setSelection(0)
 
-            if(Constants.getTipoUsuario(this) == 1 ){
+            if (Constants.getTipoUsuario(this) == OWNER) {
                 // propietario
                 chckBoxReporta.isEnabled = false
                 etReportaE.isEnabled = false
@@ -462,7 +463,7 @@ class EditSolicitudActivity : BaseActivity() {
                             )
 
                             etPropietarioE.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
-                            if(Constants.getTipoUsuario(applicationContext) == 1){
+                            if (Constants.getTipoUsuario(applicationContext) == OWNER) {
                                 chckBoxReporta.isChecked = true
                                 fillDataAccordingCheck()
                             }

@@ -29,7 +29,9 @@ import com.glass.oceanbs.adapters.BitacoraStatusAdapter
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.extensions.alert
 import com.glass.oceanbs.extensions.hide
+import com.glass.oceanbs.models.COLLABORATOR
 import com.glass.oceanbs.models.GenericObj
+import com.glass.oceanbs.models.OWNER
 import com.glass.oceanbs.models.ShortStatus
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -62,7 +64,6 @@ class CreateIncidenciaActivity : BaseActivity() {
     private lateinit var etFallaRealI: EditText
     private lateinit var etObservacionesI: EditText
     private lateinit var btnSaveIncidenciaI: Button
-
     private lateinit var txtBitacoraStatus: TextView
 
     private var listSpinner3m: ArrayList<GenericObj> = ArrayList()
@@ -87,7 +88,6 @@ class CreateIncidenciaActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_incidencia)
-
         supportActionBar?.hide()
 
         Constants.checkPermission(this,
@@ -581,7 +581,7 @@ class CreateIncidenciaActivity : BaseActivity() {
         }
 
         //show | hide button according user or colaborator
-        if(Constants.getTipoUsuario(this) == 1) //propietario
+        if(Constants.getTipoUsuario(this) == OWNER) //propietario
             btnAddStatus.visibility = View.GONE
 
 
@@ -606,7 +606,7 @@ class CreateIncidenciaActivity : BaseActivity() {
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                if(Constants.getTipoUsuario(applicationContext) == 2) //colaborador
+                if (Constants.getTipoUsuario(applicationContext) == COLLABORATOR) //colaborador
                     showDeleteDialog(layParentIn, listRegistroStatus[pos].Id)
             }
         })

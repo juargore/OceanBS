@@ -59,16 +59,16 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
     <!-- New Main Activity -->
+    <string name="title_activity_aftermarket">AftermarketActivity</string>
     <string name="new_welcome_crecento">Bienvenido a Grupo Crecento</string>
     <string name="new_aftermarket_tracing">Seguimiento</string>
-    <string name="new_aftermarket_conversation">Coversación</string>
+    <string name="new_aftermarket_conversation">Conversación</string>
     <string name="new_aftermarket_summary">Resumen</string>
     <string name="new_aftermarket_construction">Construcción</string>
     <string name="new_aftermarket_documentation">Documentación</string>
-    <string name="new_aftermarket_history">History</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_aftermarket">AftermarketActivity</string>
+    <string name="new_aftermarket_history">Historia</string>
+    <string name="new_aftermarket_owner">Propietario</string>
+    <string name="new_aftermarket_collaborator">Colaborador</string>
+    <string name="new_aftermarket_select">Seleccionar</string>
 
 </resources>

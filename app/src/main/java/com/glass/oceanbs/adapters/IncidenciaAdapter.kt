@@ -2,20 +2,23 @@
 
 package com.glass.oceanbs.adapters
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import com.glass.oceanbs.R
 import com.glass.oceanbs.models.ShortIncidencia
 import kotlinx.android.synthetic.main.card_incidencias.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
-class IncidenciaAdapter(private val context: Context,
-                        private val listIncidencias: ArrayList<ShortIncidencia>,
-                        private val eventClick: InterfaceOnClick,
-                        private val eventLongClick: InterfaceOnLongClick)
-    : androidx.recyclerview.widget.RecyclerView.Adapter<IncidenciaAdapter.ItemViewHolder>() {
+class IncidenciaAdapter(
+    private val context: Context,
+    private val listIncidencias: ArrayList<ShortIncidencia>,
+    private val eventClick: InterfaceOnClick,
+    private val eventLongClick: InterfaceOnLongClick
+): androidx.recyclerview.widget.RecyclerView.Adapter<IncidenciaAdapter.ItemViewHolder>() {
 
     interface InterfaceOnClick {
         fun onItemClick(pos: Int)
@@ -30,33 +33,34 @@ class IncidenciaAdapter(private val context: Context,
         return ItemViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return listIncidencias.size
-    }
+    override fun getItemCount() = listIncidencias.size
 
     override fun onBindViewHolder(p0: ItemViewHolder, pos: Int) {
         p0.setData(pos, listIncidencias[pos], eventClick, eventLongClick)
     }
 
-    inner class ItemViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView){
-
-        @SuppressLint("DefaultLocale")
-        fun setData(position: Int, incidencia: ShortIncidencia, eventItemClick: InterfaceOnClick, eventItemLongClick: InterfaceOnLongClick){
-
+    inner class ItemViewHolder(itemView: View): androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+        fun setData(
+            position: Int,
+            incidencia: ShortIncidencia,
+            eventItemClick: InterfaceOnClick,
+            eventItemLongClick: InterfaceOnLongClick
+        ) {
             itemView.txtClasificacion.text = incidencia.Clasificacion
             itemView.txtStatus.text = incidencia.Status
             itemView.txtVigencia.text = incidencia.Vigencia
             itemView.txtFecha.text = incidencia.FechaAlta
             itemView.txtFalla.text = incidencia.Falla
 
-            when(incidencia.Status.toLowerCase()){
-                "registrada"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceBlue))}
-                "por verificar"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceOrange))}
-                "aceptada", "programada"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidencePurple))}
-                "en proceso"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceYellow))}
-                "terminada"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceLightGreen))}
-                "entregada"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceDarkGreen))}
-                "no aceptada", "no terminada", "no entregada"->{itemView.layColorStatus.setBackgroundColor(context.resources.getColor(R.color.colorIncidencePink))}
+            val layout = itemView.layColorStatus
+            when (incidencia.Status.toLowerCase(Locale.getDefault())) {
+                "registrada"-> setColorStatus(layout, R.color.colorIncidenceBlue)
+                "por verificar"-> setColorStatus(layout, R.color.colorIncidenceOrange)
+                "aceptada", "programada"-> setColorStatus(layout, R.color.colorIncidencePurple)
+                "en proceso"-> setColorStatus(layout, R.color.colorIncidenceYellow)
+                "terminada"-> setColorStatus(layout, R.color.colorIncidenceLightGreen)
+                "entregada"-> setColorStatus(layout, R.color.colorIncidenceDarkGreen)
+                "no aceptada", "no terminada", "no entregada"-> setColorStatus(layout, R.color.colorIncidencePink)
             }
 
             itemView.setOnClickListener {
@@ -68,6 +72,9 @@ class IncidenciaAdapter(private val context: Context,
                 true
             }
         }
-    }
 
+        private fun setColorStatus(v: RelativeLayout, color: Int) {
+            v.setBackgroundColor(context.resources.getColor(color))
+        }
+    }
 }

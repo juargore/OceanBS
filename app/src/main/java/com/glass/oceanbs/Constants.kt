@@ -35,6 +35,8 @@ object Constants {
     const val URL_IMAGES_STATUS = "${URL_PARENT}uploads/crecento/statusincidencias/"
 
     const val GET_CAROUSEL = "ConsultaCarruselApp"
+    const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
+    const val GET_DESARROLLOS_BY_OWNER_ID = "ConsultaDesarrollosIdPropietario"
 
     const val WEB_SERVICE = "WebService"
     const val ERROR = "Error"
@@ -42,6 +44,7 @@ object Constants {
     const val DATA = "Datos"
     const val PHOTO = "Fotografia"
     const val PHOTOS = "photos"
+    const val OWNER_ID = "IdPropietario"
 
     private const val DATABASE_SP = "oceanbs"
 

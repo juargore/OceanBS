@@ -25,6 +25,7 @@ import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.models.GenericObj
+import com.glass.oceanbs.models.OWNER
 import com.glass.oceanbs.models.Status
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.NetworkPolicy
@@ -380,7 +381,7 @@ class EditStatusActivity : BaseActivity() {
             }
         }
 
-        if(Constants.getTipoUsuario(this) == 1)
+        if (Constants.getTipoUsuario(this) == OWNER)
             disableFieldsIfPropietario()
     }
 

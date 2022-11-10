@@ -3,6 +3,7 @@ package com.glass.oceanbs.activities
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View.GONE
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.GET_CAROUSEL
 import com.glass.oceanbs.Constants.DATA
@@ -24,6 +25,8 @@ import kotlinx.android.synthetic.main.activity_new_main.*
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
+import java.util.*
+import kotlin.collections.ArrayList
 
 class NewMainActivity : BaseActivity() {
 
@@ -43,7 +46,7 @@ class NewMainActivity : BaseActivity() {
 
     private fun setViews() {
         txtDate.text = getDateFormatted(this)
-        txtUserName.text = getUserName(this)
+        txtUserName.text = getUserName(this).uppercase(Locale.getDefault())
         fabExit.setOnClickListener { showExitDialog() }
     }
 

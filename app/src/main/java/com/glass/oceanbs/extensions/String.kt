@@ -1,7 +1,9 @@
 package com.glass.oceanbs.extensions
 
 import android.content.Context
+import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
+import com.glass.oceanbs.models.OWNER
 import java.util.*
 
 fun getDateFormatted(c: Context) : String {
@@ -48,5 +50,13 @@ fun getNameOfMonth(c: Context) : String {
         Calendar.NOVEMBER -> c.getString(R.string.month_november)
         Calendar.DECEMBER -> c.getString(R.string.month_december)
         else -> ""
+    }
+}
+
+fun getUserTypeStr(c: Context) : String {
+    return if (Constants.getTipoUsuario(c) == OWNER) {
+        c.getString(R.string.new_aftermarket_owner)
+    } else {
+        c.getString(R.string.new_aftermarket_collaborator)
     }
 }

@@ -35,9 +35,7 @@ import com.glass.oceanbs.adapters.BitacoraStatusAdapter
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.extensions.alert
 import com.glass.oceanbs.extensions.hide
-import com.glass.oceanbs.models.GenericObj
-import com.glass.oceanbs.models.Incidencia
-import com.glass.oceanbs.models.ShortStatus
+import com.glass.oceanbs.models.*
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
@@ -331,7 +329,7 @@ class EditIncidenciaActivity : BaseActivity() {
         etFallaReportadaEdI.setText(cIncidencia.FallaReportada)
         etObservacionesEdI.setText(cIncidencia.Observaciones)
 
-        if(Constants.getTipoUsuario(this) == 1){
+        if (Constants.getTipoUsuario(this) == OWNER) {
 
             // propietario -> disable all fields
             imgPhotoEd.isEnabled = false
@@ -720,7 +718,7 @@ class EditIncidenciaActivity : BaseActivity() {
         }
 
         //show | hide button according user or colaborator
-        if(Constants.getTipoUsuario(this) == 1)
+        if (Constants.getTipoUsuario(this) == OWNER)
             btnAddStatus.visibility = View.GONE
 
 
@@ -745,7 +743,7 @@ class EditIncidenciaActivity : BaseActivity() {
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                if(Constants.getTipoUsuario(applicationContext) == 2)
+                if (Constants.getTipoUsuario(applicationContext) == COLLABORATOR)
                     showDeleteDialog(layParentEdIn, listRegistroStatus[pos].Id)
             }
         })

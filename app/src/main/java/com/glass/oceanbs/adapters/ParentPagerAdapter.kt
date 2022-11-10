@@ -22,7 +22,7 @@ class ParentPagerAdapter(var context: Context, manager: FragmentManager) : Fragm
 
     override fun getPageTitle(position: Int): CharSequence {
         return when(position) {
-            0-> "Mis Solicitudes"
+            0 -> "Mis Solicitudes"
             else -> "Nueva Solicitud"
         }
     }

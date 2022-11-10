@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.aftermarket.MainTracingFragment">
+    tools:context=".fragments.aftermarket.MainTracingFragment"
+    tools:ignore="HardcodedText">
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -13,7 +15,7 @@
         android:background="@color/colorLighterGray"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="12dp"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,15 +25,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Juan Arturo Gómez Reséndiz"
-            android:textSize="16sp" />
+            android:textSize="15sp" />
 
         <TextView
-            android:id="@+id/textView22"
+            android:id="@+id/txtOwner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cliente desde febrero de 2017"
             android:textColor="@color/colorLightGray"
-            android:textSize="10sp"
+            android:textSize="11sp"
             tools:ignore="SmallSp" />
     </LinearLayout>
 
@@ -47,23 +49,62 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/laySpinner"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view14">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                tools:ignore="UselessParent">
+
+                <Spinner
+                    android:id="@+id/spinnerDesarrollo"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_round_corner" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:src="@android:drawable/arrow_down_float"
+                    app:tint="@color/colorDarkGray"
+                    tools:ignore="ContentDescription" />
+            </RelativeLayout>
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="scrollable"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/laySpinner" />
+        app:layout_constraintTop_toBottomOf="@+id/laySpinner"
+        app:tabBackground="@color/colorTabBackground"
+        app:tabIndicatorColor="#FCC914"
+        app:tabIndicatorHeight="6dp"
+        app:tabMode="scrollable"
+        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+        app:tabTextColor="@color/colorWhite" />
 
-    <com.glass.oceanbs.fragments.aftermarket.adapters.ViewPagerNoScroll
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"

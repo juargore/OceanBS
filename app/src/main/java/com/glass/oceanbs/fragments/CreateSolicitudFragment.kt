@@ -26,6 +26,7 @@ import com.glass.oceanbs.activities.ListIncidenciasActivity
 import com.glass.oceanbs.activities.MainActivity
 import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.models.GenericObj
+import com.glass.oceanbs.models.OWNER
 import com.glass.oceanbs.models.Propietario
 import com.squareup.picasso.Picasso
 import okhttp3.*
@@ -148,11 +149,11 @@ class CreateSolicitudFragment : Fragment() {
     }
 
     // get a list of all desarrollos in Server
-    private fun getListDesarrollos(){
+    private fun getListDesarrollos() {
 
         val client = OkHttpClient()
 
-        val builder: FormBody = if(Constants.getTipoUsuario(requireContext()) == 1){
+        val builder: FormBody = if (Constants.getTipoUsuario(requireContext()) == OWNER) {
 
             // propietario
             FormBody.Builder()
@@ -204,7 +205,7 @@ class CreateSolicitudFragment : Fragment() {
 
         val client = OkHttpClient()
 
-        val builder: FormBody = if(Constants.getTipoUsuario(requireContext()) == 1){
+        val builder: FormBody = if (Constants.getTipoUsuario(requireContext()) == OWNER) {
 
             // propietario
             FormBody.Builder()
@@ -286,7 +287,7 @@ class CreateSolicitudFragment : Fragment() {
                             etPropietarioN.setText(
                                 "${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
 
-                            if(Constants.getTipoUsuario(context!!) == 1){
+                            if (Constants.getTipoUsuario(context!!) == OWNER) {
                                 // propietario
                                 chckBoxReportaN.isChecked = true
                                 fillDataAccordingCheck()
@@ -315,7 +316,7 @@ class CreateSolicitudFragment : Fragment() {
 
         spinDesarrolloN.adapter = adapterDesarrollo
 
-        if(Constants.getTipoUsuario(requireContext()) == 1 && listDesarrollos.size == 1){
+        if (Constants.getTipoUsuario(requireContext()) == OWNER && listDesarrollos.size == 1) {
             // propietario
             spinDesarrolloN.setSelection(1)
         }
@@ -347,7 +348,7 @@ class CreateSolicitudFragment : Fragment() {
 
         spinUnidadN.adapter = adapterUnidad
 
-        if(Constants.getTipoUsuario(requireContext()) == 1 && listUnidades.size == 1){
+        if (Constants.getTipoUsuario(requireContext()) == OWNER && listUnidades.size == 1) {
             // propietario
             spinUnidadN.setSelection(1)
         }
@@ -377,7 +378,7 @@ class CreateSolicitudFragment : Fragment() {
             etEmailN.setText(cPropietario.correoElecP)
             spinRelacionN.setSelection(0)
 
-            if(Constants.getTipoUsuario(requireContext()) == 1){
+            if (Constants.getTipoUsuario(requireContext()) == OWNER) {
 
                 // propietario
                 chckBoxReportaN.isEnabled = false

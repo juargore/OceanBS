@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.card_item_new_home.view.*
 
 class NewHomeItemAdapter(
     private var elements: List<ItemNewHome>
-) : RecyclerView.Adapter<NewHomeItemAdapter.ItemViewHolder>() {
+): RecyclerView.Adapter<NewHomeItemAdapter.ItemViewHolder>() {
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -44,10 +44,7 @@ class NewHomeItemAdapter(
                 1 -> intent = Intent(context, AftermarketActivity::class.java)
                 else -> url = item.url
             }
-
-            setOnClickListener {
-                onItemClicked?.invoke(intent, url)
-            }
+            setOnClickListener { onItemClicked?.invoke(intent, url) }
         }
     }
 }
