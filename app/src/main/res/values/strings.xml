@@ -74,5 +74,10 @@
     <string name="new_construction_changes">* Sujeta a cambios de fuerza mayor.</string>
     <string name="new_construction_deadline">Fecha Estimada de Término</string>
     <string name="new_construction_progress">AVANCE DE CONSTRUCCIÓN</string>
+    <string name="new_documentation_progress">AVANCE DE DOCUMENTACIÓN</string>
+    <string name="new_documentation_inform">INFÓRMENOS SOBRE SU SEGUIMIENTO</string>
+    <string name="new_documentation_yes">Si</string>
+    <string name="new_documentation_no">No</string>
+    <string name="new_documentation_subtitle">¿Hasta el momento ha sido informado y atendido con oportunidad y puntualidad?</string>
 
 </resources>
