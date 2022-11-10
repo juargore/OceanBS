@@ -58,6 +58,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layMain"
         app:tabIndicatorColor="@color/colorPrimary"
+        app:tabIndicatorHeight="3dp"
         app:tabMode="fixed"
         app:tabTextColor="@color/colorBlack" />
 

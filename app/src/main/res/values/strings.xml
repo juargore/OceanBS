@@ -70,5 +70,9 @@
     <string name="new_aftermarket_owner">Propietario</string>
     <string name="new_aftermarket_collaborator">Colaborador</string>
     <string name="new_aftermarket_select">Seleccionar</string>
+    <string name="new_construction_extra_info">Información Adicional</string>
+    <string name="new_construction_changes">* Sujeta a cambios de fuerza mayor.</string>
+    <string name="new_construction_deadline">Fecha Estimada de Término</string>
+    <string name="new_construction_progress">AVANCE DE CONSTRUCCIÓN</string>
 
 </resources>

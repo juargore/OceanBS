@@ -3,7 +3,6 @@ package com.glass.oceanbs.activities
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View.GONE
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.GET_CAROUSEL
 import com.glass.oceanbs.Constants.DATA
