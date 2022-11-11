@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.glass.oceanbs.Constants.GET_ALL_DESARROLLOS
@@ -16,9 +15,7 @@ import com.glass.oceanbs.Constants.URL_SUCURSALES
 import com.glass.oceanbs.Constants.WEB_SERVICE
 import com.glass.oceanbs.Constants.getTipoUsuario
 import com.glass.oceanbs.Constants.getUserId
-import com.glass.oceanbs.Constants.getUserName
 import com.glass.oceanbs.R
-import com.glass.oceanbs.extensions.getUserTypeStr
 import com.glass.oceanbs.fragments.aftermarket.adapters.SummaryPagerAdapter
 import com.glass.oceanbs.models.GenericObj
 import com.glass.oceanbs.models.OWNER
@@ -27,7 +24,6 @@ import kotlinx.android.synthetic.main.fragment_main_tracing.*
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
-import java.util.*
 
 class MainTracingFragment : Fragment() {
 
@@ -41,18 +37,10 @@ class MainTracingFragment : Fragment() {
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
         if (rootView == null) {
             rootView = infl.inflate(R.layout.fragment_main_tracing, cont, false)
-            setupViews()
             setUpTabs()
             getListDesarrollos()
         }
         return rootView
-    }
-
-    private fun setupViews() {
-        val txtUserName = rootView?.findViewById<TextView>(R.id.txtUserName)
-        val txtOwner = rootView?.findViewById<TextView>(R.id.txtOwner)
-        txtUserName?.text = getUserName(requireContext()).uppercase(Locale.getDefault())
-        txtOwner?.text = getUserTypeStr(requireContext())
     }
 
     private fun setUpTabs() {

@@ -116,7 +116,7 @@
             android:layout_width="match_parent"
             android:layout_height="145dp"
             app:autoPlay="false"
-            app:fillColor="#02854A"
+            app:fillColor="@color/colorGreen"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

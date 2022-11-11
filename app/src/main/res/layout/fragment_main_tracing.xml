@@ -8,44 +8,6 @@
     tools:context=".fragments.aftermarket.MainTracingFragment"
     tools:ignore="HardcodedText">
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorLighterGray"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="6dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/txtUserName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Juan Arturo Gómez Reséndiz"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/txtOwner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cliente desde febrero de 2017"
-            android:textColor="@color/colorLightGray"
-            android:textSize="11sp"
-            tools:ignore="SmallSp" />
-    </LinearLayout>
-
-    <View
-        android:id="@+id/view14"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:background="@color/colorDarkGray"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/laySpinner"
         android:layout_width="match_parent"
@@ -53,7 +15,7 @@
         android:paddingVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view14">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="wrap_content"

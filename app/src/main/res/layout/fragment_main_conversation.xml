@@ -1,58 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.aftermarket.MainConversationFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorLighterGray"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/txtUserName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Juan Arturo Gómez Reséndiz"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/txtOwner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cliente desde febrero de 2017"
-            android:textColor="@color/colorLightGray"
-            android:textSize="11sp"
-            tools:ignore="SmallSp" />
-    </LinearLayout>
-
-    <View
-        android:id="@+id/view14"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:background="@color/colorDarkGray"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
-
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvConversation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="12dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view14" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:itemCount="3"
+        tools:listitem="@layout/card_item_chat_customer" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -66,20 +31,25 @@
         <EditText
             android:id="@+id/editTextTextPersonName4"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/rectangle_round_corner"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:inputType="textMultiLine"
+            app:layout_constraintBottom_toBottomOf="@+id/button3"
             app:layout_constraintEnd_toStartOf="@+id/button3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/button3"
+            tools:ignore="Autofill,LabelFor" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:background="@color/colorPrimary"
+            android:padding="6dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_arrow_right"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

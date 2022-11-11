@@ -53,11 +53,11 @@ object Constants {
         val sview = snack.view
         val tv = sview.findViewById<TextView>(R.id.snackbar_text)
 
-        when(type){
-            Types.GENERAL ->{ }
-            Types.ERROR ->{ sview.setBackgroundColor(context.resources.getColor(R.color.colorIncidencePink)) }
-            Types.SUCCESS ->{  sview.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceLightGreen)) }
-            Types.INFO ->{ sview.setBackgroundColor(context.resources.getColor(R.color.colorPrimary)) }
+        when (type) {
+            Types.GENERAL -> Unit
+            Types.ERROR -> sview.setBackgroundColor(context.resources.getColor(R.color.colorIncidencePink))
+            Types.SUCCESS -> sview.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceLightGreen))
+            Types.INFO -> sview.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
         }
 
         tv.setTextColor(Color.BLACK)
@@ -71,8 +71,6 @@ object Constants {
         INFO
     }
 
-
-    /* functions to get and set the User ID */
 
     fun setUserId(context: Context, userId: String){
         val editor = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE).edit()
@@ -164,7 +162,6 @@ object Constants {
 
 
     /* functions to check if User has active internet connection or not */
-
     fun internetConnected(activity: Activity) : Boolean{
         return isNetworkConnected(activity)
     }
@@ -182,11 +179,6 @@ object Constants {
             cancelButton.hide()
             acceptButton.hide()
         }.show()
-        /*activity.alert(activity.resources.getString(R.string.desc_no_internet),
-            activity.resources.getString(R.string.title_no_internet))
-        {
-            positiveButton(activity.resources.getString(R.string.accept)) {}
-        }.show().setCancelable(true)*/
     }
 
     /* functions to check the permissions for the general App */
@@ -198,19 +190,15 @@ object Constants {
                     PackageManager.PERMISSION_GRANTED
         }
         if (!havePermissions) {
-            if(perm.toList().any {
-                    ActivityCompat.
-                        shouldShowRequestPermissionRationale(activity, it)}
+            if (perm.toList().any {
+                    ActivityCompat.shouldShowRequestPermissionRationale(activity, it)}
             ) {
                 val dialog = AlertDialog.Builder(activity)
                     .setTitle("Se necesitan Permisos!!")
                     .setMessage("Es necesario otorgar permisos a esta App para su correcto funcionamiento")
                     .setPositiveButton("Sí. Conceder los permisos") { _, _ ->
-                        ActivityCompat.requestPermissions(
-                            activity, perm, PERMISSION_ID)
-                    }
-                    //.setNegativeButton("No conceder") { _, _ -> }
-                    .create()
+                        ActivityCompat.requestPermissions(activity, perm, PERMISSION_ID)
+                    }.create()
                 dialog.show()
                 dialog.setCancelable(false)
             } else {
