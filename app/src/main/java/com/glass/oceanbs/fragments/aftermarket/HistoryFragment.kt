@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.R
+import com.glass.oceanbs.extensions.hide
+import com.glass.oceanbs.extensions.show
 import com.glass.oceanbs.fragments.aftermarket.adapters.HistoryItemAdapter
 import com.glass.oceanbs.models.History
 
@@ -19,11 +22,23 @@ class HistoryFragment : Fragment() {
     }
 
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
-        if (root == null) {
-            root = infl.inflate(R.layout.fragment_history, cont, false)
-            setUpRecycler()
-        }
+        root = infl.inflate(R.layout.fragment_history, cont, false)
+        initValidation()
         return root
+    }
+
+    private fun initValidation() {
+        val parent = root?.findViewById<ConstraintLayout>(R.id.layParentHistory)
+        val desarrolloId = MainTracingFragment.desarrolloId
+
+        println("AQUI: Id en History: $desarrolloId")
+
+        if (desarrolloId != null) {
+            parent?.show()
+            setUpRecycler()
+        } else {
+            parent?.hide()
+        }
     }
 
     private fun setUpRecycler() {

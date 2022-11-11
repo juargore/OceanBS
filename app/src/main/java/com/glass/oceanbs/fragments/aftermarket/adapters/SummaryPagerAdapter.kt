@@ -12,7 +12,10 @@ import com.glass.oceanbs.fragments.aftermarket.DocumentationFragment
 import com.glass.oceanbs.fragments.aftermarket.HistoryFragment
 import com.glass.oceanbs.fragments.aftermarket.SummaryFragment
 
-class SummaryPagerAdapter(val context: Context, manager: FragmentManager) : FragmentPagerAdapter(manager) {
+class SummaryPagerAdapter(
+    val context: Context,
+    manager: FragmentManager
+) : FragmentPagerAdapter(manager) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> SummaryFragment.newInstance()

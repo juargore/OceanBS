@@ -28,27 +28,29 @@ import java.io.IOException
 class MainTracingFragment : Fragment() {
 
     private var rootView: View? = null
+    private lateinit var viewPager: ViewPager
+    private lateinit var tabLayout: TabLayout
     private val desarrollosList = mutableListOf<GenericObj>()
 
     companion object {
+        var desarrolloId : String? = null
         fun newInstance() = MainTracingFragment()
     }
 
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
         if (rootView == null) {
             rootView = infl.inflate(R.layout.fragment_main_tracing, cont, false)
-            setUpTabs()
+            viewPager = rootView!!.findViewById(R.id.viewPager)
+            tabLayout = rootView!!.findViewById(R.id.tabLayout)
             getListDesarrollos()
         }
         return rootView
     }
 
     private fun setUpTabs() {
-        val viewPager = rootView?.findViewById<ViewPager>(R.id.viewPager)
-        val tabLayout = rootView?.findViewById<TabLayout>(R.id.tabLayout)
-        viewPager?.adapter = SummaryPagerAdapter(requireContext(), childFragmentManager)
-        viewPager?.offscreenPageLimit = 4
-        tabLayout?.setupWithViewPager(viewPager)
+        viewPager.adapter = SummaryPagerAdapter(requireContext(), childFragmentManager)
+        viewPager.offscreenPageLimit = 4
+        tabLayout.setupWithViewPager(viewPager)
     }
 
     private fun getListDesarrollos() {
@@ -68,6 +70,13 @@ class MainTracingFragment : Fragment() {
                 if (jsonRes.getInt("Error") == 0) {
                     val arrayDesarrollos = jsonRes.getJSONArray("Datos")
                     desarrollosList.clear()
+                    /*desarrollosList.add( GenericObj (
+                        Id     = "01",
+                        Codigo = "A123",
+                        Nombre = "ISLA 001",
+                        extra1 = "Acueducto #1100",
+                        extra2 = ""
+                    ))*/
 
                     for (i in 0 until arrayDesarrollos.length()) {
                         val jsonObj = arrayDesarrollos.getJSONObject(i)
@@ -99,10 +108,11 @@ class MainTracingFragment : Fragment() {
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
                     if (pos != 0) {
-                        val strId: String = desarrollosList[pos - 1].Id
-                        //getListUnidad(strId)
+                        desarrolloId = desarrollosList[pos - 1].Id
+                        setUpTabs()
                     } else {
-                        //setUpSpinnerUnidad()
+                        desarrolloId = null
+                        setUpTabs()
                     }
                 }
             }

@@ -8,7 +8,7 @@
     tools:context=".fragments.aftermarket.ConstructionFragment">
 
     <LinearLayout
-        android:id="@+id/parent"
+        android:id="@+id/layParentConstruction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -32,7 +32,7 @@
             android:layout_marginHorizontal="40dp"
             android:layout_marginBottom="16dp"
             android:gravity="center_horizontal"
-            android:text="Su propiedad presenta un avance del 30% de construcción." />
+            android:text="Su propiedad presenta un avance del 90% de construcción." />
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -13,6 +14,8 @@ import com.github.chrisbanes.photoview.PhotoView
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
+import com.glass.oceanbs.extensions.hide
+import com.glass.oceanbs.extensions.show
 import com.squareup.picasso.Picasso
 import com.synnapps.carouselview.CarouselView
 import com.synnapps.carouselview.ImageListener
@@ -35,17 +38,29 @@ class ConstructionFragment : Fragment() {
     }
 
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
-        if (root == null) {
-            root = infl.inflate(R.layout.fragment_construction, cont, false)
+        root = infl.inflate(R.layout.fragment_construction, cont, false)
+        initValidation()
+        return root
+    }
+
+    private fun initValidation() {
+        val parent = root?.findViewById<LinearLayout>(R.id.layParentConstruction)
+        val desarrolloId = MainTracingFragment.desarrolloId
+
+        println("AQUI: Id en Construction: $desarrolloId")
+
+        if (desarrolloId != null) {
+            parent?.show()
             setupViews()
             getBottomPhotosFromServer()
+        } else {
+            parent?.hide()
         }
-        return root
     }
 
     @SuppressLint("SetTextI18n")
     private fun setupViews() {
-        val progress = 80 // todo: set real percentage from Server
+        val progress = 90 // todo: set real percentage from Server
         val progressBar = root?.findViewById<View>(R.id.circularProgress)
         val str = progressBar?.findViewById<TextView>(R.id.progress_tv)
         val pr = progressBar?.findViewById<ProgressBar>(R.id.circular_determinative_pb)
@@ -104,7 +119,7 @@ class ConstructionFragment : Fragment() {
     }
 
     private fun showSnackBar(str: String) {
-        root?.findViewById<View>(R.id.parent)?.let {
+        root?.findViewById<View>(R.id.layParentConstruction)?.let {
             activity?.runOnUiThread { snackbar(requireContext(), it, str, Constants.Types.ERROR) }
         }
     }

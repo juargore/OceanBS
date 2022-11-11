@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.R
+import com.glass.oceanbs.extensions.hide
+import com.glass.oceanbs.extensions.show
 import com.glass.oceanbs.fragments.aftermarket.adapters.SummaryItemAdapter
 import com.glass.oceanbs.models.ItemSummary
 
@@ -19,11 +22,23 @@ class SummaryFragment : Fragment() {
     }
 
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
-        if (root == null) {
-            root = infl.inflate(R.layout.fragment_summary, cont, false)
-            setupRecycler()
-        }
+        root = infl.inflate(R.layout.fragment_summary, cont, false)
+        initValidation()
         return root
+    }
+
+    private fun initValidation() {
+        val parent = root?.findViewById<LinearLayout>(R.id.layParentSummary)
+        val desarrolloId = MainTracingFragment.desarrolloId
+
+        println("AQUI: Id en Summary: $desarrolloId")
+
+        if (desarrolloId != null) {
+            parent?.show()
+            setupRecycler()
+        } else {
+            parent?.hide()
+        }
     }
 
     private fun setupRecycler() {
