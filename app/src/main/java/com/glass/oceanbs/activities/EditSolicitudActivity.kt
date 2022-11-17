@@ -55,27 +55,23 @@ class EditSolicitudActivity : BaseActivity() {
 
     private var fDesarrollosFirst = true
     private var fUnidadesFirst = true
-
     private lateinit var cSolicitud: Solicitud
     private lateinit var cPropietario: Propietario
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_solicitud)
-
-        supportActionBar?.hide()
-
-        val args = intent.extras
-        solicitudId = args!!.getString("solicitudId").toString()
-        desarrollo = args.getString("desarrollo").toString()
-        persona = args.getString("persona").toString()
-        codigoUnidad = args.getString("codigoUnidad").toString()
-
+        intent.extras?.let {
+            solicitudId = it.getString("solicitudId").toString()
+            desarrollo = it.getString("desarrollo").toString()
+            persona = it.getString("persona").toString()
+            codigoUnidad = it.getString("codigoUnidad").toString()
+        }
         initComponents()
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
-    private fun initComponents(){
+    private fun initComponents() {
         layParentE = findViewById(R.id.layParentE)
         txtTitleDesarrolloE = findViewById(R.id.txtTitleDesarrolloE)
         txtSubTitleDesarrolloE = findViewById(R.id.txtSubTitleDesarrolloE)
@@ -102,7 +98,7 @@ class EditSolicitudActivity : BaseActivity() {
         etObservacionesE = findViewById(R.id.etObservacionesE)
         btnSaveSolicitud = findViewById(R.id.btnUpdateSolicitudE)
         btnSaveSolicitud.setOnClickListener {
-            if(validateFullFields())
+            if (validateFullFields())
                 sendDataToServer()
         }
 
@@ -115,14 +111,14 @@ class EditSolicitudActivity : BaseActivity() {
         builder.setView(dialogView)
         progress = builder.create()
 
-        if(Constants.internetConnected(this)){
+        if (Constants.internetConnected(this)) {
             getCurrentSolicitud()
-        } else
+        } else {
             Constants.showPopUpNoInternet(this)
-        //getCurrentSolicitud()
+        }
     }
 
-    private fun getCurrentSolicitud(){
+    private fun getCurrentSolicitud() {
         progress.show()
 
         val client = OkHttpClient()
@@ -141,8 +137,7 @@ class EditSolicitudActivity : BaseActivity() {
                 runOnUiThread {
                     try {
                         val js = JSONObject(response.body!!.string())
-
-                        if(js.getInt("Error") == 0){
+                        if (js.getInt("Error") == 0) {
                             val j = js.getJSONArray("Datos").getJSONObject(0)
 
                             cSolicitud = Solicitud(
@@ -171,7 +166,7 @@ class EditSolicitudActivity : BaseActivity() {
                             progress.dismiss()
                             Constants.snackbar(applicationContext, layParentE, js.getString("Mensaje"), Constants.Types.ERROR)
                         }
-                    }catch (e: Error){
+                    }catch (e: Error) {
                         progress.dismiss()
                     }
                 }
@@ -181,19 +176,15 @@ class EditSolicitudActivity : BaseActivity() {
 
 
     // get a list of all desarrollos in Server
-    private fun getListDesarrollos(){
-
+    private fun getListDesarrollos() {
         val client = OkHttpClient()
-
         val builder: FormBody = if (Constants.getTipoUsuario(this) == OWNER) {
-
             // propietario
             FormBody.Builder()
                 .add("WebService","ConsultaDesarrollosIdPropietario")
                 .add("IdPropietario",Constants.getUserId(this))
                 .build()
-        } else{
-
+        } else {
             // colaborador
             FormBody.Builder()
                 .add("WebService","ConsultaDesarrollosTodos")
@@ -201,20 +192,16 @@ class EditSolicitudActivity : BaseActivity() {
         }
 
         val request = Request.Builder().url(Constants.URL_SUCURSALES).post(builder).build()
-
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
-
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
                             val arrayDesarrollos = jsonRes.getJSONArray("Datos")
-
-                            for(i in 0 until arrayDesarrollos.length()){
+                            for (i in 0 until arrayDesarrollos.length()) {
                                 val jsonObj : JSONObject = arrayDesarrollos.getJSONObject(i)
-
                                 listDesarrollos.add( GenericObj (
                                     jsonObj.getString("Id"),
                                     jsonObj.getString("Codigo"),
@@ -222,17 +209,15 @@ class EditSolicitudActivity : BaseActivity() {
                                     "${jsonObj.getString("Calle")} ${jsonObj.getString("NumExt")}",
                                     jsonObj.getString("Fotografia")))
                             }
-
                             setUpSpinnerDesarrollos()
                         }
-                    }catch (_: Error){ }
+                    }catch (_: Error) { }
                 }
             }
         })
     }
 
-
-    private fun setUpSpinnerDesarrollos(){
+    private fun setUpSpinnerDesarrollos() {
         val desarrollosList: ArrayList<String> = ArrayList()
 
         for (i in listDesarrollos)
@@ -251,44 +236,40 @@ class EditSolicitudActivity : BaseActivity() {
         spinDesarrolloE.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                if(pos != 0){
-                    if(fDesarrollosFirst){
+                if (pos != 0) {
+                    if (fDesarrollosFirst) {
                         val strId: String = listDesarrollos[pos-1].Id
                         getListUnidad(strId)
                         fDesarrollosFirst = false
-                    } else{
+                    } else {
                         val strId: String = listDesarrollos[pos-1].Id
                         getListUnidad(strId)
                         resetAllEdittext()
                     }
-                } else{
+                } else {
                     listUnidades.clear()
                     setUpSpinnerUnidad()
                 }
             }
         }
 
-        for(i in 0 until listDesarrollos.size){
-            if(cSolicitud.CodigoDesarrollo == listDesarrollos[i].Codigo)
+        for (i in 0 until listDesarrollos.size) {
+            if (cSolicitud.CodigoDesarrollo == listDesarrollos[i].Codigo)
                 spinDesarrolloE.setSelection(i+1)
         }
     }
 
     // get list of unidad according the desarrollo id
-    private fun getListUnidad(idDesarrollo: String){
-
+    private fun getListUnidad(idDesarrollo: String) {
         val client = OkHttpClient()
-
         val builder: FormBody = if (Constants.getTipoUsuario(this) == OWNER) {
-
             // propietario
             FormBody.Builder()
                 .add("WebService","ConsultaUnidadesIdDesarrolloIdPropietario")
                 .add("IdDesarrollo", idDesarrollo)
                 .add("IdPropietario",Constants.getUserId(this))
                 .build()
-        } else{
-
+        } else {
             // colaborador
             FormBody.Builder()
                 .add("WebService","ConsultaUnidadesIdDesarrollo")
@@ -303,11 +284,11 @@ class EditSolicitudActivity : BaseActivity() {
                 try {
                     val jsonRes = JSONObject(response.body!!.string())
 
-                    if(jsonRes.getInt("Error") == 0){
+                    if (jsonRes.getInt("Error") == 0) {
                         val arrayDesarrollos = jsonRes.getJSONArray("Datos")
                         listUnidades.clear()
 
-                        for(i in 0 until arrayDesarrollos.length()){
+                        for (i in 0 until arrayDesarrollos.length()) {
                             val jsonObj : JSONObject = arrayDesarrollos.getJSONObject(i)
 
                             listUnidades.add(
@@ -324,12 +305,12 @@ class EditSolicitudActivity : BaseActivity() {
                             etPropietarioE.setText("")
                             setUpSpinnerUnidad() }
                     }
-                }catch (_: Error){ }
+                } catch (_: Error) { }
             }
         })
     }
 
-    private fun resetAllEdittext(){
+    private fun resetAllEdittext() {
         etReportaE.setText("")
         etTelMovilE.setText("")
         etTelParticularE.setText("")
@@ -339,7 +320,7 @@ class EditSolicitudActivity : BaseActivity() {
     }
 
     // fill spinner unidad
-    private fun setUpSpinnerUnidad(){
+    private fun setUpSpinnerUnidad() {
         val unidadesList: ArrayList<String> = ArrayList()
 
         for (i in listUnidades)
@@ -359,8 +340,8 @@ class EditSolicitudActivity : BaseActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                if(pos != 0){
-                    if(fUnidadesFirst){
+                if (pos != 0) {
+                    if (fUnidadesFirst) {
                         getPropietarioName(listUnidades[pos-1].Id)
                         fUnidadesFirst = false
                     } else{
@@ -374,8 +355,8 @@ class EditSolicitudActivity : BaseActivity() {
             }
         }
 
-        for(i in 0 until listUnidades.size){
-            if(cSolicitud.CodigoUnidad == listUnidades[i].Codigo)
+        for (i in 0 until listUnidades.size) {
+            if (cSolicitud.CodigoUnidad == listUnidades[i].Codigo)
                 spinUnidadE.setSelection(i+1)
         }
 
@@ -383,10 +364,10 @@ class EditSolicitudActivity : BaseActivity() {
     }
 
 
-    private fun fillDataFirstTime(){
+    private fun fillDataFirstTime() {
         etCodigoE.setText(cSolicitud.Codigo)
 
-        if(cSolicitud.ReportaPropietario.toInt() == 1){
+        if (cSolicitud.ReportaPropietario.toInt() == 1) {
             chckBoxReporta.isChecked = true
         }
 
@@ -403,8 +384,8 @@ class EditSolicitudActivity : BaseActivity() {
     }
 
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
-    private fun fillDataAccordingCheck(){
-        if(chckBoxReporta.isChecked){
+    private fun fillDataAccordingCheck() {
+        if (chckBoxReporta.isChecked) {
             etReportaE.setText("${cPropietario.nombre} ${cPropietario.apellidoP} ${cPropietario.apellidoM}")
             etTelMovilE.setText(cPropietario.telMovil)
             etTelParticularE.setText(cPropietario.telParticular)
@@ -434,7 +415,7 @@ class EditSolicitudActivity : BaseActivity() {
         }
     }
 
-    private fun getPropietarioName(idUnidad: String){
+    private fun getPropietarioName(idUnidad: String) {
         val client = OkHttpClient()
         val builder = FormBody.Builder()
             .add("WebService","ConsultaPropietarioIdUnidad")
@@ -451,7 +432,7 @@ class EditSolicitudActivity : BaseActivity() {
                     try {
                         val j = JSONObject(response.body!!.string())
 
-                        if(j.getInt("Error") == 0){
+                        if (j.getInt("Error") == 0) {
                             cPropietario = Propietario(
                                 j.getString("Id"),
                                 j.getString("Nombre"),
@@ -468,7 +449,7 @@ class EditSolicitudActivity : BaseActivity() {
                                 fillDataAccordingCheck()
                             }
                         }
-                    }catch (_: Error){ }
+                    }catch (_: Error) { }
                 }
             }
         })
@@ -489,12 +470,12 @@ class EditSolicitudActivity : BaseActivity() {
 
     // send values to server to create a new solicitud
     @SuppressLint("SetTextI18n")
-    private fun sendDataToServer(){
+    private fun sendDataToServer() {
         progress.show()
         progress.setCancelable(false)
         titleProgress.text = "Enviando información"
 
-        val reporta : Int = if(chckBoxReporta.isChecked){1}else{0}
+        val reporta : Int = if (chckBoxReporta.isChecked) {1}else{0}
         userId = Constants.getUserId(this)
 
         val user = TableUser(this).getCurrentUserById(Constants.getUserId(this), Constants.getTipoUsuario(this))
@@ -526,14 +507,14 @@ class EditSolicitudActivity : BaseActivity() {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
 
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
                             Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshSolicitudes(applicationContext, true)
                         } else{
                             Constants.snackbar(applicationContext, layParentE, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         }; progress.dismiss()
 
-                    } catch (e: Error){
+                    } catch (e: Error) {
                         Constants.snackbar(applicationContext, layParentE, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }

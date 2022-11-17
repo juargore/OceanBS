@@ -1,10 +1,7 @@
-@file:Suppress("SpellCheckingInspection", "PrivatePropertyName", "DEPRECATION",
-    "UNUSED_ANONYMOUS_PARAMETER"
-)
+@file:Suppress("SpellCheckingInspection", "PrivatePropertyName", "DEPRECATION", "UNUSED_ANONYMOUS_PARAMETER")
 
 package com.glass.oceanbs.activities
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
@@ -15,7 +12,6 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.StrictMode
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Window
@@ -88,27 +84,17 @@ class CreateStatusActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_status)
-
-        supportActionBar?.hide()
-
-        Constants.checkPermission(this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA)
-
-        val builder = StrictMode.VmPolicy.Builder()
-        StrictMode.setVmPolicy(builder.build())
-
-        val extras = intent.extras
-        incidenciaId = extras!!.getString("incidenciaId").toString()
-        persona = extras.getString("persona").toString()
-        desarrollo = extras.getString("desarrollo").toString()
-        codigoUnidad = extras.getString("codigoUnidad").toString()
-
+        intent.extras?.let {
+            incidenciaId = it.getString("incidenciaId").toString()
+            persona = it.getString("persona").toString()
+            desarrollo = it.getString("desarrollo").toString()
+            codigoUnidad = it.getString("codigoUnidad").toString()
+        }
         initComponents()
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
-    private fun initComponents(){
+    private fun initComponents() {
         layParentR = findViewById(R.id.layParentR)
         imgBackStatus = findViewById(R.id.imgBackStatusR)
         txtTitleR = findViewById(R.id.txtTitleR)
@@ -145,27 +131,21 @@ class CreateStatusActivity : BaseActivity() {
         builder.setView(dialogView)
         progress = builder.create()
 
-        if(Constants.internetConnected(this)){
+        if (Constants.internetConnected(this)) {
             setListeners()
             getDataForSpinners()
         } else
             Constants.showPopUpNoInternet(this)
-
-        //setListeners()
-        //getDataForSpinners()
     }
 
-    private fun setListeners(){
+    private fun setListeners() {
         imgBackStatus.setOnClickListener { this.finish() }
-
         cardPhoto1.setOnClickListener { showPictureDialog(1); SELECTED = 1 }
         cardPhoto2.setOnClickListener { showPictureDialog(2); SELECTED = 2 }
         cardPhoto3.setOnClickListener { showPictureDialog(3); SELECTED = 3 }
-
         txtShowPhoto1.setOnClickListener { showPopPhoto(1) }
         txtShowPhoto2.setOnClickListener { showPopPhoto(2) }
         txtShowPhoto3.setOnClickListener { showPopPhoto(3) }
-
         btnSaveStatusR.setOnClickListener {
             when {
                 spinnerRegistraR.selectedItemPosition == 0 -> {
@@ -174,15 +154,12 @@ class CreateStatusActivity : BaseActivity() {
                 spinnerAtiendeR.selectedItemPosition == 0 -> {
                     snackbar(applicationContext, layParentR, "El colaborador que atiende es obligatorio", Constants.Types.ERROR)
                 }
-                else -> {
-                    sendDataToServer()
-                }
+                else -> sendDataToServer()
             }
         }
     }
 
-    private fun getDataForSpinners(){
-
+    private fun getDataForSpinners() {
         val client = OkHttpClient()
         val builder = FormBody.Builder()
             .add("WebService","ConsultaColaboradoresTodosApp")
@@ -198,25 +175,25 @@ class CreateStatusActivity : BaseActivity() {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
 
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
 
                             val arrayColab = jsonRes.getJSONArray("Datos")
                             snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
 
-                            for (i in 0 until arrayColab.length()){
+                            for (i in 0 until arrayColab.length()) {
                                 val j : JSONObject = arrayColab.getJSONObject(i)
 
                                 listColaboradores1.add(GenericObj(
-                                        j.getString("Id"),
-                                        j.getString("Codigo"),
-                                        "${j.getString("Nombre")} ${j.getString("ApellidoP")} ${j.getString("ApellidoM")}"))
+                                    j.getString("Id"),
+                                    j.getString("Codigo"),
+                                    "${j.getString("Nombre")} ${j.getString("ApellidoP")} ${j.getString("ApellidoM")}"))
                             }
 
                             listColaboradores2.addAll(listColaboradores1)
                             setUpSpinners()
                         }
 
-                    }catch (e: Error){
+                    }catch (e: Error) {
                         snackbar(applicationContext, layParentR, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
@@ -225,7 +202,7 @@ class CreateStatusActivity : BaseActivity() {
 
     }
 
-    private fun setUpSpinners(){
+    private fun setUpSpinners() {
 
         val statusList = arrayOf(
             "Seleccione una opción",
@@ -269,8 +246,8 @@ class CreateStatusActivity : BaseActivity() {
         else
             user.idColaborador
 
-        for(i in 0 until listColaboradores1.size){
-            if(userId == listColaboradores1[i].Id)
+        for(i in 0 until listColaboradores1.size) {
+            if (userId == listColaboradores1[i].Id)
                 spinnerRegistraR.setSelection(i+1)
         }
 
@@ -279,7 +256,7 @@ class CreateStatusActivity : BaseActivity() {
 
     @SuppressLint("SetTextI18n")
     @Suppress("LocalVariableName", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-    private fun sendDataToServer(){
+    private fun sendDataToServer() {
         progress.show()
         progress.setCancelable(false)
         titleProgress.text = "Enviando información"
@@ -305,11 +282,11 @@ class CreateStatusActivity : BaseActivity() {
 
         // get id colaborador according spinners
         var idColaborador1 = ""
-        if(spinnerAtiendeR.selectedItemPosition > 0)
+        if (spinnerAtiendeR.selectedItemPosition > 0)
             idColaborador1 = listColaboradores1[spinnerAtiendeR.selectedItemPosition-1].Id
 
         var idColaborador2 = ""
-        if(spinnerRegistraR.selectedItemPosition > 0)
+        if (spinnerRegistraR.selectedItemPosition > 0)
             idColaborador2 = listColaboradores2[spinnerRegistraR.selectedItemPosition-1].Id
 
         //val requestBody : RequestBody
@@ -324,17 +301,17 @@ class CreateStatusActivity : BaseActivity() {
             .addFormDataPart("IdColaborador2", idColaborador1)
             .addFormDataPart("StatusIncidencia", spinnerStatusR.selectedItemPosition.toString())
 
-        if(defaultImage1)
+        if (defaultImage1)
             requestBody.addFormDataPart("Fotografia1", "")
         else
             requestBody.addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
 
-        if(defaultImage2)
+        if (defaultImage2)
             requestBody.addFormDataPart("Fotografia2", "")
         else
             requestBody.addFormDataPart("Fotografia2", "image2.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray2))
 
-        if(defaultImage3)
+        if (defaultImage3)
             requestBody.addFormDataPart("Fotografia3", "")
         else
             requestBody.addFormDataPart("Fotografia3", "image3.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray3))
@@ -354,7 +331,7 @@ class CreateStatusActivity : BaseActivity() {
                         val jsonRes = JSONObject(response.body!!.string())
                         Log.e("RES",  jsonRes.toString())
 
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
 
                             snackbar(applicationContext, layParentR, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshIncidencias(applicationContext, true)
@@ -369,7 +346,7 @@ class CreateStatusActivity : BaseActivity() {
 
                         progress.dismiss()
 
-                    } catch (e: Error){
+                    } catch (e: Error) {
                         progress.dismiss()
                         snackbar(applicationContext, layParentR, e.message.toString(), Constants.Types.ERROR)
                     }
@@ -392,21 +369,19 @@ class CreateStatusActivity : BaseActivity() {
         pictureDialog.show()
     }
 
-    private fun showPopPhoto(photo: Int){
+    private fun showPopPhoto(photo: Int) {
         val dialog = Dialog(this, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.pop_image)
 
         val image = dialog.findViewById<ImageView>(R.id.imgCenter)
-
-        val b: Bitmap = when(photo){
-            1->{ imgPhoto1.drawable.toBitmap() }
-            2->{ imgPhoto2.drawable.toBitmap() }
-            else->{ imgPhoto3.drawable.toBitmap() }
+        val b: Bitmap = when(photo) {
+            1 -> imgPhoto1.drawable.toBitmap()
+            2 -> imgPhoto2.drawable.toBitmap()
+            else -> imgPhoto3.drawable.toBitmap()
         }
         image.setImageBitmap(b)
-
         dialog.show()
     }
 
@@ -427,8 +402,8 @@ class CreateStatusActivity : BaseActivity() {
         val df = SimpleDateFormat("-mm-ss", Locale.getDefault())
 
         val outUri: Uri
-        when(photo){
-            1->{
+        when(photo) {
+            1 -> {
                 val newPicFile = df.format(date) + ".jpg"
                 val outPath = "/sdcard/$newPicFile"
                 val outfile = File(outPath)
@@ -436,14 +411,14 @@ class CreateStatusActivity : BaseActivity() {
                 mCameraFileName1 = outfile.toString()
                 outUri = Uri.fromFile(outfile)
             }
-            2->{
+            2 -> {
                 val newPicFile = df.format(date) + ".jpg"
                 val outPath = "/sdcard/$newPicFile"
                 val outfile = File(outPath)
 
                 mCameraFileName2 = outfile.toString()
                 outUri = Uri.fromFile(outfile)}
-            else->{
+            else -> {
                 val newPicFile = df.format(date) + ".jpg"
                 val outPath = "/sdcard/$newPicFile"
                 val outfile = File(outPath)
@@ -460,42 +435,35 @@ class CreateStatusActivity : BaseActivity() {
     @Deprecated("Deprecated in Java")
     public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == GALLERY)
-        {
-            if (data != null)
-            {
+        if (requestCode == GALLERY) {
+            if (data != null) {
                 val contentURI = data.data
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-
-                    when(SELECTED){
-                        1->{imgPhoto1.setImageBitmap(bitmap); defaultImage1 = false}
-                        2->{imgPhoto2.setImageBitmap(bitmap); defaultImage2 = false}
-                        else->{imgPhoto3.setImageBitmap(bitmap); defaultImage3 = false}
+                    when (SELECTED) {
+                        1 -> { imgPhoto1.setImageBitmap(bitmap); defaultImage1 = false }
+                        2 -> { imgPhoto2.setImageBitmap(bitmap); defaultImage2 = false }
+                        else -> { imgPhoto3.setImageBitmap(bitmap); defaultImage3 = false }
                     }
-
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
             }
-        }
-        else if (requestCode == CAMERA)
-        {
-            when(SELECTED){
-                1->{
+        } else if (requestCode == CAMERA) {
+            when (SELECTED) {
+                1 -> {
                     val file = File(mCameraFileName1)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName1))
                         imgPhoto1.setImageURI(uriImage); defaultImage1 = false }
                 }
-                2->{
+                2 -> {
                     val file = File(mCameraFileName2)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName2))
                         imgPhoto2.setImageURI(uriImage); defaultImage2 = false }
                 }
-                else->{
+                else -> {
                     val file = File(mCameraFileName3)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName3))
@@ -504,5 +472,4 @@ class CreateStatusActivity : BaseActivity() {
             }
         }
     }
-
 }

@@ -20,7 +20,6 @@ class NotificationActivity : AppCompatActivity() {
 
     private var title = ""
     private var image = ""
-
     private var solicitudId = ""
     private var desarrollo = ""
     private var persona = ""
@@ -37,34 +36,24 @@ class NotificationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
+        intent.extras?.let{
+            image = it.getString("image").toString()
+            title = it.getString("title").toString()
+            solicitudId = it.getString("solicitudId").toString()
+            desarrollo = it.getString("desarrollo").toString()
+            persona = it.getString("persona").toString()
+            codigoUnidad = it.getString("codigoUnidad").toString()
+            fromServer = it.getBoolean("fromServer")
 
-        supportActionBar?.hide()
-
-        val args = intent.extras
-
-        try {
-            image = args!!.getString("image").toString()
-            title = args.getString("title").toString()
-            solicitudId = args.getString("solicitudId").toString()
-            desarrollo = args.getString("desarrollo").toString()
-            persona = args.getString("persona").toString()
-            codigoUnidad = args.getString("codigoUnidad").toString()
-            fromServer = args.getBoolean("fromServer")
-
-            t1 = args.getString("t1").toString()
-            t2 = args.getString("t2").toString()
-            t3 = args.getString("t3").toString()
-            t4 = args.getString("t4").toString()
-            t5 = args.getString("t5").toString()
-            t6 = args.getString("t6").toString()
-
-        } catch (e: Exception){
-            e.printStackTrace()
+            t1 = it.getString("t1").toString()
+            t2 = it.getString("t2").toString()
+            t3 = it.getString("t3").toString()
+            t4 = it.getString("t4").toString()
+            t5 = it.getString("t5").toString()
+            t6 = it.getString("t6").toString()
         }
-
         setListeners()
         setInformation()
-
         createNotificationCopy(applicationContext)
     }
 
@@ -88,8 +77,7 @@ class NotificationActivity : AppCompatActivity() {
         }
 
         btnRevSolN.setOnClickListener {
-
-            //Open Main or Login Activity
+            // open Main or Login Activity
             val remember = Constants.getKeepLogin(this)
             val intent: Intent = if(remember)
                 Intent(this@NotificationActivity, MainActivity::class.java)
@@ -98,10 +86,11 @@ class NotificationActivity : AppCompatActivity() {
 
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
-            this.finish()
+            finish()
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private fun createNotificationCopy(context: Context) {
         val channelId = "oceanbs_channel_01"
 

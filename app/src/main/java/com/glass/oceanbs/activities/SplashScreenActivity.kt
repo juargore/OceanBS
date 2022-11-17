@@ -18,15 +18,12 @@ class SplashScreenActivity : AppCompatActivity() {
     private val DISPLAY_LENGTH = 2000
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-
         supportActionBar?.hide()
 
         Handler().postDelayed({

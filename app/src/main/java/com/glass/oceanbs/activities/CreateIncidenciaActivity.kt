@@ -7,12 +7,15 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.os.StrictMode
+import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
@@ -20,10 +23,20 @@ import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.Constants
+import com.glass.oceanbs.Constants.ERROR
+import com.glass.oceanbs.Constants.SELECT
+import com.glass.oceanbs.Constants.WEB_SERVICE
+import com.glass.oceanbs.Constants.getTipoUsuario
+import com.glass.oceanbs.Constants.getUserId
+import com.glass.oceanbs.Constants.internetConnected
+import com.glass.oceanbs.Constants.showPopUpNoInternet
+import com.glass.oceanbs.Constants.snackbar
+import com.glass.oceanbs.Constants.updateRefreshIncidencias
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.BitacoraStatusAdapter
 import com.glass.oceanbs.database.TableUser
@@ -73,7 +86,6 @@ class CreateIncidenciaActivity : BaseActivity() {
 
     private val GALLERY = 1
     private val CAMERA = 2
-    private var mCameraFileName = ""
     private var idSolicitud = ""
     private var idIncidencia = ""
     private var persona = ""
@@ -81,33 +93,24 @@ class CreateIncidenciaActivity : BaseActivity() {
     private var codigoUnidad = ""
     private var defaultImage = true
 
-    /*companion object {
-        private const val IMAGE_DIRECTORY = "/demonuts"
-    }*/
+    private var pictureAsFile : File? = null
+    private var mBitmap: Bitmap? = null
+    private val PERMISSION_CODE = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_incidencia)
-        supportActionBar?.hide()
-
-        Constants.checkPermission(this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA)
-
-        val builder = StrictMode.VmPolicy.Builder()
-        StrictMode.setVmPolicy(builder.build())
-
-        val extras = intent.extras
-        idSolicitud = extras!!.getString("solicitudId").toString()
-        persona = extras.getString("persona").toString()
-        desarrollo = extras.getString("desarrollo").toString()
-        codigoUnidad = extras.getString("codigoUnidad").toString()
-
+        intent.extras?.let {
+            idSolicitud = it.getString("solicitudId").toString()
+            persona = it.getString("persona").toString()
+            desarrollo = it.getString("desarrollo").toString()
+            codigoUnidad = it.getString("codigoUnidad").toString()
+        }
         initComponents()
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
-    private fun initComponents(){
+    private fun initComponents() {
         layParentIn = findViewById(R.id.layParentIn)
         txtTitleDesarrolloIn = findViewById(R.id.txtTitleDesarrolloIn)
         txtSubTitleDesarrolloIn = findViewById(R.id.txtSubTitleDesarrolloIn)
@@ -132,7 +135,7 @@ class CreateIncidenciaActivity : BaseActivity() {
 
         // set up progress dialg
         val builder = AlertDialog.Builder(this, R.style.HalfDialogTheme)
-        val inflat = this.layoutInflater
+        val inflat = layoutInflater
         val dialogView = inflat.inflate(R.layout.progress, null)
 
         titleProgress = dialogView.findViewById(R.id.loading_title)
@@ -146,22 +149,21 @@ class CreateIncidenciaActivity : BaseActivity() {
         cardPhoto.setOnClickListener { showPictureDialog() }
 
         btnSaveIncidenciaI.setOnClickListener {
-            if(validateFullFields())
+            if (validateFullFields())
                 sendDataToServer()
         }
 
-        if(Constants.internetConnected(this)){
+        if (internetConnected(this))
             getDataForSpinners(1)
-        } else
-            Constants.showPopUpNoInternet(this)
-        //getDataForSpinners(1)
+        else
+            showPopUpNoInternet(this)
     }
 
-    private fun getDataForSpinners(value: Int){
+    private fun getDataForSpinners(value: Int) {
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
-            .add("WebService","ConsultaValoresClasificacionIdClasificacion")
+            .add(WEB_SERVICE,"ConsultaValoresClasificacionIdClasificacion")
             .add("IdClasificacion", value.toString())
             .build()
 
@@ -174,47 +176,38 @@ class CreateIncidenciaActivity : BaseActivity() {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
 
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt(ERROR) == 0) {
                             val arrayClasif = jsonRes.getJSONArray("Datos")
 
-                            for(i in 0 until arrayClasif.length()){
-                                val j : JSONObject = arrayClasif.getJSONObject(i)
-
-                                when(value){
-                                    1->{ listSpinner3m.add(GenericObj(
-                                            j.getString("Id"),
-                                            j.getString("Codigo"),
-                                            j.getString("Nombre")))
-                                        }
-                                    2->{ listSpinner6m.add(GenericObj(
-                                            j.getString("Id"),
-                                            j.getString("Codigo"),
-                                            j.getString("Nombre")))
-                                        }
-                                    3->{ listSpinner1a.add(GenericObj(
-                                            j.getString("Id"),
-                                            j.getString("Codigo"),
-                                            j.getString("Nombre")))
-                                        }
+                            for(i in 0 until arrayClasif.length()) {
+                                val j = arrayClasif.getJSONObject(i)
+                                val generic = GenericObj(
+                                    j.getString("Id"),
+                                    j.getString("Codigo"),
+                                    j.getString("Nombre"))
+                                when(value) {
+                                    1 -> listSpinner3m.add(generic)
+                                    2 -> listSpinner6m.add(generic)
+                                    3 -> listSpinner1a.add(generic)
                                 }
                             }
                         }
 
-                        when(value){
+                        when (value) {
                             1-> getDataForSpinners(2)
                             2-> getDataForSpinners(3)
                             3 -> setUpSpinners()
                         }
 
-                    } catch (_: Error){}
+                    } catch (_: Error) {}
                 }
             }
         })
     }
 
-    private fun setUpSpinners(){
+    private fun setUpSpinners() {
         val list3m: ArrayList<String> = ArrayList()
-        list3m.add(0, "Seleccionar")
+        list3m.add(0, SELECT)
 
         for (i in listSpinner3m)
             list3m.add(i.Nombre)
@@ -222,19 +215,18 @@ class CreateIncidenciaActivity : BaseActivity() {
         val adapter3m = ArrayAdapter(this, R.layout.spinner_text, list3m)
         spinner3m.adapter = adapter3m
 
-        spinner3m.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
+        spinner3m.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {}
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
-                if(pos > 0){
+                if (pos > 0) {
                     spinner6m.setSelection(0)
                     spinner1a.setSelection(0)
                 }
             }
         }
 
-
         val list6m: ArrayList<String> = ArrayList()
-        list6m.add(0, "Seleccionar")
+        list6m.add(0, SELECT)
 
         for (i in listSpinner6m)
             list6m.add(i.Nombre)
@@ -242,19 +234,18 @@ class CreateIncidenciaActivity : BaseActivity() {
         val adapter6m = ArrayAdapter(this, R.layout.spinner_text, list6m)
         spinner6m.adapter = adapter6m
 
-        spinner6m.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
+        spinner6m.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {}
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
-                if(pos > 0){
+                if (pos > 0) {
                     spinner3m.setSelection(0)
                     spinner1a.setSelection(0)
                 }
             }
         }
 
-
         val list1a: ArrayList<String> = ArrayList()
-        list1a.add(0, "Seleccionar")
+        list1a.add(0, SELECT)
 
         for (i in listSpinner1a)
             list1a.add(i.Nombre)
@@ -262,16 +253,15 @@ class CreateIncidenciaActivity : BaseActivity() {
         val adapter1a = ArrayAdapter(this, R.layout.spinner_text, list1a)
         spinner1a.adapter = adapter1a
 
-        spinner1a.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
+        spinner1a.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {}
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
-                if(pos > 0){
+                if (pos > 0) {
                     spinner3m.setSelection(0)
                     spinner6m.setSelection(0)
                 }
             }
         }
-
     }
 
     private fun validateFullFields(): Boolean {
@@ -285,25 +275,24 @@ class CreateIncidenciaActivity : BaseActivity() {
 
     // send values to server to create a new incidencia
     @SuppressLint("SetTextI18n")
-    private fun sendDataToServer(){
+    private fun sendDataToServer() {
         progress.show()
         titleProgress.text = "Enviando información"
 
-        val user = TableUser(this).getCurrentUserById(Constants.getUserId(this), Constants.getTipoUsuario(this))
-        val userId= user.idColaborador
-
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
-
+        val user = TableUser(this).getCurrentUserById(getUserId(this), getTipoUsuario(this))
+        val userId= user.idColaborador
+        var valor1a = ""
         var valor3m = ""
-        if(spinner3m.selectedItemPosition > 0)
+        var valor6m = ""
+
+        if (spinner3m.selectedItemPosition > 0)
             valor3m = listSpinner3m[spinner3m.selectedItemPosition-1].Id
 
-        var valor6m = ""
-        if(spinner6m.selectedItemPosition > 0)
+        if (spinner6m.selectedItemPosition > 0)
             valor6m = listSpinner6m[spinner6m.selectedItemPosition-1].Id
 
-        var valor1a = ""
-        if(spinner1a.selectedItemPosition > 0)
+        if (spinner1a.selectedItemPosition > 0)
             valor1a = listSpinner1a[spinner1a.selectedItemPosition-1].Id
 
         val bitmapPhoto1 = imgPhoto.drawable.toBitmap()
@@ -326,7 +315,7 @@ class CreateIncidenciaActivity : BaseActivity() {
             .addFormDataPart("FallaReportada", etFallaReportadaI.text.toString())
             .addFormDataPart("FallaReal", etFallaRealI.text.toString())
 
-        if(defaultImage)
+        if (defaultImage)
             requestBody.addFormDataPart("Fotografia1", "")
         else
             requestBody.addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
@@ -341,22 +330,17 @@ class CreateIncidenciaActivity : BaseActivity() {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
-
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
                             idIncidencia = jsonRes.getString("Id")
-
-                            Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
-                            Constants.updateRefreshIncidencias(applicationContext, true)
-
+                            snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
+                            updateRefreshIncidencias(applicationContext, true)
                             getStatus()
-                            /*Handler().postDelayed({getStatus()}, 2500)*/
-                        } else
-                            Constants.snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
-
+                        } else {
+                            snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
+                        }
                         progress.dismiss()
-
-                    } catch (e: Error){
-                        Constants.snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
+                    } catch (e: Error) {
+                        snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
                 }
@@ -364,25 +348,22 @@ class CreateIncidenciaActivity : BaseActivity() {
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Constants.snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
+                    snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }
         })
     }
 
-    private fun showPopPhoto(){
-        val dialog = Dialog(this, R.style.FullDialogTheme)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setContentView(R.layout.pop_image)
-
-        val image = dialog.findViewById<ImageView>(R.id.imgCenter)
-
-        val b = imgPhoto.drawable.toBitmap()
-        image.setImageBitmap(b)
-
-        dialog.show()
+    private fun showPopPhoto() {
+        Dialog(this, R.style.FullDialogTheme).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setContentView(R.layout.pop_image)
+            val b = imgPhoto.drawable.toBitmap()
+            val image = findViewById<ImageView>(R.id.imgCenter)
+            image.setImageBitmap(b)
+        }.show()
     }
 
     private fun showPictureDialog() {
@@ -393,112 +374,140 @@ class CreateIncidenciaActivity : BaseActivity() {
         pictureDialog.setItems(pictureDialogItems) { _, which ->
             when (which) {
                 0 -> choosePhotoFromGallary()
-                1 -> takePhotoFromCamera()
+                1 -> verifyPermissionAndRedirectToCamera()
             }
         }
         pictureDialog.show()
     }
 
     private fun choosePhotoFromGallary() {
-        val galleryIntent = Intent(Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-
-        startActivityForResult(galleryIntent, GALLERY)
+        startActivityForResult(Intent(
+            Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), GALLERY
+        )
     }
 
-    @SuppressLint("SdCardPath")
-    private fun takePhotoFromCamera() {
-        val intent = Intent()
-        intent.action = MediaStore.ACTION_IMAGE_CAPTURE
+    @SuppressLint("InlinedApi", "ObsoleteSdkInt")
+    private fun verifyPermissionAndRedirectToCamera() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                == PackageManager.PERMISSION_DENIED  ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_MEDIA_LOCATION
+                )
+                == PackageManager.PERMISSION_DENIED) {
 
-        val date = Date()
-        val df = SimpleDateFormat("-mm-ss", Locale.getDefault())
+                //permission was not enabled
+                val permission = arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_MEDIA_LOCATION
+                )
 
-        val newPicFile = df.format(date) + ".jpg"
-        val outPath = "/sdcard/$newPicFile"
-        val outfile = File(outPath)
+                //show popup to request permission
+                requestPermissions(permission, PERMISSION_CODE)
+            } else{
+                //permission already granted
+                openCamera()
+            }
+        } else{
+            // system os is < marshmallow
+            openCamera()
+        }
+    }
 
-        mCameraFileName = outfile.toString()
-        val outUri = Uri.fromFile(outfile)
+    @SuppressLint("QueryPermissionsNeeded")
+    private fun openCamera() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error while creating the File
+                    Log.e("--", "Error creating file: ${ex.message}")
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also { file ->
+                    val filePath = file.path
+                    BitmapFactory.decodeFile(filePath)?.let {
+                        mBitmap = Bitmap.createScaledBitmap(it, 500, 500, false)
+                    }
+                    pictureAsFile = file
+                    val photoURI = FileProvider.getUriForFile(
+                        Objects.requireNonNull(this),
+                        "com.glass.oceanbs" + ".provider", file)
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, CAMERA)
+                }
+            }
+        }
+    }
 
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, outUri)
-        startActivityForResult(intent, CAMERA)
+    @SuppressLint("SimpleDateFormat")
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        )
     }
 
     @Deprecated("Deprecated in Java")
     public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == GALLERY)
-        {
-            if (data != null)
-            {
+        if (requestCode == GALLERY) {
+            if (data != null) {
                 val contentURI = data.data
                 try {
-                    val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
+                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, contentURI)
                     imgPhoto.setImageBitmap(bitmap)
                     defaultImage = false
-
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
             }
+        } else if (requestCode == CAMERA) {
+            val filePath = pictureAsFile?.path
+            val preBitmap = BitmapFactory.decodeFile(filePath)
+            val matrix = Matrix()
+            matrix.postRotate(90f)
+            val rotatedBitmap = Bitmap.createBitmap(preBitmap, 0, 0, preBitmap.width, preBitmap.height, matrix, true)
+            imgPhoto.setImageBitmap(rotatedBitmap)
+            defaultImage = false
         }
-        else if (requestCode == CAMERA)
-        {
-            val file = File(mCameraFileName)
+    }
 
-            if (file.exists()) {
-                val uriImage = Uri.fromFile(File(mCameraFileName))
-                imgPhoto.setImageURI(uriImage)
-                defaultImage = false
-
-                //val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uriImage);
-                //mCameraFileName = saveImage(bitmap)
+    @SuppressLint("MissingSuperCall")
+    override fun onRequestPermissionsResult(code: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (code) {
+            PERMISSION_CODE -> {
+                for (i in permissions.indices) {
+                    if (permissions[i] == Manifest.permission.CAMERA) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            openCamera()
+                        } else {
+                            Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show()
+                        }
+                        break
+                    }
+                }
             }
         }
     }
 
-    /*private fun saveImage(myBitmap: Bitmap):String {
-        val bytes = ByteArrayOutputStream()
-
-        val a = Bitmap.createScaledBitmap(myBitmap, myBitmap.width/3, myBitmap.height/3, true)
-        a.compress(Bitmap.CompressFormat.JPEG, 80, bytes)
-
-        val wallpaperDirectory = File(
-            (Environment.getExternalStorageDirectory()).toString() + IMAGE_DIRECTORY)
-
-        // have the object build the directory structure, if needed.
-        if (!wallpaperDirectory.exists()) {
-            wallpaperDirectory.mkdirs()
-        }
-
-        try
-        {
-            val f = File(wallpaperDirectory, ("A"+(Calendar.getInstance()
-                .timeInMillis).toString() + ".jpg"))
-            f.createNewFile()
-
-            val fo = FileOutputStream(f)
-            fo.write(bytes.toByteArray())
-            MediaScannerConnection.scanFile(this,
-                arrayOf(f.path),
-                arrayOf("image/jpeg"), null)
-            fo.close()
-
-            return f.absolutePath
-        }
-        catch (e1: IOException) {
-            e1.printStackTrace()
-        }
-
-        return ""
-    }*/
-
-
-    private fun getStatus(){
+    private fun getStatus() {
         progress.show()
-
         val client = OkHttpClient()
         val builder = FormBody.Builder()
             .add("WebService","ConsultaStatusIncidenciaIdIncidenciaApp")
@@ -506,11 +515,10 @@ class CreateIncidenciaActivity : BaseActivity() {
             .build()
 
         val request = Request.Builder().url(Constants.URL_STATUS).post(builder).build()
-
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Constants.snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
+                    snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
                     progress.dismiss()
                 }
             }
@@ -521,15 +529,13 @@ class CreateIncidenciaActivity : BaseActivity() {
                         val jsonRes = JSONObject(response.body!!.string())
                         listRegistroStatus.clear()
 
-                        if(jsonRes.getInt("Error") > 0)
-                            Constants.snackbar(applicationContext,
-                                layParentIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
-                        else{
-
+                        if (jsonRes.getInt("Error") > 0)
+                            snackbar(applicationContext, layParentIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
+                        else {
                             // create status object and iterate json array
                             val arrayStatus = jsonRes.getJSONArray("Datos")
 
-                            for(i in 0 until arrayStatus.length()){
+                            for(i in 0 until arrayStatus.length()) {
                                 val j : JSONObject = arrayStatus.getJSONObject(i)
 
                                 listRegistroStatus.add(ShortStatus(
@@ -538,15 +544,13 @@ class CreateIncidenciaActivity : BaseActivity() {
                                     j.getString("StatusIncidencia"),
                                     j.getString("Status")))
                             }
-
                             showPopBitacoraStatus()
                         }
 
                         Constants.updateRefreshStatus(applicationContext, false)
                         progress.dismiss()
-
-                    }catch (e: Error){
-                        Constants.snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
+                    }catch (e: Error) {
+                        snackbar(applicationContext, layParentIn, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
                 }
@@ -554,7 +558,7 @@ class CreateIncidenciaActivity : BaseActivity() {
         })
     }
 
-    private fun showPopBitacoraStatus(){
+    private fun showPopBitacoraStatus() {
         val dialog = Dialog(this, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -563,27 +567,26 @@ class CreateIncidenciaActivity : BaseActivity() {
         val btnAddIncidencia = dialog.findViewById<Button>(R.id.btnAddPopIncidencias)
         btnAddIncidencia.setOnClickListener {
             dialog.dismiss()
-
             finish()
             startActivity(intent)
         }
 
         val btnAddStatus = dialog.findViewById<Button>(R.id.btnAddPopStatusIncidencias)
         btnAddStatus.setOnClickListener {
-            val intent = Intent(applicationContext, CreateStatusActivity::class.java)
-            intent.putExtra("incidenciaId", idIncidencia)
-            intent.putExtra("persona",persona)
-            intent.putExtra("desarrollo",desarrollo)
-            intent.putExtra("codigoUnidad",codigoUnidad)
-            startActivity(intent)
-
+            startActivity(
+                Intent(applicationContext, CreateStatusActivity::class.java).apply {
+                    putExtra("incidenciaId", idIncidencia)
+                    putExtra("persona",persona)
+                    putExtra("desarrollo",desarrollo)
+                    putExtra("codigoUnidad",codigoUnidad)
+                }
+            )
             dialog.dismiss()
         }
 
         //show | hide button according user or colaborator
-        if(Constants.getTipoUsuario(this) == OWNER) //propietario
+        if (getTipoUsuario(this) == OWNER)
             btnAddStatus.visibility = View.GONE
-
 
         val btnExit = dialog.findViewById<TextView>(R.id.txtCancelP)
         btnExit.setOnClickListener {
@@ -592,8 +595,6 @@ class CreateIncidenciaActivity : BaseActivity() {
         }
 
         val rvBitacoraStatusIncidencia = dialog.findViewById<RecyclerView>(R.id.rvBitacoraStatusIncidencia)
-        rvBitacoraStatusIncidencia.layoutManager = LinearLayoutManager(this)
-
         val adapter = BitacoraStatusAdapter(this, listRegistroStatus, object : BitacoraStatusAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
                 val intent = Intent(applicationContext, EditStatusActivity::class.java)
@@ -606,18 +607,17 @@ class CreateIncidenciaActivity : BaseActivity() {
             }
         }, object : BitacoraStatusAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                if (Constants.getTipoUsuario(applicationContext) == COLLABORATOR) //colaborador
+                if (getTipoUsuario(applicationContext) == COLLABORATOR) //colaborador
                     showDeleteDialog(layParentIn, listRegistroStatus[pos].Id)
             }
         })
 
         rvBitacoraStatusIncidencia.adapter = adapter
-
         dialog.show()
         dialog.setCancelable(false)
     }
 
-    private fun showDeleteDialog(view: View, idStatus: String){
+    private fun showDeleteDialog(view: View, idStatus: String) {
         alert {
             title.hide()
             message.text = getString(R.string.msg_confirm_deletion)
@@ -626,20 +626,9 @@ class CreateIncidenciaActivity : BaseActivity() {
             }
             cancelClickListener { }
         }.show()
-        /*alert(resources.getString(R.string.msg_confirm_deletion),
-            "")
-        {
-            positiveButton(resources.getString(R.string.accept)) {
-                deleteStatusRegistro(view, idStatus)
-            }
-            negativeButton(resources.getString(R.string.cancel)){}
-        }.show().apply {
-            getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
-            getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
-        }*/
     }
 
-    private fun deleteStatusRegistro(view: View, idStatus: String){
+    private fun deleteStatusRegistro(view: View, idStatus: String) {
         progress.show()
 
         val client = OkHttpClient()
@@ -654,7 +643,7 @@ class CreateIncidenciaActivity : BaseActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
                     val msg = "No es posible eliminar esta status!"
-                    Constants.snackbar(applicationContext, view, msg, Constants.Types.ERROR)
+                    snackbar(applicationContext, view, msg, Constants.Types.ERROR)
                 }
             }
             override fun onResponse(call: Call, response: Response) {
@@ -663,24 +652,24 @@ class CreateIncidenciaActivity : BaseActivity() {
                         val jsonRes = JSONObject(response.body!!.string())
                         Log.e("--", jsonRes.toString())
 
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
 
                             // successfully deleted on Server -> refresh list
                             listRegistroStatus.clear()
 
-                            Constants.snackbar(applicationContext, view, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
-                            Constants.updateRefreshIncidencias(applicationContext, true)
+                            snackbar(applicationContext, view, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
+                            updateRefreshIncidencias(applicationContext, true)
                             getStatus()
                         } else{
-                            Constants.snackbar(
+                            snackbar(
                                 applicationContext,
                                 view,
                                 jsonRes.getString("Mensaje"),
                                 Constants.Types.ERROR)
                         }
 
-                    } catch (e: Error){
-                        Constants.snackbar(
+                    } catch (e: Error) {
+                        snackbar(
                             applicationContext,
                             view,
                             e.message.toString(),
@@ -694,7 +683,7 @@ class CreateIncidenciaActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(Constants.mustRefreshStatus(this)){
+        if (Constants.mustRefreshStatus(this)) {
             listRegistroStatus.clear()
             getStatus()
         }

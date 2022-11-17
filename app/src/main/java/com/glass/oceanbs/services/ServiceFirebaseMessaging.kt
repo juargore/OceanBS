@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
@@ -19,13 +20,11 @@ import com.google.firebase.messaging.RemoteMessage
 @SuppressLint("MissingFirebaseInstanceTokenRefresh")
 class ServiceFirebaseMessaging : FirebaseMessagingService() {
 
-    @SuppressLint("UnspecifiedImmutableFlag")
+    @SuppressLint("UnspecifiedImmutableFlag", "ObsoleteSdkInt")
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
         val channelId = "oceanbs_channel_01"
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val name = "oceanbs_channel"
             val description = "This is OceanBs Channel"
@@ -67,12 +66,16 @@ class ServiceFirebaseMessaging : FirebaseMessagingService() {
             notificationIntent.putExtra("body",remoteMessage.notification?.body)
             notificationIntent.putExtra("image",remoteMessage.data["image"])
             notificationIntent.putExtra("fromServer", false)
-        } else{
+        } else {
             notificationIntent = Intent(applicationContext, LoginActivity::class.java)
             notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
 
-        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
         notificationBuilder.setContentIntent(pendingIntent)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

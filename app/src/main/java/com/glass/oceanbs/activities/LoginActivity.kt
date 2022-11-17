@@ -1,4 +1,4 @@
-@file:Suppress("SpellCheckingInspection")
+@file:Suppress("SpellCheckingInspection", "DEPRECATION")
 
 package com.glass.oceanbs.activities
 
@@ -29,23 +29,19 @@ class LoginActivity : BaseActivity()  {
     private lateinit var progress : AlertDialog
     private lateinit var etCode: EditText
     private lateinit var etPhone: EditText
-
     private lateinit var parentLayout: LinearLayout
     private lateinit var btnLogIn: Button
     private lateinit var chckBoxLogin: CheckBox
 
-    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        supportActionBar?.hide()
         initComponents()
         FirebaseApp.initializeApp(this)
     }
 
-    @Suppress("DEPRECATION")
     @SuppressLint("InflateParams", "SetTextI18n")
-    private fun initComponents(){
+    private fun initComponents() {
         parentLayout = findViewById(R.id.parentLayoutLogin)
         etCode = findViewById(R.id.etCode)
         etPhone = findViewById(R.id.etPhone)
@@ -66,7 +62,7 @@ class LoginActivity : BaseActivity()  {
         setListeners()
     }
 
-    private fun setListeners(){
+    private fun setListeners() {
         btnLogIn.setOnClickListener {
             if (Constants.internetConnected(this)) {
                 if (validateFullFields())
@@ -77,7 +73,7 @@ class LoginActivity : BaseActivity()  {
         }
     }
 
-    private fun sendCredentialsToServer(){
+    private fun sendCredentialsToServer() {
         progress.show()
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -98,7 +94,7 @@ class LoginActivity : BaseActivity()  {
                         val jsonRes = JSONObject(response.body!!.string())
                         Log.e("LOGIN", jsonRes.toString())
 
-                        if(jsonRes.getInt("Error") > 0)
+                        if (jsonRes.getInt("Error") > 0)
                             snackbar(applicationContext, parentLayout, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         else{
 
@@ -139,7 +135,7 @@ class LoginActivity : BaseActivity()  {
                             startActivity(Intent(this@LoginActivity, NewMainActivity::class.java))
                         }
 
-                    } catch (e: Error){
+                    } catch (e: Error) {
                         snackbar(this@LoginActivity, parentLayout, e.message.toString(), Constants.Types.ERROR)
                     }
 
@@ -170,7 +166,7 @@ class LoginActivity : BaseActivity()  {
         }
     }
 
-    private fun sendFirebaseToken(){
+    private fun sendFirebaseToken() {
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -205,7 +201,7 @@ class LoginActivity : BaseActivity()  {
                         val jsonRes = JSONObject(response.body!!.string())
                         Log.e("RES token", jsonRes.toString())
 
-                        if(jsonRes.getInt("Error") > 0){
+                        if (jsonRes.getInt("Error") > 0) {
                             Log.e("",jsonRes.getString("Mensaje"))
                             Constants.updateRefreshToken(applicationContext, true)
                         }
@@ -213,17 +209,11 @@ class LoginActivity : BaseActivity()  {
                             Constants.updateRefreshToken(applicationContext, false)
                         }
 
-                    } catch (e: Error){
-                        //snackbar(applicationContext!!, layParentMain, e.message.toString(), Constants.Types.ERROR)
-                    }
+                    } catch (_: Error) { }
                 }
             }
 
-            override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread {
-                    //snackbar(applicationContext!!, layParentMain, e.message.toString(), Constants.Types.ERROR)
-                }
-            }
+            override fun onFailure(call: Call, e: IOException) { }
         })
     }
 }

@@ -34,6 +34,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //noinspection GradleDependency
+    //noinspection GradleDependency, DifferentStdlibGradleVersion
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.core:core-ktx:1.9.0'
@@ -50,6 +52,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:23.1.0'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    //noinspection GradleDependency
     implementation 'com.google.android.material:material:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'

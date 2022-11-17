@@ -23,7 +23,6 @@ class AftermarketActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_aftermarket)
-        supportActionBar?.hide()
         setUpTabs()
         intent.extras?.let {
             photosList = it.getStringArrayList(Constants.PHOTOS)!!.toList()

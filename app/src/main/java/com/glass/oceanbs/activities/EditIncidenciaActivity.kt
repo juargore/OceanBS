@@ -86,33 +86,22 @@ class EditIncidenciaActivity : BaseActivity() {
     private var desarrollo = ""
     private var codigoUnidad = ""
     private var defaultImage = true
-
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_incidencia)
-
-        supportActionBar?.hide()
-
-        Constants.checkPermission(this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA)
-
-        val builder = StrictMode.VmPolicy.Builder()
-        StrictMode.setVmPolicy(builder.build())
-
-        val extras = intent.extras
-        idSolicitud = extras!!.getString("solicitudId").toString()
-        idIncidencia = extras.getString("incidenciaId").toString()
-        persona = extras.getString("persona").toString()
-        desarrollo = extras.getString("desarrollo").toString()
-        codigoUnidad = extras.getString("codigoUnidad").toString()
-
+        intent.extras?.let {
+            idSolicitud = it.getString("solicitudId").toString()
+            idIncidencia = it.getString("incidenciaId").toString()
+            persona = it.getString("persona").toString()
+            desarrollo = it.getString("desarrollo").toString()
+            codigoUnidad = it.getString("codigoUnidad").toString()
+        }
         initComponents()
     }
 
     @SuppressLint("InflateParams", "SetTextI18n")
-    private fun initComponents(){
+    private fun initComponents() {
         layParentEdIn = findViewById(R.id.layParentEdIn)
         txtTitleDesarrolloEdIn = findViewById(R.id.txtTitleDesarrolloEdIn)
         txtSubTitleDesarrolloEdIn = findViewById(R.id.txtSubTitleDesarrolloEdIn)
@@ -154,11 +143,11 @@ class EditIncidenciaActivity : BaseActivity() {
         txtBitacoraStatusEd.setOnClickListener { getStatus() }
 
         btnUpdateIncidenciaEdI.setOnClickListener {
-            if(validateFullFields())
+            if (validateFullFields())
                 sendDataToServer()
         }
 
-        if(Constants.internetConnected(this)){
+        if (Constants.internetConnected(this)) {
             getDataForSpinners(1)
             getPhotoIncidencia()
             getIncidencia()
@@ -166,7 +155,7 @@ class EditIncidenciaActivity : BaseActivity() {
             Constants.showPopUpNoInternet(this)
     }
 
-    private fun getPhotoIncidencia(){
+    private fun getPhotoIncidencia() {
         val client = OkHttpClient()
         val builder = FormBody.Builder()
             .add("WebService","GetFotografiaIdIncidenciaNumStatus")
@@ -189,7 +178,7 @@ class EditIncidenciaActivity : BaseActivity() {
                         val jRes = JSONObject(response.body!!.string())
                         Log.e("FOTO", jRes.toString())
 
-                        if(jRes.getInt("Error") == 0){
+                        if (jRes.getInt("Error") == 0) {
                             defaultImage = jRes.getString("Fotografia").replace(" ","") == ""
 
                             Picasso.get().load("${Constants.URL_IMAGES_STATUS}${jRes.getString("Fotografia")}")
@@ -198,7 +187,7 @@ class EditIncidenciaActivity : BaseActivity() {
                                 .networkPolicy(NetworkPolicy.NO_CACHE)
                                 .error(R.drawable.ic_box).into(imgPhotoEd)
                         }
-                    }catch (_: Error){
+                    }catch (_: Error) {
 
                     }
                 }
@@ -206,7 +195,7 @@ class EditIncidenciaActivity : BaseActivity() {
         })
     }
 
-    private fun getDataForSpinners(value: Int){
+    private fun getDataForSpinners(value: Int) {
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
@@ -217,55 +206,42 @@ class EditIncidenciaActivity : BaseActivity() {
         val request = Request.Builder().url(Constants.URL_CLASIFICACION).post(builder).build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread {
-                    progress.dismiss()
-                }
+                runOnUiThread { progress.dismiss() }
             }
 
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
-
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
                             val arrayClasif = jsonRes.getJSONArray("Datos")
-
-                            for(i in 0 until arrayClasif.length()){
+                            for (i in 0 until arrayClasif.length()) {
                                 val j : JSONObject = arrayClasif.getJSONObject(i)
+                                val generic = GenericObj(
+                                    j.getString("Id"),
+                                    j.getString("Codigo"),
+                                    j.getString("Nombre"))
 
-                                when(value){
-                                    1->{ listSpinner3m.add(GenericObj(
-                                        j.getString("Id"),
-                                        j.getString("Codigo"),
-                                        j.getString("Nombre")))
-                                    }
-                                    2->{ listSpinner6m.add(GenericObj(
-                                        j.getString("Id"),
-                                        j.getString("Codigo"),
-                                        j.getString("Nombre")))
-                                    }
-                                    3->{ listSpinner1a.add(GenericObj(
-                                        j.getString("Id"),
-                                        j.getString("Codigo"),
-                                        j.getString("Nombre")))
-                                    }
+                                when(value) {
+                                    1 -> listSpinner3m.add(generic)
+                                    2 -> listSpinner6m.add(generic)
+                                    3 -> listSpinner1a.add(generic)
                                 }
                             }
                         }
 
-                        when(value){
-                            1-> getDataForSpinners(2)
-                            2-> getDataForSpinners(3)
+                        when(value) {
+                            1 -> getDataForSpinners(2)
+                            2 -> getDataForSpinners(3)
                             3 -> setUpSpinners()
                         }
-
-                    } catch (_: Error){}
+                    } catch (_: Error) {}
                 }
             }
         })
     }
 
-    private fun getIncidencia(){
+    private fun getIncidencia() {
         progress.show()
 
         val client = OkHttpClient()
@@ -288,7 +264,7 @@ class EditIncidenciaActivity : BaseActivity() {
                         val jsonRes = JSONObject(response.body!!.string())
                         Log.e("INC", jsonRes.toString())
 
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
                             val j = jsonRes.getJSONArray("Datos").getJSONObject(0)
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
 
@@ -307,7 +283,7 @@ class EditIncidenciaActivity : BaseActivity() {
                         } else
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
 
-                    }catch (e: Error){
+                    }catch (e: Error) {
                         snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR)
                     }
                     progress.dismiss()
@@ -316,15 +292,11 @@ class EditIncidenciaActivity : BaseActivity() {
         })
     }
 
-    private fun fillData(){
-        //etFechaAltaEdI.setText(cIncidencia.FechaAlta)
-        //etFechaModifEdI.setText(cIncidencia.FechaUltimaModif)
-        //etFallaRealEdI.setText(cIncidencia.FallaReal)
+    private fun fillData() {
         etFallaReportadaEdI.setText(cIncidencia.FallaReportada)
         etObservacionesEdI.setText(cIncidencia.Observaciones)
 
         if (Constants.getTipoUsuario(this) == OWNER) {
-
             // propietario -> disable all fields
             imgPhotoEd.isEnabled = false
             imgPhotoEd.isClickable = false
@@ -349,8 +321,7 @@ class EditIncidenciaActivity : BaseActivity() {
         }
     }
 
-    private fun setUpSpinners(){
-
+    private fun setUpSpinners() {
         val list3m: ArrayList<String> = ArrayList()
         list3m.add(0, "Seleccionar")
 
@@ -363,7 +334,7 @@ class EditIncidenciaActivity : BaseActivity() {
         spinner3mEd.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {}
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
-                if(pos > 0){
+                if (pos > 0) {
                     spinner6mEd.setSelection(0)
                     spinner1aEd.setSelection(0)
                 }
@@ -382,13 +353,12 @@ class EditIncidenciaActivity : BaseActivity() {
         spinner6mEd.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {}
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
-                if(pos > 0){
+                if (pos > 0) {
                     spinner3mEd.setSelection(0)
                     spinner1aEd.setSelection(0)
                 }
             }
         }
-
 
         val list1a: ArrayList<String> = ArrayList()
         list1a.add(0, "Seleccionar")
@@ -402,7 +372,7 @@ class EditIncidenciaActivity : BaseActivity() {
         spinner1aEd.onItemSelectedListener = object  : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {}
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
-                if(pos > 0){
+                if (pos > 0) {
                     spinner3mEd.setSelection(0)
                     spinner6mEd.setSelection(0)
                 }
@@ -412,30 +382,30 @@ class EditIncidenciaActivity : BaseActivity() {
         fillSpinners()
     }
 
-    private fun fillSpinners(){
+    private fun fillSpinners() {
 
         when {
             cIncidencia.IdValorClasif1.toInt() != 0 -> {
 
                 // value is in first spinner
-                for(i in 0 until listSpinner3m.size){
-                    if(cIncidencia.IdValorClasif1 == listSpinner3m[i].Id)
+                for (i in 0 until listSpinner3m.size) {
+                    if (cIncidencia.IdValorClasif1 == listSpinner3m[i].Id)
                         spinner3mEd.setSelection(i+1)
                 }
             }
             cIncidencia.IdValorClasif2.toInt() != 0 -> {
 
                 // value is in second spinner
-                for(i in 0 until listSpinner6m.size){
-                    if(cIncidencia.IdValorClasif2 == listSpinner6m[i].Id)
+                for (i in 0 until listSpinner6m.size) {
+                    if (cIncidencia.IdValorClasif2 == listSpinner6m[i].Id)
                         spinner6mEd.setSelection(i+1)
                 }
             }
             cIncidencia.IdValorClasif3.toInt() != 0 -> {
 
                 // value is in third spinner
-                for(i in 0 until listSpinner1a.size){
-                    if(cIncidencia.IdValorClasif3 == listSpinner1a[i].Id)
+                for (i in 0 until listSpinner1a.size) {
+                    if (cIncidencia.IdValorClasif3 == listSpinner1a[i].Id)
                         spinner1aEd.setSelection(i+1)
                 }
             }
@@ -454,7 +424,7 @@ class EditIncidenciaActivity : BaseActivity() {
 
     // send values to server to create a new incidencia
     @SuppressLint("SetTextI18n")
-    private fun sendDataToServer(){
+    private fun sendDataToServer() {
         progress.show()
         titleProgress.text = "Enviando información"
 
@@ -464,15 +434,15 @@ class EditIncidenciaActivity : BaseActivity() {
         val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS).build()
 
         var valor3m = ""
-        if(spinner3mEd.selectedItemPosition > 0)
+        if (spinner3mEd.selectedItemPosition > 0)
             valor3m = listSpinner3m[spinner3mEd.selectedItemPosition-1].Id
 
         var valor6m = ""
-        if(spinner6mEd.selectedItemPosition > 0)
+        if (spinner6mEd.selectedItemPosition > 0)
             valor6m = listSpinner6m[spinner6mEd.selectedItemPosition-1].Id
 
         var valor1a = ""
-        if(spinner1aEd.selectedItemPosition > 0)
+        if (spinner1aEd.selectedItemPosition > 0)
             valor1a = listSpinner1a[spinner1aEd.selectedItemPosition-1].Id
 
         val bitmapPhoto1 = imgPhotoEd.drawable.toBitmap()
@@ -496,7 +466,7 @@ class EditIncidenciaActivity : BaseActivity() {
             .addFormDataPart("FallaReportada", etFallaReportadaEdI.text.toString())
             .addFormDataPart("FallaReal", etFallaRealEdI.text.toString())
 
-        if(defaultImage){
+        if (defaultImage) {
             requestBody.addFormDataPart("Fotografia1", "")
             Log.e("--","No se envio la imagen")
         } else {
@@ -504,25 +474,21 @@ class EditIncidenciaActivity : BaseActivity() {
             Log.e("--","Si se envio la imagen")
         }
 
-
         val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(requestBody.build()).build()
-
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
-
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshIncidencias(applicationContext, true)
                             getStatus()
-                        } else
+                        } else {
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
-
+                        }
                         progress.dismiss()
-
-                    } catch (e: Error){
+                    } catch (e: Error) {
                         snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
@@ -538,17 +504,14 @@ class EditIncidenciaActivity : BaseActivity() {
         })
     }
 
-    private fun showPopPhoto(){
+    private fun showPopPhoto() {
         val dialog = Dialog(this, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.pop_image)
-
         val image = dialog.findViewById<ImageView>(R.id.imgCenter)
-
         val b = imgPhotoEd.drawable.toBitmap()
         image.setImageBitmap(b)
-
         dialog.show()
     }
 
@@ -567,11 +530,10 @@ class EditIncidenciaActivity : BaseActivity() {
     }
 
     private fun choosePhotoFromGallary() {
-        val galleryIntent = Intent(
+        startActivityForResult(Intent(
             Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-
-        startActivityForResult(galleryIntent, GALLERY)
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI), GALLERY
+        )
     }
 
     @SuppressLint("SdCardPath")
@@ -581,14 +543,12 @@ class EditIncidenciaActivity : BaseActivity() {
 
         val date = Date()
         val df = SimpleDateFormat("-mm-ss", Locale.getDefault())
-
         val newPicFile = df.format(date) + ".jpg"
         val outPath = "/sdcard/$newPicFile"
         val outfile = File(outPath)
 
         mCameraFileName = outfile.toString()
         val outUri = Uri.fromFile(outfile)
-
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outUri)
         startActivityForResult(intent, CAMERA)
     }
@@ -597,23 +557,18 @@ class EditIncidenciaActivity : BaseActivity() {
     public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == GALLERY)
-        {
-            if (data != null)
-            {
+        if (requestCode == GALLERY) {
+            if (data != null) {
                 val contentURI = data.data
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
                     imgPhotoEd.setImageBitmap(bitmap)
                     defaultImage = false
-
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
             }
-        }
-        else if (requestCode == CAMERA)
-        {
+        } else if (requestCode == CAMERA) {
             val file = File(mCameraFileName)
 
             if (file.exists()) {
@@ -624,7 +579,7 @@ class EditIncidenciaActivity : BaseActivity() {
         }
     }
 
-    private fun getStatus(){
+    private fun getStatus() {
         progress.show()
 
         val client = OkHttpClient()
@@ -634,7 +589,6 @@ class EditIncidenciaActivity : BaseActivity() {
             .build()
 
         val request = Request.Builder().url(Constants.URL_STATUS).post(builder).build()
-
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
@@ -649,14 +603,14 @@ class EditIncidenciaActivity : BaseActivity() {
                         val jsonRes = JSONObject(response.body!!.string())
                         listRegistroStatus.clear()
 
-                        if(jsonRes.getInt("Error") > 0)
+                        if (jsonRes.getInt("Error") > 0)
                             snackbar(applicationContext, layParentEdIn, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         else{
 
                             // create status object and iterate json array
                             val arrayStatus = jsonRes.getJSONArray("Datos")
 
-                            for(i in 0 until arrayStatus.length()){
+                            for (i in 0 until arrayStatus.length()) {
                                 val j : JSONObject = arrayStatus.getJSONObject(i)
 
                                 listRegistroStatus.add(ShortStatus(
@@ -672,7 +626,7 @@ class EditIncidenciaActivity : BaseActivity() {
                         Constants.updateRefreshStatus(applicationContext, false)
                         progress.dismiss()
 
-                    }catch (e: Error){
+                    } catch (e: Error) {
                         snackbar(applicationContext, layParentEdIn, e.message.toString(), Constants.Types.ERROR)
                         progress.dismiss()
                     }
@@ -681,7 +635,7 @@ class EditIncidenciaActivity : BaseActivity() {
         })
     }
 
-    private fun showPopBitacoraStatus(){
+    private fun showPopBitacoraStatus() {
         val dialog = Dialog(this, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -748,7 +702,7 @@ class EditIncidenciaActivity : BaseActivity() {
         dialog.setCancelable(false)
     }
 
-    private fun showDeleteDialog(view: View, idStatus: String){
+    private fun showDeleteDialog(view: View, idStatus: String) {
         alert {
             title.hide()
             message.text = getString(R.string.msg_confirm_deletion)
@@ -757,22 +711,10 @@ class EditIncidenciaActivity : BaseActivity() {
             }
             cancelClickListener { }
         }.show()
-
-        /*alert(resources.getString(R.string.msg_confirm_deletion),
-            "")
-        {
-            positiveButton(resources.getString(R.string.accept)) {
-                deleteStatusRegistro(view, idStatus)
-            }
-            negativeButton(resources.getString(R.string.cancel)){}
-        }.show().apply {
-            getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
-            getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
-        }*/
     }
 
 
-    private fun deleteStatusRegistro(view: View, idStatus: String){
+    private fun deleteStatusRegistro(view: View, idStatus: String) {
         val client = OkHttpClient()
         val builder = FormBody.Builder()
             .add("WebService","EliminaStatusIncidencia")
@@ -794,7 +736,7 @@ class EditIncidenciaActivity : BaseActivity() {
                         val jsonRes = JSONObject(response.body!!.string())
                         Log.e("--", jsonRes.toString())
 
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
 
                             // successfully deleted on Server -> refresh list
                             listRegistroStatus.clear()
@@ -806,7 +748,7 @@ class EditIncidenciaActivity : BaseActivity() {
                             snackbar(applicationContext, view, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                         }
 
-                    } catch (e: Error){
+                    } catch (e: Error) {
                         snackbar(applicationContext, view, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
@@ -816,10 +758,9 @@ class EditIncidenciaActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(Constants.mustRefreshStatus(this)){
+        if (Constants.mustRefreshStatus(this)) {
             listRegistroStatus.clear()
             getStatus()
         }
     }
-
 }

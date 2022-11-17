@@ -2,7 +2,6 @@
 
 package com.glass.oceanbs.activities
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
@@ -13,7 +12,6 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.StrictMode
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -96,15 +94,6 @@ class EditStatusActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_status)
-        supportActionBar?.hide()
-
-        Constants.checkPermission(this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA)
-
-        val builder = StrictMode.VmPolicy.Builder()
-        StrictMode.setVmPolicy(builder.build())
-
         intent.extras?.let {
             idStatus = it.getString("idStatus").toString()
             incidenciaId = it.getString("incidenciaId").toString()
@@ -112,12 +101,11 @@ class EditStatusActivity : BaseActivity() {
             desarrollo = it.getString("desarrollo").toString()
             codigoUnidad = it.getString("codigoUnidad").toString()
         }
-
         initComponents()
     }
 
     @SuppressLint("SetTextI18n", "InflateParams")
-    private fun initComponents(){
+    private fun initComponents() {
         layParentER = findViewById(R.id.layParentER)
         txtTitleER = findViewById(R.id.txtTitleER)
         txtSubTitleER = findViewById(R.id.txtSubTitleER)
@@ -157,14 +145,14 @@ class EditStatusActivity : BaseActivity() {
         txtTitleER.text = "$desarrollo $codigoUnidad"
         txtSubTitleER.text = persona
 
-        if(Constants.internetConnected(this)){
+        if (Constants.internetConnected(this)) {
             setListeners()
             getDataForSpinners()
         } else
             Constants.showPopUpNoInternet(this)
     }
 
-    private fun setListeners(){
+    private fun setListeners() {
         imgBackStatusER.setOnClickListener { this.finish() }
 
         cardPhoto1ER.setOnClickListener { showPictureDialog(1); SELECTED = 1 }
@@ -190,7 +178,7 @@ class EditStatusActivity : BaseActivity() {
         }
     }
 
-    private fun getDataForSpinners(){
+    private fun getDataForSpinners() {
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
@@ -207,11 +195,11 @@ class EditStatusActivity : BaseActivity() {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
 
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
 
                             val arrayColab = jsonRes.getJSONArray("Datos")
 
-                            for (i in 0 until arrayColab.length()){
+                            for (i in 0 until arrayColab.length()) {
                                 val j : JSONObject = arrayColab.getJSONObject(i)
 
                                 listColaboradores1.add(
@@ -226,7 +214,7 @@ class EditStatusActivity : BaseActivity() {
                             setUpSpinners()
                         }
 
-                    }catch (e: Error){
+                    }catch (e: Error) {
                         snackbar(applicationContext, layParentER, e.message.toString(), Constants.Types.ERROR)
                     }
                 }
@@ -235,7 +223,7 @@ class EditStatusActivity : BaseActivity() {
 
     }
 
-    private fun setUpSpinners(){
+    private fun setUpSpinners() {
 
         statusList = arrayOf(
             "Seleccione una opción",
@@ -275,7 +263,7 @@ class EditStatusActivity : BaseActivity() {
         getStatusIncidencia()
     }
 
-    private fun getStatusIncidencia(){
+    private fun getStatusIncidencia() {
         progress.show()
 
         val client = OkHttpClient()
@@ -296,7 +284,7 @@ class EditStatusActivity : BaseActivity() {
                     val jsonRes = JSONObject(response.body!!.string())
                     Log.e("RES", jsonRes.toString())
 
-                    if(jsonRes.getInt("Error") == 0){
+                    if (jsonRes.getInt("Error") == 0) {
                         val j = jsonRes.getJSONArray("Datos").getJSONObject(0)
                         snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
 
@@ -326,12 +314,10 @@ class EditStatusActivity : BaseActivity() {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun fillData(){
+    private fun fillData() {
         defaultImage1 = cStatus.Fotografia1.replace(" ","") == ""
         defaultImage2 = cStatus.Fotografia2.replace(" ","") == ""
         defaultImage3 = cStatus.Fotografia3.replace(" ","") == ""
-
-        Log.e("--", "Foto1 = ${cStatus.Fotografia1} \nFoto2 = ${cStatus.Fotografia2} \nFoto3 = ${cStatus.Fotografia3}")
 
         Picasso.get().load("${Constants.URL_IMAGES_STATUS}${cStatus.Fotografia1}")
             .placeholder(resources.getDrawable(R.drawable.ic_loading))
@@ -351,31 +337,28 @@ class EditStatusActivity : BaseActivity() {
             .networkPolicy(NetworkPolicy.NO_CACHE)
             .error(R.drawable.ic_box).into(imgPhoto3ER)
 
-        //etAltaE.setText(cStatus.FechaAlta)
-        //etModifER.setText(cStatus.FechaUltimaModif)
         etObservacionesER.setText(cStatus.Observaciones)
-
         fillSpinners()
     }
 
-    private fun fillSpinners(){
+    private fun fillSpinners() {
         // value is in first spinner
-        for(i in 0 until listColaboradores1.size){
-            if(cStatus.IdColaborador1 == listColaboradores1[i].Id)
+        for (i in 0 until listColaboradores1.size) {
+            if (cStatus.IdColaborador1 == listColaboradores1[i].Id)
                 spinnerRegistraER.setSelection(i+1)
         }
 
         spinnerRegistraER.isEnabled = false
 
         // value is in second spinner
-        for(i in 0 until listColaboradores2.size){
-            if(cStatus.IdColaborador2 == listColaboradores2[i].Id)
+        for (i in 0 until listColaboradores2.size) {
+            if (cStatus.IdColaborador2 == listColaboradores2[i].Id)
                 spinnerAtiendeER.setSelection(i+1)
         }
 
         // value is in third spinner
-        for(i in statusList.indices){
-            if(cStatus.StatusIncidencia.toInt() == i){
+        for (i in statusList.indices) {
+            if (cStatus.StatusIncidencia.toInt() == i) {
                 spinnerStatusER.setSelection(i)
                 break
             }
@@ -386,7 +369,7 @@ class EditStatusActivity : BaseActivity() {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun disableFieldsIfPropietario(){
+    private fun disableFieldsIfPropietario() {
         cardPhoto1ER.isEnabled = false
         cardPhoto2ER.isEnabled = false
         cardPhoto3ER.isEnabled = false
@@ -405,7 +388,7 @@ class EditStatusActivity : BaseActivity() {
 
     @SuppressLint("SetTextI18n")
     @Suppress("LocalVariableName", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-    private fun sendDataToServer(){
+    private fun sendDataToServer() {
         progress.show()
         progress.setCancelable(false)
         titleProgress.text = "Enviando información"
@@ -431,11 +414,11 @@ class EditStatusActivity : BaseActivity() {
 
         // get id colaborador according spinners
         var idColaborador1 = ""
-        if(spinnerAtiendeER.selectedItemPosition > 0)
+        if (spinnerAtiendeER.selectedItemPosition > 0)
             idColaborador1 = listColaboradores1[spinnerAtiendeER.selectedItemPosition-1].Id
 
         var idColaborador2 = ""
-        if(spinnerRegistraER.selectedItemPosition > 0)
+        if (spinnerRegistraER.selectedItemPosition > 0)
             idColaborador2 = listColaboradores2[spinnerRegistraER.selectedItemPosition-1].Id
 
         //val requestBody : RequestBody
@@ -450,17 +433,17 @@ class EditStatusActivity : BaseActivity() {
             .addFormDataPart("IdColaborador2", idColaborador1)
             .addFormDataPart("StatusIncidencia", spinnerStatusER.selectedItemPosition.toString())
 
-        if(defaultImage1)
+        if (defaultImage1)
             requestBody.addFormDataPart("Fotografia1", "")
         else
             requestBody.addFormDataPart("Fotografia1", "image1.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray1))
 
-        if(defaultImage2)
+        if (defaultImage2)
             requestBody.addFormDataPart("Fotografia2", "")
         else
             requestBody.addFormDataPart("Fotografia2", "image2.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray2))
 
-        if(defaultImage3)
+        if (defaultImage3)
             requestBody.addFormDataPart("Fotografia3", "")
         else
             requestBody.addFormDataPart("Fotografia3", "image3.jpeg", RequestBody.create(MEDIA_TYPE_JPG, byteArray3))
@@ -479,7 +462,7 @@ class EditStatusActivity : BaseActivity() {
                         val jsonRes = JSONObject(response.body!!.string())
                         Log.e("RES",  jsonRes.toString())
 
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
 
                             snackbar(applicationContext, layParentER, jsonRes.getString("Mensaje"), Constants.Types.SUCCESS)
                             Constants.updateRefreshIncidencias(applicationContext, true)
@@ -493,7 +476,7 @@ class EditStatusActivity : BaseActivity() {
 
                         progress.dismiss()
 
-                    } catch (e: Error){
+                    } catch (e: Error) {
                         progress.dismiss()
                         snackbar(applicationContext, layParentER, e.message.toString(), Constants.Types.ERROR)
                     }
@@ -516,42 +499,40 @@ class EditStatusActivity : BaseActivity() {
         pictureDialog.show()
     }
 
-    private fun showPopPhoto(photo: Int){
+    private fun showPopPhoto(photo: Int) {
         val dialog = Dialog(this, R.style.FullDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.pop_image)
 
         val image = dialog.findViewById<ImageView>(R.id.imgCenter)
-
-        val b: Bitmap = when(photo){
-            1->{ imgPhoto1ER.drawable.toBitmap() }
-            2->{ imgPhoto2ER.drawable.toBitmap() }
-            else->{ imgPhoto3ER.drawable.toBitmap() }
+        val b: Bitmap = when(photo) {
+            1 -> imgPhoto1ER.drawable.toBitmap()
+            2 -> imgPhoto2ER.drawable.toBitmap()
+            else -> imgPhoto3ER.drawable.toBitmap()
         }
         image.setImageBitmap(b)
-
         dialog.show()
     }
 
     private fun choosePhotoFromGallary() {
-        val galleryIntent = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-
-        startActivityForResult(galleryIntent, GALLERY)
+        startActivityForResult(
+            Intent(
+                Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI), GALLERY
+        )
     }
+
     @SuppressLint("SdCardPath")
     private fun takePhotoFromCamera(photo: Int) {
+        val date = Date()
+        val df = SimpleDateFormat("-mm-ss", Locale.getDefault())
+        val outUri: Uri
         val intent = Intent()
         intent.action = MediaStore.ACTION_IMAGE_CAPTURE
 
-        val date = Date()
-        val df = SimpleDateFormat("-mm-ss", Locale.getDefault())
-
-        val outUri: Uri
-        when(photo){
-            1->{
+        when (photo) {
+            1 -> {
                 val newPicFile = df.format(date) + ".jpg"
                 val outPath = "/sdcard/$newPicFile"
                 val outfile = File(outPath)
@@ -559,14 +540,14 @@ class EditStatusActivity : BaseActivity() {
                 mCameraFileName1 = outfile.toString()
                 outUri = Uri.fromFile(outfile)
             }
-            2->{
+            2 -> {
                 val newPicFile = df.format(date) + ".jpg"
                 val outPath = "/sdcard/$newPicFile"
                 val outfile = File(outPath)
 
                 mCameraFileName2 = outfile.toString()
                 outUri = Uri.fromFile(outfile)}
-            else->{
+            else -> {
                 val newPicFile = df.format(date) + ".jpg"
                 val outPath = "/sdcard/$newPicFile"
                 val outfile = File(outPath)
@@ -583,44 +564,37 @@ class EditStatusActivity : BaseActivity() {
     @Deprecated("Deprecated in Java")
     public override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == GALLERY)
-        {
-            if (data != null)
-            {
+        if (requestCode == GALLERY) {
+            if (data != null) {
                 val contentURI = data.data
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-
-                    when(SELECTED){
-                        1->{imgPhoto1ER.setImageBitmap(bitmap); defaultImage1 = false}
-                        2->{imgPhoto2ER.setImageBitmap(bitmap); defaultImage2 = false}
-                        else->{imgPhoto3ER.setImageBitmap(bitmap); defaultImage3 = false}
+                    when(SELECTED) {
+                        1 -> { imgPhoto1ER.setImageBitmap(bitmap); defaultImage1 = false }
+                        2 -> { imgPhoto2ER.setImageBitmap(bitmap); defaultImage2 = false }
+                        else -> { imgPhoto3ER.setImageBitmap(bitmap); defaultImage3 = false }
                     }
-
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
             }
-        }
-        else if (requestCode == CAMERA)
-        {
-            when(SELECTED){
-                1->{
+        } else if (requestCode == CAMERA) {
+            when(SELECTED) {
+                1 -> {
                     val file = File(mCameraFileName1)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName1))
                         imgPhoto1ER.setImageURI(uriImage)
                         defaultImage1 = false}
                 }
-                2->{
+                2 -> {
                     val file = File(mCameraFileName2)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName2))
                         imgPhoto2ER.setImageURI(uriImage)
                         defaultImage2 = false}
                 }
-                else->{
+                else -> {
                     val file = File(mCameraFileName3)
                     if (file.exists()) {
                         val uriImage = Uri.fromFile(File(mCameraFileName3))
@@ -630,5 +604,4 @@ class EditStatusActivity : BaseActivity() {
             }
         }
     }
-
 }

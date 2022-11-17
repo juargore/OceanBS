@@ -45,6 +45,7 @@ object Constants {
     const val PHOTO = "Fotografia"
     const val PHOTOS = "photos"
     const val OWNER_ID = "IdPropietario"
+    const val SELECT = "Seleccionar"
 
     private const val DATABASE_SP = "oceanbs"
 

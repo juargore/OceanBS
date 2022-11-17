@@ -17,11 +17,11 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.glass.oceanbs.Constants
+import com.glass.oceanbs.Constants.internetConnected
+import com.glass.oceanbs.Constants.showPopUpNoInternet
 import com.glass.oceanbs.Constants.snackbar
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.IncidenciaAdapter
@@ -57,18 +57,12 @@ class ListIncidenciasActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_incidencias)
-
-        supportActionBar?.hide()
-
-        val args = intent.extras
-
-        try {
-            solicitudId = args!!.getString("solicitudId").toString()
-            desarrollo = args.getString("desarrollo").toString()
-            persona = args.getString("persona").toString()
-            codigoUnidad = args.getString("codigoUnidad").toString()
-        } catch (_: Exception){}
-
+        intent.extras?.let {
+            solicitudId = it.getString("solicitudId").toString()
+            desarrollo = it.getString("desarrollo").toString()
+            persona = it.getString("persona").toString()
+            codigoUnidad = it.getString("codigoUnidad").toString()
+        }
         initComponents()
     }
 
@@ -81,7 +75,6 @@ class ListIncidenciasActivity : AppCompatActivity() {
         laySuccessI = findViewById(R.id.laySuccessI)
         layFailI = findViewById(R.id.layFailI)
         swipeInc = findViewById(R.id.swipeInc)
-
         rvIncidencias = findViewById(R.id.rvIncidencias)
         fabNewIncidencia = findViewById(R.id.fabNewIncidencia)
 
@@ -96,34 +89,33 @@ class ListIncidenciasActivity : AppCompatActivity() {
 
         txtTitleDesarrolloI.text = "$desarrollo $codigoUnidad"
         txtSubTitleDesarrolloI.text = persona
-
         fabNewIncidencia.setOnClickListener {
-            val intent = Intent(applicationContext, CreateIncidenciaActivity::class.java)
-            intent.putExtra("persona", persona)
-            intent.putExtra("desarrollo", desarrollo)
-            intent.putExtra("solicitudId", solicitudId)
-            intent.putExtra("codigoUnidad", codigoUnidad)
-            startActivity(intent)
+            startActivity(
+                Intent(applicationContext, CreateIncidenciaActivity::class.java).apply {
+                    putExtra("persona", persona)
+                    putExtra("desarrollo", desarrollo)
+                    putExtra("solicitudId", solicitudId)
+                    putExtra("codigoUnidad", codigoUnidad)
+                }
+            )
         }
 
         imgBackIncidencias.setOnClickListener { backIntent() }
-
         swipeInc.setOnRefreshListener {
-            if(Constants.internetConnected(this)){
+            if (internetConnected(this))
                 getIncidencias()
-            } else
-                Constants.showPopUpNoInternet(this)
-
+            else
+                showPopUpNoInternet(this)
             swipeInc.isRefreshing = false
         }
 
-        if(Constants.internetConnected(this)){
+        if (internetConnected(this))
             getIncidencias()
-        } else
-            Constants.showPopUpNoInternet(this)
+        else
+            showPopUpNoInternet(this)
     }
 
-    private fun getIncidencias(){
+    private fun getIncidencias() {
         progress.show()
         userId = Constants.getUserId(this)
 
@@ -134,22 +126,19 @@ class ListIncidenciasActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder().url(Constants.URL_INCIDENCIAS).post(builder).build()
-
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
-
-                        if(jsonRes.getInt("Error") > 0)
+                        if (jsonRes.getInt("Error") > 0)
                             snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
-                        else{
-
+                        else {
                             // create incidencia object and iterate json array
                             val arrayIncidencias = jsonRes.getJSONArray("Datos")
                             listIncidencias.clear()
 
-                            for(i in 0 until arrayIncidencias.length()){
+                            for (i in 0 until arrayIncidencias.length()) {
                                 val j : JSONObject = arrayIncidencias.getJSONObject(i)
 
                                 listIncidencias.add(ShortIncidencia(
@@ -162,7 +151,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
                             }
 
                             // show / hide layout according the number of rows
-                            if(listIncidencias.size > 0){
+                            if (listIncidencias.size > 0) {
                                 laySuccessI.visibility = View.VISIBLE
                                 layFailI.visibility = View.GONE
                                 setUpRecyclerView()
@@ -191,8 +180,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
         })
     }
 
-    private fun setUpRecyclerView(){
-        rvIncidencias.layoutManager = LinearLayoutManager(this)
+    private fun setUpRecyclerView() {
         val adapter = IncidenciaAdapter(this, listIncidencias, object : IncidenciaAdapter.InterfaceOnClick{
             override fun onItemClick(pos: Int) {
                 val intent = Intent(applicationContext, EditIncidenciaActivity::class.java)
@@ -205,11 +193,9 @@ class ListIncidenciasActivity : AppCompatActivity() {
             }
         }, object : IncidenciaAdapter.InterfaceOnLongClick{
             override fun onItemLongClick(pos: Int) {
-                //showDeleteDialog(listIncidencias[pos].Id)
                 showPopOptions(listIncidencias[pos].Id)
             }
         })
-
         rvIncidencias.adapter = adapter
     }
 
@@ -228,7 +214,8 @@ class ListIncidenciasActivity : AppCompatActivity() {
         edit.visibility = View.GONE
 
         delete.setOnClickListener {
-            showDeleteDialog(incidenciaId); dialog.dismiss() }
+            showDeleteDialog(incidenciaId); dialog.dismiss()
+        }
         exit.setOnClickListener { dialog.dismiss() }
 
         dialog.show()
@@ -243,17 +230,6 @@ class ListIncidenciasActivity : AppCompatActivity() {
             }
             cancelClickListener { }
         }.show()
-        /*alert(resources.getString(R.string.msg_confirm_deletion),
-            "")
-        {
-            positiveButton(resources.getString(R.string.accept)) {
-                deleteIncidenciaByServer(incidenciaId)
-            }
-            negativeButton(resources.getString(R.string.cancel)){}
-        }.show().apply {
-            getButton(AlertDialog.BUTTON_POSITIVE)?.let { it.textColor = resources.getColor(R.color.colorBlack) }
-            getButton(AlertDialog.BUTTON_NEGATIVE)?.let { it.textColor = resources.getColor(R.color.colorAccent) }
-        }*/
     }
 
     private fun deleteIncidenciaByServer(incidenciaId: String){
@@ -277,9 +253,9 @@ class ListIncidenciasActivity : AppCompatActivity() {
             }
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread{
-                    try{
+                    try {
                         val jsonRes = JSONObject(response.body!!.string())
-                        if(jsonRes.getInt("Error") == 0){
+                        if (jsonRes.getInt("Error") == 0) {
 
                             // successfully deleted on Server -> refresh list
                             listIncidencias.clear()
@@ -291,7 +267,7 @@ class ListIncidenciasActivity : AppCompatActivity() {
                             snackbar(applicationContext, layParentI, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
                             progress.dismiss()
                         }
-                    } catch (e: java.lang.Error){
+                    } catch (e: java.lang.Error) {
                         progress.dismiss()
                         snackbar(applicationContext, layParentI,
                             "No es posible eliminar esta incidencia. Intente más tarde", Constants.Types.ERROR)
@@ -307,31 +283,26 @@ class ListIncidenciasActivity : AppCompatActivity() {
     }
 
     @SuppressLint("NewApi")
-    private fun backIntent(){
-
+    private fun backIntent() {
         val mngr: ActivityManager =
             getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-
         val taskList: List<ActivityManager.RunningTaskInfo> = mngr.getRunningTasks(10)
 
         if (taskList[0].numActivities == 1 && taskList[0].topActivity?.className.equals(this.javaClass.name)) {
-
             this@ListIncidenciasActivity.finish()
-
             val intent = Intent(this@ListIncidenciasActivity, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-
-        } else
+        } else {
             this.finish()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        if(Constants.mustRefreshIncidencias(this)){
+        if (Constants.mustRefreshIncidencias(this)) {
             listIncidencias.clear()
             getIncidencias()
         }
     }
-
 }
