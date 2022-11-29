@@ -19,9 +19,9 @@ import com.glass.oceanbs.extensions.hide
 import com.google.android.material.snackbar.Snackbar
 
 object Constants {
-
     //private const val URL_PARENT = "http://oceanbs01.com/"
     private const val URL_PARENT = "http://oceanbs04.com/"
+    private const val DATABASE_SP = "oceanbs"
 
     const val URL_USER = "${URL_PARENT}models/catalogos/CCatColaborador.php"
     const val URL_SOLICITUDES = "${URL_PARENT}models/registros/CRegSolicitudAG.php"
@@ -33,21 +33,31 @@ object Constants {
     const val URL_IMAGES_CAROUSEL = "${URL_PARENT}models/catalogos/CCatEmpresa.php"
     const val URL_IMAGES = "${URL_PARENT}uploads/catalogos/sucursales/"
     const val URL_IMAGES_STATUS = "${URL_PARENT}uploads/crecento/statusincidencias/"
+    const val URL_MAIN_ITEMS_HOME = "${URL_PARENT}models/na_servicios/CServiciosAplicacionesConsultas.php"
 
     const val GET_CAROUSEL = "ConsultaCarruselApp"
     const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
     const val GET_DESARROLLOS_BY_OWNER_ID = "ConsultaDesarrollosIdPropietario"
+    const val GET_MAIN_ITEMS_HOME = "ConsultaIntegralMenuPrincipal"
 
     const val WEB_SERVICE = "WebService"
     const val ERROR = "Error"
     const val MESSAGE = "Mensaje"
     const val DATA = "Datos"
+    const val OPTIONS = "Opciones"
     const val PHOTO = "Fotografia"
     const val PHOTOS = "photos"
     const val OWNER_ID = "IdPropietario"
     const val SELECT = "Seleccionar"
-
-    private const val DATABASE_SP = "oceanbs"
+    const val WELCOME_CAPTION = "LeyendaBienvenida"
+    const val CURRENT_DATE = "FechaActual"
+    const val MEMBER_SINCE = "LeyendaPropietario"
+    const val OWNER = "Propietario"
+    const val TITLE = "Titulo"
+    const val CAPTION = "Leyenda"
+    const val COLOR = "Color"
+    const val LINK_TYPE = "TipoEnlace"
+    const val LINK = "Enlace"
 
     fun snackbar(context: Context, view: View, message: String, type: Types = Types.GENERAL) {
         val snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG)

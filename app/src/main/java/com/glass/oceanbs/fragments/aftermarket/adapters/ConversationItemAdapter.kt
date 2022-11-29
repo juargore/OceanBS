@@ -22,8 +22,8 @@ class ConversationItemAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            0 -> ItemViewHolderCustomer(getView(parent, R.layout.card_item_chat_customer))
-            else -> ItemViewHolderService(getView(parent, R.layout.card_item_chat_service))
+            0 -> ItemViewHolderCustomer(getView(parent, R.layout.card_item_chat_service))
+            else -> ItemViewHolderService(getView(parent, R.layout.card_item_chat_customer))
         }
     }
 
@@ -36,8 +36,8 @@ class ConversationItemAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = elements[position]
         when (holder.itemViewType) {
-            0 -> holder.itemView.txtMessageCustomer.setText(item.message)
-            2 -> holder.itemView.txtMessageService.setText(item.message)
+            0 -> holder.itemView.txtMessageService.setText(item.message)
+            2 -> holder.itemView.txtMessageCustomer.setText(item.message)
         }
     }
 }

@@ -40,8 +40,8 @@ class NewHomeItemAdapter(
             var url: String? = null
 
             when (position) {
-                0 -> intent = Intent(context, MainActivity::class.java)
-                1 -> intent = Intent(context, AftermarketActivity::class.java)
+                0 -> intent = Intent(context, AftermarketActivity::class.java)
+                1 -> intent = Intent(context, MainActivity::class.java)
                 else -> url = item.url
             }
             setOnClickListener { onItemClicked?.invoke(intent, url) }

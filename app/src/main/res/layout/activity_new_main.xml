@@ -63,7 +63,7 @@
         app:layout_constraintTop_toBottomOf="@+id/layMain">
 
         <TextView
-            android:id="@+id/textView24"
+            android:id="@+id/txtWelcome"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:fontFamily="sans-serif-condensed"
@@ -103,7 +103,7 @@
         android:background="@color/colorLighterGray"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="6dp"
+        android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view13">
@@ -113,10 +113,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Juan Arturo Gómez Reséndiz"
-            android:textSize="15sp" />
+            android:textSize="13sp" />
 
         <TextView
-            android:id="@+id/textView22"
+            android:id="@+id/txtMemberSince"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cliente desde febrero de 2017"

@@ -28,23 +28,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="40dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center_horizontal"
             android:text="Su propiedad presenta un avance del 50% de documentación" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="24dp"
+            android:baselineAligned="false"
             android:orientation="horizontal"
-            android:weightSum="2"
-            android:baselineAligned="false">
+            android:weightSum="2">
 
             <include
                 android:id="@+id/circularProgress"
                 layout="@layout/circular_progress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:layout_weight="0.55" />
 
             <LinearLayout
@@ -70,8 +71,8 @@
                     android:background="@drawable/rectangle_round_corner_gray_fill"
                     android:ems="10"
                     android:inputType="textMultiLine"
-                    android:lines="5"
-                    android:maxLines="5"
+                    android:lines="3"
+                    android:maxLines="3"
                     tools:ignore="Autofill,LabelFor" />
             </LinearLayout>
         </LinearLayout>
@@ -80,7 +81,7 @@
             android:id="@+id/view15"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="18dp"
             android:background="@color/colorLightGray" />
 
         <LinearLayout
@@ -111,7 +112,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="12dp"
                 android:orientation="horizontal">
 
                 <Button

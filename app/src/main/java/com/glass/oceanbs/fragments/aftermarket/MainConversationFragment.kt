@@ -34,6 +34,7 @@ class MainConversationFragment : Fragment() {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) initValidation()
     }
+
     private fun initValidation() {
         val parent = root?.findViewById<ConstraintLayout>(R.id.layParentConversation)
         val desarrolloId = MainTracingFragment.desarrolloId
