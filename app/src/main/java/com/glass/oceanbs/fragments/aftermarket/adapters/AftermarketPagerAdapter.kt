@@ -9,9 +9,10 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.glass.oceanbs.R
 import com.glass.oceanbs.fragments.aftermarket.MainConversationFragment
 import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment
+import com.glass.oceanbs.models.Unity
 import java.util.*
 
-class AftermarketPagerAdapter(val context: Context, manager: FragmentManager) : FragmentPagerAdapter(manager) {
+class AftermarketPagerAdapter(val context: Context, manager: FragmentManager): FragmentPagerAdapter(manager) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> MainTracingFragment.newInstance()

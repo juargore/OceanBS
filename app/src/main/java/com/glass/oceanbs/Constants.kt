@@ -34,17 +34,20 @@ object Constants {
     const val URL_IMAGES = "${URL_PARENT}uploads/catalogos/sucursales/"
     const val URL_IMAGES_STATUS = "${URL_PARENT}uploads/crecento/statusincidencias/"
     const val URL_MAIN_ITEMS_HOME = "${URL_PARENT}models/na_servicios/CServiciosAplicacionesConsultas.php"
+    const val URL_SUMMARY_ITEMS = URL_MAIN_ITEMS_HOME
 
     const val GET_CAROUSEL = "ConsultaCarruselApp"
     const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
     const val GET_DESARROLLOS_BY_OWNER_ID = "ConsultaDesarrollosIdPropietario"
     const val GET_MAIN_ITEMS_HOME = "ConsultaIntegralMenuPrincipal"
+    const val GET_SUMMARY_ITEMS = "ConsultaIntegralSeguimientoResumen"
 
     const val WEB_SERVICE = "WebService"
     const val ERROR = "Error"
     const val MESSAGE = "Mensaje"
     const val DATA = "Datos"
     const val OPTIONS = "Opciones"
+    const val UNITS = "Unidades"
     const val PHOTO = "Fotografia"
     const val PHOTOS = "photos"
     const val OWNER_ID = "IdPropietario"
@@ -52,31 +55,34 @@ object Constants {
     const val WELCOME_CAPTION = "LeyendaBienvenida"
     const val CURRENT_DATE = "FechaActual"
     const val MEMBER_SINCE = "LeyendaPropietario"
-    const val OWNER = "Propietario"
+    const val OWNER_NAME = "NombrePropietario"
     const val TITLE = "Titulo"
     const val CAPTION = "Leyenda"
     const val COLOR = "Color"
     const val LINK_TYPE = "TipoEnlace"
     const val LINK = "Enlace"
+    const val PROGRESS = "Avance"
+    const val IMAGE = "Imagen"
+    const val UNITY_ID = "IdUnidad"
+    const val UNITY_CODE = "CodigoUnidad"
+    const val UNITY_NAME = "NombreUnidad"
 
-    fun snackbar(context: Context, view: View, message: String, type: Types = Types.GENERAL) {
+    fun snackbar(context: Context, view: View, message: String, type: Types) {
         val snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
         val sview = snack.view
         val tv = sview.findViewById<TextView>(R.id.snackbar_text)
 
-        when (type) {
-            Types.GENERAL -> Unit
-            Types.ERROR -> sview.setBackgroundColor(context.resources.getColor(R.color.colorIncidencePink))
-            Types.SUCCESS -> sview.setBackgroundColor(context.resources.getColor(R.color.colorIncidenceLightGreen))
-            Types.INFO -> sview.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
+        val color = when (type) {
+            Types.ERROR -> R.color.colorIncidencePink
+            Types.SUCCESS -> R.color.colorIncidenceLightGreen
+            Types.INFO -> R.color.colorPrimary
         }
-
+        sview.setBackgroundColor(context.resources.getColor(color))
         tv.setTextColor(Color.BLACK)
         snack.show()
     }
 
     enum class Types{
-        GENERAL,
         ERROR,
         SUCCESS,
         INFO

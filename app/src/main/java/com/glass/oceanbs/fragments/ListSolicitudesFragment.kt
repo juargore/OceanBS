@@ -76,11 +76,9 @@ class ListSolicitudesFragment : Fragment() {
         layFailFS = view.findViewById(R.id.layFailFS)
         rvSolicitudes = view.findViewById(R.id.rvSolicitudes)
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
-
         cardFecha = view.findViewById(R.id.cardFecha)
         cardTodas = view.findViewById(R.id.cardTodas)
         txtFecha = view.findViewById(R.id.txtFecha)
-
 
         val cldr = Calendar.getInstance()
         val day = cldr.get(Calendar.DAY_OF_MONTH)
@@ -89,7 +87,7 @@ class ListSolicitudesFragment : Fragment() {
 
         val realMonth = month+1
         var strMonth = realMonth.toString()
-        if(realMonth < 10)
+        if (realMonth < 10)
             strMonth = "0$realMonth"
 
         val realDay = day
@@ -122,9 +120,9 @@ class ListSolicitudesFragment : Fragment() {
         }
 
         // after init -> get solicitudes if network available
-        if(Constants.internetConnected(requireActivity())){
+        if (Constants.internetConnected(requireActivity())) {
             getSolicitudesByDate(today)
-        } else{
+        } else {
             Constants.showPopUpNoInternet(requireActivity())
         }
     }
@@ -137,31 +135,33 @@ class ListSolicitudesFragment : Fragment() {
         val year1 = cldr.get(Calendar.YEAR)
 
         val picker = DatePickerDialog(requireContext(), R.style.AppTheme_CustomDatePickerAccent, { _, year, month, day ->
+            val realDay = day
+            var strDay = realDay.toString()
+            val realMonth = month+1
+            var strMonth = realMonth.toString()
 
-                val realDay = day
-                var strDay = realDay.toString()
+            if (realMonth < 10)
+                strMonth = "0$realMonth"
 
-                val realMonth = month+1
-                var strMonth = realMonth.toString()
-                if(realMonth < 10)
-                    strMonth = "0$realMonth"
+            if (realDay < 10)
+                strDay = "0$realDay"
 
-                if(realDay < 10)
-                    strDay = "0$realDay"
-
-                txtView.text = "$year-$strMonth-$strDay"
-                getSolicitudesByDate("$year-$strMonth-$strDay")
-
-            }, year1, month1, day1)
+            txtView.text = "$year-$strMonth-$strDay"
+            getSolicitudesByDate("$year-$strMonth-$strDay")
+        }, year1, month1, day1)
         picker.show()
     }
 
     private fun getSolicitudesByDate(fecha: String){
-        Log.e("--", fecha)
         progress.show()
         userId = Constants.getUserId(requireContext())
 
-        val user = TableUser(requireContext()).getCurrentUserById(Constants.getUserId(requireContext()), Constants.getTipoUsuario(requireContext()))
+        val user = TableUser(requireContext())
+            .getCurrentUserById(
+                Constants.getUserId(
+                    requireContext()), Constants.getTipoUsuario(requireContext()
+                )
+            )
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
@@ -181,9 +181,9 @@ class ListSolicitudesFragment : Fragment() {
                         val jsonRes = JSONObject(response.body!!.string())
                         Log.e("RES", jsonRes.toString())
 
-                        if(jsonRes.getInt("Error") > 0)
+                        if (jsonRes.getInt("Error") > 0)
                             snackbar(requireContext(), layParentS, jsonRes.getString("Mensaje"), Constants.Types.ERROR)
-                        else{
+                        else {
 
                             //If fecha is ALL -> reset date to today
                             if(fecha == "")
@@ -207,7 +207,7 @@ class ListSolicitudesFragment : Fragment() {
                             }
 
                             // show / hide layout according the number of rows
-                            if(listSolicitudes.size > 0){
+                            if (listSolicitudes.size > 0){
                                 laySuccessFS.visibility = View.VISIBLE
                                 layFailFS.visibility = View.GONE
 

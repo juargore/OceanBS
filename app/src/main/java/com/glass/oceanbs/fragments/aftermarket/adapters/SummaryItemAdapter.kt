@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.R
-import com.glass.oceanbs.extensions.hide
 import com.glass.oceanbs.extensions.invisible
 import com.glass.oceanbs.extensions.show
 import com.glass.oceanbs.models.ItemSummary
@@ -26,7 +25,7 @@ class SummaryItemAdapter(
 
     override fun getItemCount() = elements.size
 
-    var onItemClicked: ((ItemSummary) -> Unit)? = null
+    private var onItemClicked: ((ItemSummary) -> Unit)? = null
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = elements[position]
@@ -46,7 +45,9 @@ class SummaryItemAdapter(
 
             viewColorBottom.setBackgroundColor(Color.parseColor(item.hexColor))
             txtPercentage.setBackgroundColor(Color.parseColor(item.hexColor))
-            Picasso.get().load(item.urlImgLeft).into(imgLeft)
+            if (item.urlImgLeft.isNotEmpty()) {
+                Picasso.get().load(item.urlImgLeft).into(imgLeft)
+            }
 
             setOnClickListener { onItemClicked?.invoke(item) }
         }
