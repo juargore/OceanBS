@@ -41,7 +41,7 @@ private var progress: android.app.AlertDialog? = null
 
 data class Parameter(
     val key: String,
-    val value: String
+    val value: String?
 )
 
 fun Activity.getDataFromServer(
@@ -70,8 +70,10 @@ fun Activity.getDataFromServer(
     val builder = FormBody.Builder()
         .add(Constants.WEB_SERVICE, webService)
 
-    parameters?.forEach {
-        builder.add(it.key, it.value)
+    parameters?.forEach { param ->
+        param.value?.let {
+            builder.add(param.key, it)
+        }
     }
 
     val request = Request.Builder().url(url).post(builder.build()).build()
@@ -79,7 +81,9 @@ fun Activity.getDataFromServer(
     client.newCall(request).enqueue(object: Callback {
         override fun onResponse(call: Call, response: Response) {
             try {
-                val jsonRes = JSONObject(response.body!!.string())
+                val res = response.body!!.string()
+                println(res)
+                val jsonRes = JSONObject(res)
                 if (jsonRes.getInt(Constants.ERROR) > 0) {
                     showSnackBar(jsonRes.getString(Constants.MESSAGE), parent)
                 } else {

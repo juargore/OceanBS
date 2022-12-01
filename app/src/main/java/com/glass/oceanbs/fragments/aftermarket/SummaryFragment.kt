@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.Constants.CAPTION
+import com.glass.oceanbs.Constants.CAPTION_SUMMARY
 import com.glass.oceanbs.Constants.COLOR
 import com.glass.oceanbs.Constants.GET_SUMMARY_ITEMS
 import com.glass.oceanbs.Constants.IMAGE
@@ -26,7 +27,6 @@ import com.glass.oceanbs.models.ItemSummary
 
 class SummaryFragment : Fragment() {
 
-    private lateinit var root: View
     private lateinit var txtTop: TextView
     private lateinit var layParentSummary: LinearLayout
 
@@ -35,30 +35,30 @@ class SummaryFragment : Fragment() {
     }
 
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View {
-        root = infl.inflate(R.layout.fragment_summary, cont, false)
-        initValidation()
+        val root = infl.inflate(R.layout.fragment_summary, cont, false)
+        initValidation(root)
         return root
     }
 
-    private fun initValidation() {
+    private fun initValidation(root: View) {
         layParentSummary = root.findViewById(R.id.layParentSummary)
         txtTop = root.findViewById(R.id.txtTop)
         val desarrolloId = MainTracingFragment.desarrolloId
         if (desarrolloId != null) {
             layParentSummary.show()
-            getItemsFromServer()
+            getItemsFromServer(root)
         } else {
             layParentSummary.hide()
         }
     }
 
-    private fun getItemsFromServer() {
+    private fun getItemsFromServer(root: View) {
         activity?.getDataFromServer(
             webService = GET_SUMMARY_ITEMS,
             url = URL_SUMMARY_ITEMS,
             parent = layParentSummary
         ) { jsonRes ->
-            val caption = jsonRes.getString(CAPTION)
+            val caption = jsonRes.getString(CAPTION_SUMMARY)
             val arr = jsonRes.getJSONArray(OPTIONS)
             val mList = mutableListOf<ItemSummary>()
 
@@ -76,18 +76,18 @@ class SummaryFragment : Fragment() {
                     )
                 )
             }
-            setupViews(caption, mList)
+            setupViews(root, caption, mList)
         }
     }
 
-    private fun setupViews(caption: String, list: List<ItemSummary>) {
+    private fun setupViews(root: View, caption: String, list: List<ItemSummary>) {
         runOnUiThread {
             txtTop.text = caption
-            setupRecycler(list)
+            setupRecycler(root, list)
         }
     }
 
-    private fun setupRecycler(list: List<ItemSummary>) {
+    private fun setupRecycler(root: View, list: List<ItemSummary>) {
         root.findViewById<RecyclerView>(R.id.rvSummary)?.let {
             it.adapter = SummaryItemAdapter(list)
         }

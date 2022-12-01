@@ -35,12 +35,14 @@ object Constants {
     const val URL_IMAGES_STATUS = "${URL_PARENT}uploads/crecento/statusincidencias/"
     const val URL_MAIN_ITEMS_HOME = "${URL_PARENT}models/na_servicios/CServiciosAplicacionesConsultas.php"
     const val URL_SUMMARY_ITEMS = URL_MAIN_ITEMS_HOME
+    const val URL_CONSTRUCTION_ITEMS = URL_MAIN_ITEMS_HOME
 
     const val GET_CAROUSEL = "ConsultaCarruselApp"
     const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
     const val GET_DESARROLLOS_BY_OWNER_ID = "ConsultaDesarrollosIdPropietario"
     const val GET_MAIN_ITEMS_HOME = "ConsultaIntegralMenuPrincipal"
     const val GET_SUMMARY_ITEMS = "ConsultaIntegralSeguimientoResumen"
+    const val GET_CONSTRUCTION_ITEMS = "ConsultaIntegralAvanceConstruccion"
 
     const val WEB_SERVICE = "WebService"
     const val ERROR = "Error"
@@ -49,6 +51,9 @@ object Constants {
     const val OPTIONS = "Opciones"
     const val UNITS = "Unidades"
     const val PHOTO = "Fotografia"
+    const val PHOTO1 = "Fotografia1"
+    const val PHOTO2 = "Fotografia2"
+    const val PHOTO3 = "Fotografia3"
     const val PHOTOS = "photos"
     const val OWNER_ID = "IdPropietario"
     const val SELECT = "Seleccionar"
@@ -58,6 +63,7 @@ object Constants {
     const val OWNER_NAME = "NombrePropietario"
     const val TITLE = "Titulo"
     const val CAPTION = "Leyenda"
+    const val CAPTION_SUMMARY = "LeyendaResumen"
     const val COLOR = "Color"
     const val LINK_TYPE = "TipoEnlace"
     const val LINK = "Enlace"
@@ -66,6 +72,8 @@ object Constants {
     const val UNITY_ID = "IdUnidad"
     const val UNITY_CODE = "CodigoUnidad"
     const val UNITY_NAME = "NombreUnidad"
+    const val ESTIMATED_COMPLETION_DATE = "FechaEstimada"
+    const val ADDITIONAL_INFO = "InformacionAdicional"
 
     fun snackbar(context: Context, view: View, message: String, type: Types) {
         val snack = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
