@@ -14,7 +14,7 @@
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/textView53"
+            android:id="@+id/txtTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
@@ -24,7 +24,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView48"
+            android:id="@+id/txtSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="40dp"
@@ -65,14 +65,18 @@
                     android:textSize="14sp" />
 
                 <EditText
-                    android:id="@+id/editTextTextPersonName3"
+                    android:id="@+id/etInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_round_corner_gray_fill"
+                    android:clickable="false"
                     android:ems="10"
+                    android:enabled="false"
+                    android:gravity="start|top"
                     android:inputType="textMultiLine"
                     android:lines="3"
                     android:maxLines="3"
+                    android:textSize="16sp"
                     tools:ignore="Autofill,LabelFor" />
             </LinearLayout>
         </LinearLayout>

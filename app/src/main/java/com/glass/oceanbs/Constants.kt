@@ -36,6 +36,7 @@ object Constants {
     const val URL_MAIN_ITEMS_HOME = "${URL_PARENT}models/na_servicios/CServiciosAplicacionesConsultas.php"
     const val URL_SUMMARY_ITEMS = URL_MAIN_ITEMS_HOME
     const val URL_CONSTRUCTION_ITEMS = URL_MAIN_ITEMS_HOME
+    const val URL_DOCUMENTATION_ITEMS = URL_MAIN_ITEMS_HOME
 
     const val GET_CAROUSEL = "ConsultaCarruselApp"
     const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
@@ -43,6 +44,7 @@ object Constants {
     const val GET_MAIN_ITEMS_HOME = "ConsultaIntegralMenuPrincipal"
     const val GET_SUMMARY_ITEMS = "ConsultaIntegralSeguimientoResumen"
     const val GET_CONSTRUCTION_ITEMS = "ConsultaIntegralAvanceConstruccion"
+    const val GET_DOCUMENTATION_ITEMS = "ConsultaIntegralAvanceDocumentacion"
 
     const val WEB_SERVICE = "WebService"
     const val ERROR = "Error"
@@ -68,6 +70,7 @@ object Constants {
     const val LINK_TYPE = "TipoEnlace"
     const val LINK = "Enlace"
     const val PROGRESS = "Avance"
+    const val PHASE = "Fase"
     const val IMAGE = "Imagen"
     const val UNITY_ID = "IdUnidad"
     const val UNITY_CODE = "CodigoUnidad"
