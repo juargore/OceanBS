@@ -5,55 +5,114 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.glass.oceanbs.Constants.GET_HISTORY_ITEMS
+import com.glass.oceanbs.Constants.NOTICES
+import com.glass.oceanbs.Constants.NOTICE_TYPE
+import com.glass.oceanbs.Constants.UNITY_ID
+import com.glass.oceanbs.Constants.URL_HISTORY_ITEMS
 import com.glass.oceanbs.R
-import com.glass.oceanbs.extensions.hide
-import com.glass.oceanbs.extensions.show
+import com.glass.oceanbs.extensions.*
+import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.desarrolloCode
+import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.desarrolloId
 import com.glass.oceanbs.fragments.aftermarket.adapters.HistoryItemAdapter
 import com.glass.oceanbs.models.History
+import com.glass.oceanbs.models.HistorySpinner
 
 class HistoryFragment : Fragment() {
-
-    private var root: View? = null
 
     companion object {
         fun newInstance() = HistoryFragment()
     }
 
+    private val historySpinnerList: ArrayList<HistorySpinner> = ArrayList()
+    private lateinit var layParentHistory: ConstraintLayout
+    private lateinit var spinnerHistory: Spinner
+
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
-        root = infl.inflate(R.layout.fragment_history, cont, false)
-        initValidation()
+        val root = infl.inflate(R.layout.fragment_history, cont, false)
+        initValidation(root)
         return root
     }
 
-    private fun initValidation() {
-        val parent = root?.findViewById<ConstraintLayout>(R.id.layParentHistory)
-        val desarrolloId = MainTracingFragment.desarrolloId
-
-        println("AQUI: Id en History: $desarrolloId")
+    private fun initValidation(root: View) {
+        layParentHistory = root.findViewById(R.id.layParentHistory)
 
         if (desarrolloId != null) {
-            parent?.show()
-            setUpRecycler()
+            layParentHistory.show()
+            fillSpinnerData(root)
         } else {
-            parent?.hide()
+            layParentHistory.hide()
         }
     }
 
-    private fun setUpRecycler() {
-        with (HistoryItemAdapter(getList())) {
-            root?.findViewById<RecyclerView>(R.id.rvHistory)?.let {
-                it.adapter = this
-                this.onItemClicked = {
+    private fun fillSpinnerData(root: View) {
+        historySpinnerList.clear()
+        historySpinnerList.add(HistorySpinner(0, "Todos los Avisos"))
+        historySpinnerList.add(HistorySpinner(1, "Avisos de Construcción"))
+        historySpinnerList.add(HistorySpinner(2, "Avisos de Documentación"))
 
+        val mList = mutableListOf<String>()
+        historySpinnerList.forEach { mList.add(it.name) }
+        spinnerHistory = root.findViewById(R.id.spinnerHistory)
+
+        with(spinnerHistory) {
+            adapter = ArrayAdapter(requireContext(), R.layout.spinner_text, mList)
+            onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                    getDataFromServer(root, historySpinnerList[pos].id)
                 }
             }
         }
     }
 
-    // todo: get real data from Server
-    private fun getList() = listOf(
+    private fun getDataFromServer(root: View, noticeInt: Int) {
+        activity?.getDataFromServer(
+            webService = GET_HISTORY_ITEMS,
+            url = URL_HISTORY_ITEMS,
+            parent = layParentHistory,
+            parameters = listOf(
+                Parameter(UNITY_ID, desarrolloId),
+                Parameter(NOTICE_TYPE, noticeInt.toString())
+            )
+        ) { jsonRes ->
+            val arr = jsonRes.getJSONArray(NOTICES)
+            val mList = mutableListOf<History>()
+            for (i in 0 until arr.length()) {
+                val j = arr.getJSONObject(i)
+                mList.add(
+                    History(
+                        id = j.getInt("Id"),
+                        title = j.getString("Titulo"),
+                        subtitle = j.getString("LeyendaAvance"),
+                        hexColor = "#FFB264",
+                        unityCode = desarrolloCode.toString(),
+                        date = j.getString("FechaEstimada")
+                    )
+                )
+            }
+
+            runOnUiThread {
+                setUpRecycler(root, mList)
+            }
+        }
+    }
+
+    private fun setUpRecycler(root: View, list: List<History>) {
+        with (HistoryItemAdapter(list)) {
+            root.findViewById<RecyclerView>(R.id.rvHistory)?.let {
+                it.adapter = this
+            }
+        }
+    }
+
+    @Suppress("unused")
+    private fun getTestList() = listOf(
         History(
             id = 0,
             title = "AVISO DE CONSTRUCCIÓN",
@@ -61,22 +120,6 @@ class HistoryFragment : Fragment() {
             hexColor = "#FFB264",
             unityCode = "PS103",
             date = "2020-04-03"
-        ),
-        History(
-            id = 1,
-            title = "AVISO DE CONSTRUCCIÓN",
-            subtitle = "40% de avance",
-            hexColor = "#FFB264",
-            unityCode = "PS102",
-            date = "2020-04-03"
-        ),
-        History(
-            id = 2,
-            title = "AVISO DE CONSTRUCCIÓN",
-            subtitle = "30% de avance",
-            hexColor = "#FFB264",
-            unityCode = "PS101",
-            date = "2020-04-03"
-        ),
+        )
     )
 }

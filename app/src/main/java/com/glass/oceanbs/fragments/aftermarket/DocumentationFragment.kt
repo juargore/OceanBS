@@ -13,14 +13,15 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.ADDITIONAL_INFO
-import com.glass.oceanbs.Constants.DATA
 import com.glass.oceanbs.Constants.GET_DOCUMENTATION_ITEMS
+import com.glass.oceanbs.Constants.NOTICE
 import com.glass.oceanbs.Constants.PHASE
 import com.glass.oceanbs.Constants.PROGRESS
 import com.glass.oceanbs.Constants.UNITY_ID
 import com.glass.oceanbs.Constants.URL_DOCUMENTATION_ITEMS
 import com.glass.oceanbs.R
 import com.glass.oceanbs.extensions.*
+import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.desarrolloId
 
 class DocumentationFragment : Fragment() {
 
@@ -38,8 +39,6 @@ class DocumentationFragment : Fragment() {
 
     private fun initValidation(root: View) {
         layParentDocumentation = root.findViewById(R.id.layParentDocumentation)
-        val desarrolloId = MainTracingFragment.desarrolloId
-
         if (desarrolloId != null) {
             layParentDocumentation.show()
             getDataFromServer(root)
@@ -55,7 +54,7 @@ class DocumentationFragment : Fragment() {
             parent = layParentDocumentation,
             parameters = listOf(Parameter(
                 key = UNITY_ID,
-                value = MainTracingFragment.desarrolloId
+                value = desarrolloId
             ))
         ) { jsonRes ->
             var progress = 0
@@ -63,8 +62,8 @@ class DocumentationFragment : Fragment() {
             var additionalInfo = ""
             val title = jsonRes.getString(Constants.TITLE)
             val subtitle = jsonRes.getString(Constants.CAPTION)
+            val arr = jsonRes.getJSONArray(NOTICE)
 
-            val arr = jsonRes.getJSONArray(DATA)
             if (arr.length() > 0) {
                 val obj = arr.getJSONObject(0)
                 progress = obj.getInt(PROGRESS)

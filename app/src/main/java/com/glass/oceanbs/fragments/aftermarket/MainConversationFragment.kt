@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.R
 import com.glass.oceanbs.extensions.hide
 import com.glass.oceanbs.extensions.show
+import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.desarrolloId
 import com.glass.oceanbs.fragments.aftermarket.adapters.ConversationItemAdapter
 import com.glass.oceanbs.models.Chat
 
@@ -37,10 +38,6 @@ class MainConversationFragment : Fragment() {
 
     private fun initValidation() {
         val parent = root?.findViewById<ConstraintLayout>(R.id.layParentConversation)
-        val desarrolloId = MainTracingFragment.desarrolloId
-
-        println("AQUI: Id en Conversation: $desarrolloId")
-
         if (desarrolloId != null) {
             parent?.show()
             setUpRecycler()

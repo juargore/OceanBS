@@ -14,9 +14,9 @@ import androidx.fragment.app.Fragment
 import com.github.chrisbanes.photoview.PhotoView
 import com.glass.oceanbs.Constants.ADDITIONAL_INFO
 import com.glass.oceanbs.Constants.CAPTION
-import com.glass.oceanbs.Constants.DATA
 import com.glass.oceanbs.Constants.ESTIMATED_COMPLETION_DATE
 import com.glass.oceanbs.Constants.GET_CONSTRUCTION_ITEMS
+import com.glass.oceanbs.Constants.NOTICE
 import com.glass.oceanbs.Constants.PHOTO1
 import com.glass.oceanbs.Constants.PHOTO2
 import com.glass.oceanbs.Constants.PHOTO3
@@ -26,6 +26,7 @@ import com.glass.oceanbs.Constants.UNITY_ID
 import com.glass.oceanbs.Constants.URL_CONSTRUCTION_ITEMS
 import com.glass.oceanbs.R
 import com.glass.oceanbs.extensions.*
+import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.desarrolloId
 import com.squareup.picasso.Picasso
 import com.synnapps.carouselview.CarouselView
 import com.synnapps.carouselview.ImageListener
@@ -52,7 +53,6 @@ class ConstructionFragment : Fragment() {
 
     private fun initValidation(root: View) {
         layParentConstruction = root.findViewById(R.id.layParentConstruction)
-        val desarrolloId = MainTracingFragment.desarrolloId
 
         if (desarrolloId != null) {
             layParentConstruction.show()
@@ -69,7 +69,7 @@ class ConstructionFragment : Fragment() {
             parent = layParentConstruction,
             parameters = listOf(Parameter(
                 key = UNITY_ID,
-                value = MainTracingFragment.desarrolloId
+                value = desarrolloId
             ))
         ) { jsonRes ->
             var progress = 0
@@ -77,7 +77,7 @@ class ConstructionFragment : Fragment() {
             var additionalInfo = ""
             val title = jsonRes.getString(TITLE)
             val subtitle = jsonRes.getString(CAPTION)
-            val arr = jsonRes.getJSONArray(DATA)
+            val arr = jsonRes.getJSONArray(NOTICE)
 
             if (arr.length() > 0) {
                 val obj = arr.getJSONObject(0)
@@ -101,7 +101,14 @@ class ConstructionFragment : Fragment() {
             }
 
             runOnUiThread {
-                setupViews(root, title, subtitle, progress, estimatedDate, additionalInfo)
+                setupViews(
+                    root = root,
+                    title = title,
+                    subtitle = subtitle,
+                    progress = progress,
+                    estimatedDate = estimatedDate,
+                    additionalInfo = additionalInfo
+                )
             }
         }
     }
@@ -115,11 +122,11 @@ class ConstructionFragment : Fragment() {
         estimatedDate: String,
         additionalInfo: String
     ) {
+        val etDate = root.findViewById<EditText>(R.id.etDate)
+        val etInfo = root.findViewById<EditText>(R.id.etInfo)
         val mTitle = root.findViewById<TextView>(R.id.txtTitle)
         val mSubtitle = root.findViewById<TextView>(R.id.txtSubtitle)
         val mProgressBar = root.findViewById<View>(R.id.circularProgress)
-        val etDate = root.findViewById<EditText>(R.id.etDate)
-        val etInfo = root.findViewById<EditText>(R.id.etInfo)
         val str = mProgressBar?.findViewById<TextView>(R.id.progress_tv)
         val pr = mProgressBar?.findViewById<ProgressBar>(R.id.circular_determinative_pb)
 

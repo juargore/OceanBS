@@ -8,3 +8,8 @@ data class History(
     val unityCode: String,
     val date: String
 )
+
+data class HistorySpinner(
+    val id: Int,
+    val name: String
+)

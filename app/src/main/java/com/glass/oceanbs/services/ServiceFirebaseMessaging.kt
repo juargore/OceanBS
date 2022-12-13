@@ -48,7 +48,7 @@ class ServiceFirebaseMessaging : FirebaseMessagingService() {
 
         val notificationIntent: Intent
 
-        if(Constants.getKeepLogin(applicationContext)){
+        if (Constants.getKeepLogin(applicationContext)) {
             notificationIntent = Intent(applicationContext, NotificationActivity::class.java)
             notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             notificationIntent.putExtra("solicitudId", remoteMessage.data["solicitudId"])

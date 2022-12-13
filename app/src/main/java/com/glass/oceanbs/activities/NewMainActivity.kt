@@ -45,6 +45,9 @@ class NewMainActivity: BaseActivity() {
         getTopImagesFromServer()
         getMainListFromServer()
         fabExit.setOnClickListener { showExitDialog() }
+
+        // todo: uncomment this if server not working
+        //setupViews("", "", "", "", emptyList())
     }
 
     private fun setUpRecycler(items: List<ItemNewHome>) {
@@ -130,7 +133,22 @@ class NewMainActivity: BaseActivity() {
             txtDate.text = strDate
             txtMemberSince.text = strMember
             txtUserName.text = strOwner
-            setUpRecycler(items)
+
+            if (items.isEmpty()) {
+                setUpRecycler(getTestlList())
+            } else {
+                setUpRecycler(items)
+            }
         }
     }
+
+    private fun getTestlList() = listOf(
+        ItemNewHome(
+            title = "SEGUIMIENTO DE SU PROPIEDAD",
+            subtitle = "Conozca los avances actuales...",
+            hexColor = "#FFB264",
+            openScreen = true,
+            url = null
+        )
+    )
 }

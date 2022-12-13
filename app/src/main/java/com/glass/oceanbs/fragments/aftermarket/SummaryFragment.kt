@@ -8,8 +8,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.CAPTION
-import com.glass.oceanbs.Constants.CAPTION_SUMMARY
 import com.glass.oceanbs.Constants.COLOR
 import com.glass.oceanbs.Constants.GET_SUMMARY_ITEMS
 import com.glass.oceanbs.Constants.IMAGE
@@ -18,10 +18,8 @@ import com.glass.oceanbs.Constants.PROGRESS
 import com.glass.oceanbs.Constants.TITLE
 import com.glass.oceanbs.Constants.URL_SUMMARY_ITEMS
 import com.glass.oceanbs.R
-import com.glass.oceanbs.extensions.getDataFromServer
-import com.glass.oceanbs.extensions.hide
-import com.glass.oceanbs.extensions.runOnUiThread
-import com.glass.oceanbs.extensions.show
+import com.glass.oceanbs.extensions.*
+import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.desarrolloId
 import com.glass.oceanbs.fragments.aftermarket.adapters.SummaryItemAdapter
 import com.glass.oceanbs.models.ItemSummary
 
@@ -43,7 +41,6 @@ class SummaryFragment : Fragment() {
     private fun initValidation(root: View) {
         layParentSummary = root.findViewById(R.id.layParentSummary)
         txtTop = root.findViewById(R.id.txtTop)
-        val desarrolloId = MainTracingFragment.desarrolloId
         if (desarrolloId != null) {
             layParentSummary.show()
             getItemsFromServer(root)
@@ -56,23 +53,26 @@ class SummaryFragment : Fragment() {
         activity?.getDataFromServer(
             webService = GET_SUMMARY_ITEMS,
             url = URL_SUMMARY_ITEMS,
-            parent = layParentSummary
+            parent = layParentSummary,
+            parameters = listOf(
+                Parameter(Constants.UNITY_ID, desarrolloId)
+            )
         ) { jsonRes ->
-            val caption = jsonRes.getString(CAPTION_SUMMARY)
+            val caption = jsonRes.getString(CAPTION)
             val arr = jsonRes.getJSONArray(OPTIONS)
             val mList = mutableListOf<ItemSummary>()
 
             for (i in 0 until arr.length()) {
                 val j = arr.getJSONObject(i)
-                val progress = j.getString(PROGRESS)
+                val progress = j.getString(PROGRESS) // Avance
                 mList.add(
                     ItemSummary(
                         isDone = progress == "100%",
-                        title = j.getString(TITLE),
-                        subtitle = j.getString(CAPTION),
-                        hexColor = j.getString(COLOR),
+                        title = j.getString(TITLE), // Titulo
+                        subtitle = j.getString(CAPTION), // Leyenda
+                        hexColor = j.getString(COLOR), // Color
                         percentage = progress,
-                        urlImgLeft = j.getString(IMAGE)
+                        urlImgLeft = j.getString(IMAGE) // Imagen
                     )
                 )
             }

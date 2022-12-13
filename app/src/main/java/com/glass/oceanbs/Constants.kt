@@ -37,6 +37,7 @@ object Constants {
     const val URL_SUMMARY_ITEMS = URL_MAIN_ITEMS_HOME
     const val URL_CONSTRUCTION_ITEMS = URL_MAIN_ITEMS_HOME
     const val URL_DOCUMENTATION_ITEMS = URL_MAIN_ITEMS_HOME
+    const val URL_HISTORY_ITEMS = URL_MAIN_ITEMS_HOME
 
     const val GET_CAROUSEL = "ConsultaCarruselApp"
     const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
@@ -45,11 +46,14 @@ object Constants {
     const val GET_SUMMARY_ITEMS = "ConsultaIntegralSeguimientoResumen"
     const val GET_CONSTRUCTION_ITEMS = "ConsultaIntegralAvanceConstruccion"
     const val GET_DOCUMENTATION_ITEMS = "ConsultaIntegralAvanceDocumentacion"
+    const val GET_HISTORY_ITEMS = "ConsultaIntegralAvisos"
 
     const val WEB_SERVICE = "WebService"
     const val ERROR = "Error"
     const val MESSAGE = "Mensaje"
     const val DATA = "Datos"
+    const val NOTICES = "Avisos"
+    const val NOTICE = "Aviso"
     const val OPTIONS = "Opciones"
     const val UNITS = "Unidades"
     const val PHOTO = "Fotografia"
@@ -73,6 +77,7 @@ object Constants {
     const val PHASE = "Fase"
     const val IMAGE = "Imagen"
     const val UNITY_ID = "IdUnidad"
+    const val NOTICE_TYPE = "TipoAviso"
     const val UNITY_CODE = "CodigoUnidad"
     const val UNITY_NAME = "NombreUnidad"
     const val ESTIMATED_COMPLETION_DATE = "FechaEstimada"

@@ -22,12 +22,11 @@ class HistoryItemAdapter(
 
     override fun getItemCount() = elements.size
 
-    var onItemClicked: ((History) -> Unit)? = null
+    private var onItemClicked: ((History) -> Unit)? = null
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = elements[position]
-
-        with(holder.itemView) {
+        with (holder.itemView) {
             txtTitle.text = item.title
             txtSubTitle.text = item.subtitle
             txtUnidad.text = item.unityCode

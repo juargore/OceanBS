@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
@@ -21,7 +22,6 @@ import com.glass.oceanbs.extensions.runOnUiThread
 import com.glass.oceanbs.fragments.aftermarket.adapters.SummaryPagerAdapter
 import com.glass.oceanbs.models.Unity
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.fragment_main_tracing.*
 
 class MainTracingFragment : Fragment() {
 
@@ -29,10 +29,12 @@ class MainTracingFragment : Fragment() {
     private lateinit var viewPager: ViewPager
     private lateinit var tabLayout: TabLayout
     private lateinit var layParent: ConstraintLayout
+    private lateinit var spinnerDesarrollo: Spinner
     private val unityList: ArrayList<Unity> = ArrayList()
 
     companion object {
         var desarrolloId : String? = null
+        var desarrolloCode: String? = null
         fun newInstance() = MainTracingFragment()
     }
 
@@ -42,7 +44,11 @@ class MainTracingFragment : Fragment() {
             viewPager = rootView!!.findViewById(R.id.viewPager)
             tabLayout = rootView!!.findViewById(R.id.tabLayout)
             layParent = rootView!!.findViewById(R.id.layParent)
+            spinnerDesarrollo = rootView!!.findViewById(R.id.spinnerDesarrollo)
             getListDesarrollos()
+
+            // todo: uncomment this if server not working
+            // setUpDesarrolloSpinner()
         }
         return rootView
     }
@@ -58,12 +64,10 @@ class MainTracingFragment : Fragment() {
             webService = GET_MAIN_ITEMS_HOME,
             url = URL_MAIN_ITEMS_HOME,
             parent = layParent,
-            parameters = listOf(
-                Parameter(
-                    key = OWNER_ID,
-                    value = getUserId(requireContext())
-                )
-            )
+            parameters = listOf(Parameter(
+                key = OWNER_ID,
+                value = getUserId(requireContext())
+            ))
         ) { jsonRes ->
             with (jsonRes) {
                 val units = getJSONArray(Constants.UNITS)
@@ -83,6 +87,14 @@ class MainTracingFragment : Fragment() {
     }
 
     private fun setUpDesarrolloSpinner() {
+        // todo: uncomment this if server not working
+        /*unityList.add(
+            Unity(
+                id = "796",
+                code = "IS801",
+                name = "Isla 801"
+            )
+        )*/
         val mList = mutableListOf<String>()
         unityList.forEach { mList.add("${it.code} - ${it.name}") }
         mList.add(0, requireContext().getString(R.string.new_aftermarket_select))
@@ -93,11 +105,8 @@ class MainTracingFragment : Fragment() {
             onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-                    desarrolloId = if (pos != 0) {
-                        unityList[pos - 1].id
-                    } else {
-                        null
-                    }
+                    desarrolloId = if (pos != 0) unityList[pos - 1].id else null
+                    desarrolloCode = if (pos != 0) unityList[pos - 1].code else null
                     setUpTabs()
                 }
             }

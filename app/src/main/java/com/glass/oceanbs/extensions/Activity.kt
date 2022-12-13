@@ -93,11 +93,15 @@ fun Activity.getDataFromServer(
                 }
             } catch (e: Exception) {
                 showSnackBar(e.message.toString(), parent)
+                progress?.dismiss()
+                progress = null
             }
         }
 
         override fun onFailure(call: Call, e: IOException) {
             showSnackBar(e.message.toString(), parent)
+            progress?.dismiss()
+            progress = null
         }
     })
 }

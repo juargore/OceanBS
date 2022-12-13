@@ -31,7 +31,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight=".35">
+                android:layout_weight=".32">
 
                 <ImageView
                     android:id="@+id/imgLeft"
@@ -50,7 +50,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
+                android:layout_weight="1.5"
                 android:orientation="vertical">
 
                 <TextView
