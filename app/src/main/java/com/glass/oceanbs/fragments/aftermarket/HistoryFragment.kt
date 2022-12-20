@@ -92,7 +92,7 @@ class HistoryFragment : Fragment() {
                         subtitle = j.getString("LeyendaAvance"),
                         hexColor = "#FFB264",
                         unityCode = desarrolloCode.toString(),
-                        date = j.getString("FechaEstimada")
+                        date = j.getString("FechaAlta")
                     )
                 )
             }

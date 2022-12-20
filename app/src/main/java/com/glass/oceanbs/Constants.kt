@@ -38,12 +38,15 @@ object Constants {
     const val URL_CONSTRUCTION_ITEMS = URL_MAIN_ITEMS_HOME
     const val URL_DOCUMENTATION_ITEMS = URL_MAIN_ITEMS_HOME
     const val URL_HISTORY_ITEMS = URL_MAIN_ITEMS_HOME
+    const val URL_CHAT_ITEMS = URL_MAIN_ITEMS_HOME
 
     const val GET_CAROUSEL = "ConsultaCarruselApp"
     const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
     const val GET_DESARROLLOS_BY_OWNER_ID = "ConsultaDesarrollosIdPropietario"
     const val GET_MAIN_ITEMS_HOME = "ConsultaIntegralMenuPrincipal"
     const val GET_SUMMARY_ITEMS = "ConsultaIntegralSeguimientoResumen"
+    const val GET_CHAT_ITEMS = "ConsultaIntegralConversacion"
+    const val POST_CHAT_MESSAGE = "EnviaMensajeConversacion"
     const val GET_CONSTRUCTION_ITEMS = "ConsultaIntegralAvanceConstruccion"
     const val GET_DOCUMENTATION_ITEMS = "ConsultaIntegralAvanceDocumentacion"
     const val GET_HISTORY_ITEMS = "ConsultaIntegralAvisos"
@@ -55,6 +58,7 @@ object Constants {
     const val NOTICES = "Avisos"
     const val NOTICE = "Aviso"
     const val OPTIONS = "Opciones"
+    const val CONVERSATION = "Conversacion"
     const val UNITS = "Unidades"
     const val PHOTO = "Fotografia"
     const val PHOTO1 = "Fotografia1"

@@ -80,4 +80,7 @@
     <string name="new_documentation_no">No</string>
     <string name="new_documentation_subtitle">¿Hasta el momento ha sido informado y atendido con oportunidad y puntualidad?</string>
 
+    <string name="new_chat_empty">Aún no ha iniciado una conversación.</string>
+    <string name="new_chat_empty_message">El mensaje no puede estar vacío.</string>
+
 </resources>

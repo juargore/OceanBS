@@ -66,13 +66,12 @@ class DocumentationFragment : Fragment() {
 
             if (arr.length() > 0) {
                 val obj = arr.getJSONObject(0)
-                progress = obj.getInt(PROGRESS)
                 phase = obj.getInt(PHASE)
                 additionalInfo = obj.getString(ADDITIONAL_INFO)
             }
 
             runOnUiThread {
-                setupViews(root, title, subtitle, progress, phase, additionalInfo)
+                setupViews(root, title, subtitle, phase, additionalInfo)
             }
         }
     }
@@ -82,7 +81,6 @@ class DocumentationFragment : Fragment() {
         root: View,
         title: String,
         subtitle: String,
-        progress: Int,
         phase: Int,
         additionalInfo: String
     ) {
@@ -105,6 +103,6 @@ class DocumentationFragment : Fragment() {
         etInfo.setText(additionalInfo)
         str?.text = "Fase $phase"
         pr?.max = 100
-        pr?.progress = progress
+        pr?.progress = (phase * 20)
     }
 }

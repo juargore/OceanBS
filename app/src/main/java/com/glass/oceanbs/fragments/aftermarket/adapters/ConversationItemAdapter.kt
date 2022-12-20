@@ -1,11 +1,13 @@
 package com.glass.oceanbs.fragments.aftermarket.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.R
 import com.glass.oceanbs.models.Chat
+import com.glass.oceanbs.models.MessageType
 import kotlinx.android.synthetic.main.card_item_chat_customer.view.*
 import kotlinx.android.synthetic.main.card_item_chat_service.view.*
 
@@ -13,17 +15,23 @@ class ConversationItemAdapter(
     private var elements: List<Chat>
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private val customerId = 0
+    private val noCustomerId = 2
+
     class ItemViewHolderCustomer(itemView: View) : RecyclerView.ViewHolder(itemView)
     class ItemViewHolderService(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun getItemViewType(position: Int): Int {
-        return if (elements[position].isCustomer) 0 else 2
+        return when (elements[position].type) {
+            MessageType.CUSTOMER -> customerId
+            else -> noCustomerId // worker or automated
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            0 -> ItemViewHolderCustomer(getView(parent, R.layout.card_item_chat_service))
-            else -> ItemViewHolderService(getView(parent, R.layout.card_item_chat_customer))
+            customerId -> ItemViewHolderCustomer(getView(parent, R.layout.card_item_chat_customer))
+            else -> ItemViewHolderService(getView(parent, R.layout.card_item_chat_service))
         }
     }
 
@@ -36,8 +44,28 @@ class ConversationItemAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = elements[position]
         when (holder.itemViewType) {
-            0 -> holder.itemView.txtMessageService.setText(item.message)
-            2 -> holder.itemView.txtMessageCustomer.setText(item.message)
+            customerId -> {
+                // customer card
+                holder.itemView.txtMessageCustomer.setText(item.message)
+                holder.itemView.txtDateCustomer.text = item.hour
+            }
+            noCustomerId -> {
+                // worker card
+                holder.itemView.txtMessageService.setText(item.message)
+                holder.itemView.txtWorkerNameService.text = item.workerName
+                holder.itemView.txtDateService.text = item.hour
+
+                // hide hour text to avoid extra margin
+                if (item.hour.isEmpty()) {
+                    holder.itemView.txtDateService.visibility = View.GONE
+                }
+
+                // automatic response -> paint text and view as blue
+                if (item.type == MessageType.AUTOMATED) {
+                    holder.itemView.txtWorkerNameService.setTextColor(Color.BLUE)
+                    holder.itemView.viewColorBottomS.setBackgroundColor(Color.BLUE)
+                }
+            }
         }
     }
 }
