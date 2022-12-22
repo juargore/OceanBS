@@ -25,7 +25,7 @@ class SummaryItemAdapter(
 
     override fun getItemCount() = elements.size
 
-    private var onItemClicked: ((ItemSummary) -> Unit)? = null
+    var onItemClicked: ((ItemSummary) -> Unit)? = null
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = elements[position]

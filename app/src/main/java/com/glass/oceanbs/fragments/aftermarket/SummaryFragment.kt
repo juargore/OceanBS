@@ -41,11 +41,18 @@ class SummaryFragment : Fragment() {
     private fun initValidation(root: View) {
         layParentSummary = root.findViewById(R.id.layParentSummary)
         txtTop = root.findViewById(R.id.txtTop)
+        val rv = root.findViewById<RecyclerView>(R.id.rvSummary)
+        val txtSelect = root.findViewById<TextView>(R.id.txtSelect)
+
         if (desarrolloId != null) {
-            layParentSummary.show()
+            rv.show()
+            txtTop.show()
+            txtSelect.hide()
             getItemsFromServer(root)
         } else {
-            layParentSummary.hide()
+            rv.hide()
+            txtTop.hide()
+            txtSelect.show()
         }
     }
 
@@ -89,7 +96,16 @@ class SummaryFragment : Fragment() {
 
     private fun setupRecycler(root: View, list: List<ItemSummary>) {
         root.findViewById<RecyclerView>(R.id.rvSummary)?.let {
-            it.adapter = SummaryItemAdapter(list)
+            val mAdapter = SummaryItemAdapter(list)
+            it.adapter = mAdapter
+            mAdapter.onItemClicked = { item ->
+                if (item.title.contains("CONSTRUCCI")) {
+                    (parentFragment as MainTracingFragment).changeToConstructionTab()
+                }
+                if (item.title.contains("DOCUMENTACI")) {
+                    (parentFragment as MainTracingFragment).changeToDocumentationTab()
+                }
+            }
         }
     }
 }

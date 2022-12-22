@@ -39,6 +39,7 @@ object Constants {
     const val URL_DOCUMENTATION_ITEMS = URL_MAIN_ITEMS_HOME
     const val URL_HISTORY_ITEMS = URL_MAIN_ITEMS_HOME
     const val URL_CHAT_ITEMS = URL_MAIN_ITEMS_HOME
+    const val URL_ANSWER_SATISFACTION = URL_MAIN_ITEMS_HOME
 
     const val GET_CAROUSEL = "ConsultaCarruselApp"
     const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
@@ -50,6 +51,7 @@ object Constants {
     const val GET_CONSTRUCTION_ITEMS = "ConsultaIntegralAvanceConstruccion"
     const val GET_DOCUMENTATION_ITEMS = "ConsultaIntegralAvanceDocumentacion"
     const val GET_HISTORY_ITEMS = "ConsultaIntegralAvisos"
+    const val POST_ANSWER_SATISFACTION = "EnviaResultadoSatisfaccion"
 
     const val WEB_SERVICE = "WebService"
     const val ERROR = "Error"
@@ -73,6 +75,7 @@ object Constants {
     const val OWNER_NAME = "NombrePropietario"
     const val TITLE = "Titulo"
     const val CAPTION = "Leyenda"
+    const val RESPONSE = "Respuesta"
     const val CAPTION_SUMMARY = "LeyendaResumen"
     const val COLOR = "Color"
     const val LINK_TYPE = "TipoEnlace"

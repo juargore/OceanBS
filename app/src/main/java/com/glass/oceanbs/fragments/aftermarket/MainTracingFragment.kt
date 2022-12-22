@@ -16,6 +16,7 @@ import com.glass.oceanbs.Constants.OWNER_ID
 import com.glass.oceanbs.Constants.URL_MAIN_ITEMS_HOME
 import com.glass.oceanbs.Constants.getUserId
 import com.glass.oceanbs.R
+import com.glass.oceanbs.activities.AftermarketActivity
 import com.glass.oceanbs.extensions.Parameter
 import com.glass.oceanbs.extensions.getDataFromServer
 import com.glass.oceanbs.extensions.runOnUiThread
@@ -57,6 +58,18 @@ class MainTracingFragment : Fragment() {
         viewPager.adapter = SummaryPagerAdapter(requireContext(), childFragmentManager)
         viewPager.offscreenPageLimit = 4
         tabLayout.setupWithViewPager(viewPager)
+    }
+
+    fun changeToConstructionTab() {
+        viewPager.currentItem = 1
+    }
+
+    fun changeToDocumentationTab() {
+        viewPager.currentItem = 2
+    }
+
+    fun intermediateToUpdateConversationChat() {
+        (activity as AftermarketActivity).changeToConversationTab()
     }
 
     private fun getListDesarrollos() {

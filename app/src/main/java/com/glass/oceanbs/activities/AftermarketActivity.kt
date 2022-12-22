@@ -34,11 +34,13 @@ class AftermarketActivity : BaseActivity() {
         txtUserName.text = getUserName(this).uppercase(Locale.getDefault())
         txtOwner.text = getUserTypeStr(this)
         fabExit.setOnClickListener { showExitDialog() }
-        intent?.extras?.let {
-            viewPager.adapter = AftermarketPagerAdapter(this, supportFragmentManager)
-            viewPager.offscreenPageLimit = 2
-            tabLayout.setupWithViewPager(viewPager)
-        }
+        viewPager.adapter = AftermarketPagerAdapter(this, supportFragmentManager)
+        viewPager.offscreenPageLimit = 2
+        tabLayout.setupWithViewPager(viewPager)
+    }
+
+    fun changeToConversationTab() {
+        viewPager.currentItem = 1
     }
 
     private fun setImagesInCarousel() {

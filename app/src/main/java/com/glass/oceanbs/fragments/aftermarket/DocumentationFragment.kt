@@ -2,23 +2,23 @@ package com.glass.oceanbs.fragments.aftermarket
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
+import androidx.fragment.app.Fragment
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.ADDITIONAL_INFO
 import com.glass.oceanbs.Constants.GET_DOCUMENTATION_ITEMS
 import com.glass.oceanbs.Constants.NOTICE
+import com.glass.oceanbs.Constants.OWNER_ID
 import com.glass.oceanbs.Constants.PHASE
-import com.glass.oceanbs.Constants.PROGRESS
+import com.glass.oceanbs.Constants.POST_ANSWER_SATISFACTION
+import com.glass.oceanbs.Constants.RESPONSE
 import com.glass.oceanbs.Constants.UNITY_ID
+import com.glass.oceanbs.Constants.URL_ANSWER_SATISFACTION
 import com.glass.oceanbs.Constants.URL_DOCUMENTATION_ITEMS
+import com.glass.oceanbs.Constants.getUserId
 import com.glass.oceanbs.R
 import com.glass.oceanbs.extensions.*
 import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.desarrolloId
@@ -57,7 +57,6 @@ class DocumentationFragment : Fragment() {
                 value = desarrolloId
             ))
         ) { jsonRes ->
-            var progress = 0
             var phase = 0
             var additionalInfo = ""
             val title = jsonRes.getString(Constants.TITLE)
@@ -85,10 +84,10 @@ class DocumentationFragment : Fragment() {
         additionalInfo: String
     ) {
         root.findViewById<Button>(R.id.btnYes)?.setOnClickListener {
-            // todo yes
+            sendReponseToServer(1) // yes
         }
         root.findViewById<Button>(R.id.btnNo)?.setOnClickListener {
-            // todo no
+            sendReponseToServer(0) // no
         }
 
         val mTitle = root.findViewById<TextView>(R.id.txtTitle)
@@ -104,5 +103,39 @@ class DocumentationFragment : Fragment() {
         str?.text = "Fase $phase"
         pr?.max = 100
         pr?.progress = (phase * 20)
+    }
+
+    private fun sendReponseToServer(response: Int) {
+        activity?.getDataFromServer(
+            webService = POST_ANSWER_SATISFACTION,
+            url = URL_ANSWER_SATISFACTION,
+            parent = layParentDocumentation,
+            parameters = listOf(
+                Parameter(OWNER_ID, getUserId(requireContext())),
+                Parameter(RESPONSE, response.toString())
+            )
+        ) {
+            if (it.getInt("Error") == 0) {
+                //val res = it.getString("Mensaje")
+                runOnUiThread {
+                    if (response == 1) {
+                        Constants.snackbar(
+                            view = layParentDocumentation,
+                            context = requireContext(),
+                            type = Constants.Types.SUCCESS,
+                            message = "Muchas gracias por su respuesta.\nEstamos para servirle."
+                        )
+                    } else {
+                        (parentFragment as MainTracingFragment).intermediateToUpdateConversationChat()
+                    }
+                    /*Constants.snackbar(
+                        view = layParentDocumentation,
+                        context = requireContext(),
+                        type = Constants.Types.SUCCESS,
+                        message = res
+                    )*/
+                }
+            }
+        }
     }
 }

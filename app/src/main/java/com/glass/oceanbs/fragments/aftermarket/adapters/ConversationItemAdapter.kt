@@ -52,6 +52,9 @@ class ConversationItemAdapter(
             noCustomerId -> {
                 // worker card
                 holder.itemView.txtMessageService.setText(item.message)
+                if (item.workerName == "null") {
+                    holder.itemView.txtWorkerNameService.visibility = View.GONE
+                }
                 holder.itemView.txtWorkerNameService.text = item.workerName
                 holder.itemView.txtDateService.text = item.hour
 
