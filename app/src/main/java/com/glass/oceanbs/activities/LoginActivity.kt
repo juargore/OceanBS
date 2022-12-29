@@ -121,7 +121,7 @@ class LoginActivity : BaseActivity()  {
 
                             // show a welcome message to the user
                             val userName = "${user.nombre} ${user.apellidoP} ${user.apellidoM}"
-                            val t = Toast.makeText(this@LoginActivity, "Bienvenido \n$userName", Toast.LENGTH_LONG)
+                            val t = Toast.makeText(this@LoginActivity, "Bienvenido \n${user.nombre}", Toast.LENGTH_LONG)
                             val v = t.view?.findViewById<TextView>(android.R.id.message)
                             if (v != null) v.gravity = Gravity.CENTER
                             t.show()

@@ -25,30 +25,46 @@ import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.des
 
 class DocumentationFragment : Fragment() {
 
+    private lateinit var root: View
     private lateinit var layParentDocumentation: LinearLayout
 
     companion object {
         fun newInstance() = DocumentationFragment()
     }
 
-    override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
-        val root = infl.inflate(R.layout.fragment_documentation, cont, false)
-        initValidation(root)
+    override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View {
+        root = infl.inflate(R.layout.fragment_documentation, cont, false)
+        layParentDocumentation = root.findViewById(R.id.layParentDocumentation)
         return root
     }
 
-    private fun initValidation(root: View) {
-        layParentDocumentation = root.findViewById(R.id.layParentDocumentation)
-        if (desarrolloId != null) {
-            layParentDocumentation.show()
-            getDataFromServer(root)
-        } else {
-            layParentDocumentation.hide()
+    @Suppress("DEPRECATION")
+    @Deprecated("Deprecated in Java")
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser) {
+            if (desarrolloId != null) {
+                layParentDocumentation.show()
+                val item = MainTracingFragment.itemDocumentation
+                if (item != null) {
+                    setupViews(
+                        title = item.title,
+                        subtitle = item.subtitle,
+                        phase = item.phase,
+                        additionalInfo = item.additionalInfo
+                    )
+                } else {
+                    getDataFromServer()
+                }
+            } else {
+                layParentDocumentation.hide()
+            }
         }
     }
 
-    private fun getDataFromServer(root: View) {
+    private fun getDataFromServer() {
         activity?.getDataFromServer(
+            showLoader = false,
             webService = GET_DOCUMENTATION_ITEMS,
             url = URL_DOCUMENTATION_ITEMS,
             parent = layParentDocumentation,
@@ -70,14 +86,18 @@ class DocumentationFragment : Fragment() {
             }
 
             runOnUiThread {
-                setupViews(root, title, subtitle, phase, additionalInfo)
+                setupViews(
+                    title = title,
+                    subtitle = subtitle,
+                    phase = phase,
+                    additionalInfo = additionalInfo
+                )
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun setupViews(
-        root: View,
         title: String,
         subtitle: String,
         phase: Int,

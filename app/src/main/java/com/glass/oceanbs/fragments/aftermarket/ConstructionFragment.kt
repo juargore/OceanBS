@@ -35,35 +35,82 @@ import okhttp3.*
 
 class ConstructionFragment : Fragment() {
 
+    data class PicassoImage(
+        val url: String?,
+        val resource: Int?
+    )
+
+    private lateinit var root: View
     private lateinit var layParentConstruction: LinearLayout
-    private val photosList: ArrayList<String> = ArrayList()
+    private val photosList: ArrayList<PicassoImage> = ArrayList()
     private var imageListener: ImageListener = ImageListener { position, imageView ->
-        Picasso.get().load(photosList[position]).fit().into(imageView)
+        photosList[position].url?.let {
+            Picasso.get().load(it).fit().into(imageView)
+        }
+        photosList[position].resource?.let {
+            Picasso.get().load(it).fit().into(imageView)
+        }
     }
 
     companion object {
         fun newInstance() = ConstructionFragment()
     }
 
-    override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
-        val root = infl.inflate(R.layout.fragment_construction, cont, false)
-        initValidation(root)
+    override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View {
+        root = infl.inflate(R.layout.fragment_construction, cont, false)
+        layParentConstruction = root.findViewById(R.id.layParentConstruction)
         return root
     }
 
-    private fun initValidation(root: View) {
-        layParentConstruction = root.findViewById(R.id.layParentConstruction)
+    @Suppress("DEPRECATION")
+    @Deprecated("Deprecated in Java")
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser) {
+            if (desarrolloId != null) {
+                layParentConstruction.show()
+                val item = MainTracingFragment.itemConstruction
+                if (item != null) {
+                    val photo1 = item.photo1
+                    val photo2 = item.photo2
+                    val photo3 = item.photo3
+                    photosList.clear()
 
-        if (desarrolloId != null) {
-            layParentConstruction.show()
-            getDataFromServer(root)
-        } else {
-            layParentConstruction.hide()
+                    if (photo1.isNotEmpty()) {
+                        photosList.add(PicassoImage(url = photo1, resource = null))
+                    } else {
+                        photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
+                    }
+                    if (photo2.isNotEmpty()) {
+                        photosList.add(PicassoImage(url = photo2, resource = null))
+                    } else {
+                        photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
+                    }
+                    if (photo3.isNotEmpty()) {
+                        photosList.add(PicassoImage(url = photo3, resource = null))
+                    } else {
+                        photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
+                    }
+
+                    setupViews(
+                        title = item.title,
+                        subtitle = item.subtitle,
+                        progress = item.progress,
+                        estimatedDate = item.date,
+                        additionalInfo = item.additionalInfo
+                    )
+                } else {
+                    getDataFromServer()
+                }
+            } else {
+                layParentConstruction.hide()
+            }
         }
     }
 
-    private fun getDataFromServer(root: View) {
+    private fun getDataFromServer() {
         activity?.getDataFromServer(
+            showLoader = false,
             webService = GET_CONSTRUCTION_ITEMS,
             url = URL_CONSTRUCTION_ITEMS,
             parent = layParentConstruction,
@@ -88,21 +135,32 @@ class ConstructionFragment : Fragment() {
                 val photo1 = obj.getString(PHOTO1)
                 val photo2 = obj.getString(PHOTO2)
                 val photo3 = obj.getString(PHOTO3)
+                photosList.clear()
+
+                /*photosList.add(PicassoImage(
+                    url = "https://img.gtsstatic.net/reno/imagereader.aspx?imageurl=https%3A%2F%2Fsir.azureedge.net%2F1194i215%2F4yxhc7f2612047pche26ey8z57i215&option=N&h=472&permitphotoenlargement=false",
+                    resource = null
+                ))*/
 
                 if (photo1.isNotEmpty()) {
-                    photosList.add(photo1)
+                    photosList.add(PicassoImage(url = photo1, resource = null))
+                } else {
+                    photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
                 }
                 if (photo2.isNotEmpty()) {
-                    photosList.add(photo2)
+                    photosList.add(PicassoImage(url = photo2, resource = null))
+                } else {
+                    photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
                 }
                 if (photo3.isNotEmpty()) {
-                    photosList.add(photo3)
+                    photosList.add(PicassoImage(url = photo3, resource = null))
+                } else {
+                    photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
                 }
             }
 
             runOnUiThread {
                 setupViews(
-                    root = root,
                     title = title,
                     subtitle = subtitle,
                     progress = progress,
@@ -115,7 +173,6 @@ class ConstructionFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setupViews(
-        root: View,
         title: String,
         subtitle: String,
         progress: Int,
@@ -137,15 +194,17 @@ class ConstructionFragment : Fragment() {
         str?.text = "$progress%"
         pr?.progress = progress
 
-        setImagesInCarousel(root)
+        setImagesInCarousel()
     }
 
-    private fun setImagesInCarousel(root: View) {
+    private fun setImagesInCarousel() {
         root.findViewById<CarouselView>(R.id.photosViewer).apply {
             setImageListener(imageListener)
             pageCount = photosList.size
             setImageClickListener { position ->
-                showImageOnPopup(photosList[position])
+                photosList[position].url?.let {
+                    showImageOnPopup(it)
+                }
             }
         }
     }
@@ -161,5 +220,10 @@ class ConstructionFragment : Fragment() {
 
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.show()
+
+        alertDialog.window?.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
     }
 }

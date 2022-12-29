@@ -63,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
                     android:text="@string/new_construction_deadline"
-                    android:textSize="14sp" />
+                    android:textSize="10sp" />
 
                 <EditText
                     android:id="@+id/etDate"
@@ -96,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
             android:text="@string/new_construction_extra_info"
-            android:textSize="14sp" />
+            android:textSize="10sp" />
 
         <EditText
             android:id="@+id/etInfo"
@@ -127,7 +127,7 @@
             app:pageColor="#00000000"
             app:radius="3dp"
             app:slideInterval="5000"
-            app:strokeColor="@android:color/white"
+            app:strokeColor="@color/colorLightGray"
             app:strokeWidth="0.5dp" />
     </LinearLayout>
 

@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
                     android:text="@string/new_construction_extra_info"
-                    android:textSize="14sp" />
+                    android:textSize="10sp" />
 
                 <EditText
                     android:id="@+id/etInfo"

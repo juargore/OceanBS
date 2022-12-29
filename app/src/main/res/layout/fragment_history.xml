@@ -9,6 +9,18 @@
     android:padding="12dp"
     tools:context=".fragments.aftermarket.HistoryFragment">
 
+    <TextView
+        android:id="@+id/txtEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No se han generado avisos para esta propiedad."
+        android:textColor="@color/colorDarkGray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="210dp"

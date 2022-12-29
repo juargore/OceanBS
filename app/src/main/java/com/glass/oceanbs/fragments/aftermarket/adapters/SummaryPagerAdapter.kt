@@ -16,6 +16,7 @@ class SummaryPagerAdapter(
     val context: Context,
     manager: FragmentManager
 ) : FragmentPagerAdapter(manager) {
+
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> SummaryFragment.newInstance()

@@ -23,6 +23,7 @@ import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.des
 import com.glass.oceanbs.fragments.aftermarket.adapters.ConversationItemAdapter
 import com.glass.oceanbs.models.Chat
 import com.glass.oceanbs.models.MessageType
+import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
 
 class MainConversationFragment : Fragment() {
 
@@ -30,6 +31,7 @@ class MainConversationFragment : Fragment() {
     private lateinit var parent: ConstraintLayout
     private lateinit var etMessage: EditText
     private lateinit var btnSend: AppCompatImageButton
+    private lateinit var swipeRefresh: SwipyRefreshLayout
 
     companion object {
         fun newInstance() = MainConversationFragment()
@@ -53,6 +55,12 @@ class MainConversationFragment : Fragment() {
         parent = root?.findViewById(R.id.layParentConversation)!!
         etMessage = root?.findViewById(R.id.etMessage)!!
         btnSend = root?.findViewById(R.id.btnSend)!!
+        swipeRefresh = root?.findViewById(R.id.swipeRefresh)!!
+
+        swipeRefresh.setOnRefreshListener {
+            swipeRefresh.isRefreshing = false
+            getItemsFromServer()
+        }
 
         if (desarrolloId != null) {
             parent.show()
@@ -90,19 +98,20 @@ class MainConversationFragment : Fragment() {
             )
         ) {
             // if everything goes well -> show snackbar success
-            if (it.getInt("Error") == 0) {
+            if (it.getInt("Error") > 0) {
                 val response = it.getString("Mensaje")
                 runOnUiThread {
                     Constants.snackbar(
                         view = parent,
                         context = requireContext(),
-                        type = Constants.Types.SUCCESS,
+                        type = Constants.Types.ERROR,
                         message = response
                     )
-
+                }
+            } else {
+                runOnUiThread {
                     // clear input before refreshing list
                     etMessage.setText("")
-
                     // refresh list to show new message
                     getItemsFromServer()
                 }

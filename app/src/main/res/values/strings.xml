@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Crecento POSTVenta</string>
+    <string name="app_name">Crecento App 2.0</string>
     <string name="crecento_group">Grupo Crecento</string>
     <string name="confirm_exit_desc">¿Está seguro que desea salir de la aplicación?</string>
 
@@ -27,12 +27,12 @@
     <string name="month_december">diciembre</string>
 
     <!-- Strings for Login Activity -->
-    <string name="welcome">Grupo Crecento\nPOSTVenta App\nBienvenido</string>
+    <string name="welcome">Crecento App 2.0\nBienvenido</string>
     <string name="user_code">Código del Propietario / Colaborador</string>
     <string name="phone_number">Teléfono Móvil</string>
     <string name="remember_credentials">Recordar credenciales</string>
     <string name="log_in">Iniciar sesión</string>
-    <string name="ocean_software">Desarrollada por \nOcean Business Software | México</string>
+    <string name="ocean_software">Desarrollada por \nOB Software | México</string>
 
     <string name="msg_confirm_deletion">¿Está seguro que desea eliminar el registro seleccionado?</string>
     <string name="msg_confirm_creation">¿Confirma que desea guardar el registo actual?</string>
@@ -65,7 +65,7 @@
     <string name="new_aftermarket_conversation">Conversación</string>
     <string name="new_aftermarket_summary">Resumen</string>
     <string name="new_aftermarket_construction">Construcción</string>
-    <string name="new_aftermarket_documentation">Documentación</string>
+    <string name="new_aftermarket_documentation">Documentos</string>
     <string name="new_aftermarket_history">Historia</string>
     <string name="new_aftermarket_owner">Propietario</string>
     <string name="new_aftermarket_collaborator">Colaborador</string>
@@ -80,7 +80,7 @@
     <string name="new_documentation_no">No</string>
     <string name="new_documentation_subtitle">¿Hasta el momento ha sido informado y atendido con oportunidad y puntualidad?</string>
 
-    <string name="new_chat_empty">Aún no ha iniciado una conversación.</string>
+    <string name="new_chat_empty">Le damos la bienvenida a este espacio de conversación directa con nuestros asesores. Háganos saber sus inquietudes. Estamos para servirse.</string>
     <string name="new_chat_empty_message">El mensaje no puede estar vacío.</string>
 
 </resources>

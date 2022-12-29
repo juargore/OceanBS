@@ -9,8 +9,8 @@ android {
         applicationId "com.glass.oceanbs"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 16
-        versionName "1.0.41a"
+        versionCode 17
+        versionName "2.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -52,7 +52,10 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-analytics:21.2.0'
+    //noinspection GradleDependency
     implementation 'com.google.firebase:firebase-messaging:23.1.0'
+
+    implementation 'com.github.orangegangsters:swipy:1.2.3@aar'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     //noinspection GradleDependency

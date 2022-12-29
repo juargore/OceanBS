@@ -6,7 +6,14 @@ data class History(
     val subtitle: String,
     val hexColor: String,
     val unityCode: String,
-    val date: String
+    val date: String,
+
+    val additionalInfo: String,
+    val progress: Int,
+    val phase: Int,
+    val photo1: String,
+    val photo2: String,
+    val photo3: String
 )
 
 data class HistorySpinner(

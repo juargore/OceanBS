@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.Constants.GET_HISTORY_ITEMS
@@ -32,6 +33,7 @@ class HistoryFragment : Fragment() {
     private val historySpinnerList: ArrayList<HistorySpinner> = ArrayList()
     private lateinit var layParentHistory: ConstraintLayout
     private lateinit var spinnerHistory: Spinner
+    private lateinit var txtEmpty: TextView
 
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
         val root = infl.inflate(R.layout.fragment_history, cont, false)
@@ -59,6 +61,7 @@ class HistoryFragment : Fragment() {
         val mList = mutableListOf<String>()
         historySpinnerList.forEach { mList.add(it.name) }
         spinnerHistory = root.findViewById(R.id.spinnerHistory)
+        txtEmpty = root.findViewById(R.id.txtEmpty)
 
         with(spinnerHistory) {
             adapter = ArrayAdapter(requireContext(), R.layout.spinner_text, mList)
@@ -71,6 +74,7 @@ class HistoryFragment : Fragment() {
         }
     }
 
+    // todo: truena cuando data viene null o empty -> verificar
     private fun getDataFromServer(root: View, noticeInt: Int) {
         activity?.getDataFromServer(
             webService = GET_HISTORY_ITEMS,
@@ -92,12 +96,23 @@ class HistoryFragment : Fragment() {
                         subtitle = j.getString("LeyendaAvance"),
                         hexColor = "#FFB264",
                         unityCode = desarrolloCode.toString(),
-                        date = j.getString("FechaAlta")
+                        date = j.getString("FechaEstimada"),
+                        additionalInfo = j.getString("InformacionAdicional"),
+                        progress = j.getInt("Avance"),
+                        phase = j.getInt("Fase"),
+                        photo1 = j.getString("Fotografia1"),
+                        photo2 = j.getString("Fotografia2"),
+                        photo3 = j.getString("Fotografia3"),
                     )
                 )
             }
 
             runOnUiThread {
+                if (mList.isEmpty()) {
+                    txtEmpty.show()
+                } else {
+                    txtEmpty.hide()
+                }
                 setUpRecycler(root, mList)
             }
         }
@@ -107,6 +122,14 @@ class HistoryFragment : Fragment() {
         with (HistoryItemAdapter(list)) {
             root.findViewById<RecyclerView>(R.id.rvHistory)?.let {
                 it.adapter = this
+                onItemClicked = { item ->
+                    if (item.title.contains("CONSTRUCCI")) {
+                        (parentFragment as MainTracingFragment).changeToConstructionTab(item)
+                    }
+                    if (item.title.contains("DOCUMENTACI")) {
+                        (parentFragment as MainTracingFragment).changeToDocumentationTab(item)
+                    }
+                }
             }
         }
     }
@@ -119,7 +142,13 @@ class HistoryFragment : Fragment() {
             subtitle = "50% de avance",
             hexColor = "#FFB264",
             unityCode = "PS103",
-            date = "2020-04-03"
+            date = "2020-04-03",
+            additionalInfo = "no info",
+            progress = 0,
+            phase = 0,
+            photo1 = "",
+            photo2 = "",
+            photo3 = "",
         )
     )
 }

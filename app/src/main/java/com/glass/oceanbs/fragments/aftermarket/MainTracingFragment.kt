@@ -21,6 +21,7 @@ import com.glass.oceanbs.extensions.Parameter
 import com.glass.oceanbs.extensions.getDataFromServer
 import com.glass.oceanbs.extensions.runOnUiThread
 import com.glass.oceanbs.fragments.aftermarket.adapters.SummaryPagerAdapter
+import com.glass.oceanbs.models.History
 import com.glass.oceanbs.models.Unity
 import com.google.android.material.tabs.TabLayout
 
@@ -36,6 +37,8 @@ class MainTracingFragment : Fragment() {
     companion object {
         var desarrolloId : String? = null
         var desarrolloCode: String? = null
+        var itemConstruction: History? = null
+        var itemDocumentation: History? = null
         fun newInstance() = MainTracingFragment()
     }
 
@@ -47,9 +50,6 @@ class MainTracingFragment : Fragment() {
             layParent = rootView!!.findViewById(R.id.layParent)
             spinnerDesarrollo = rootView!!.findViewById(R.id.spinnerDesarrollo)
             getListDesarrollos()
-
-            // todo: uncomment this if server not working
-            // setUpDesarrolloSpinner()
         }
         return rootView
     }
@@ -60,11 +60,13 @@ class MainTracingFragment : Fragment() {
         tabLayout.setupWithViewPager(viewPager)
     }
 
-    fun changeToConstructionTab() {
+    fun changeToConstructionTab(item: History?) {
+        itemConstruction = item
         viewPager.currentItem = 1
     }
 
-    fun changeToDocumentationTab() {
+    fun changeToDocumentationTab(item: History?) {
+        itemDocumentation = item
         viewPager.currentItem = 2
     }
 
@@ -100,14 +102,6 @@ class MainTracingFragment : Fragment() {
     }
 
     private fun setUpDesarrolloSpinner() {
-        // todo: uncomment this if server not working
-        /*unityList.add(
-            Unity(
-                id = "796",
-                code = "IS801",
-                name = "Isla 801"
-            )
-        )*/
         val mList = mutableListOf<String>()
         unityList.forEach { mList.add("${it.code} - ${it.name}") }
         mList.add(0, requireContext().getString(R.string.new_aftermarket_select))
@@ -120,6 +114,11 @@ class MainTracingFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
                     desarrolloId = if (pos != 0) unityList[pos - 1].id else null
                     desarrolloCode = if (pos != 0) unityList[pos - 1].code else null
+                    // reset history item to avoid re-charge from Construction or Documentation
+                    if (desarrolloId == null) {
+                        itemConstruction = null
+                        itemDocumentation = null
+                    }
                     setUpTabs()
                 }
             }

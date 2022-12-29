@@ -22,7 +22,7 @@ class HistoryItemAdapter(
 
     override fun getItemCount() = elements.size
 
-    private var onItemClicked: ((History) -> Unit)? = null
+    var onItemClicked: ((History) -> Unit)? = null
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = elements[position]

@@ -45,24 +45,27 @@ data class Parameter(
 )
 
 fun Activity.getDataFromServer(
+    showLoader: Boolean = true,
     webService: String,
     url: String,
     parameters: List<Parameter>? = null,
     parent: View,
     func: (JSONObject) -> Unit
 ) {
-    if (progress == null) {
-        val mBuilder = android.app.AlertDialog.Builder(this, R.style.HalfDialogTheme)
-        val inflat = layoutInflater
-        val dialogView = inflat.inflate(R.layout.progress, null)
+    if (showLoader) {
+        if (progress == null) {
+            val mBuilder = android.app.AlertDialog.Builder(this, R.style.HalfDialogTheme)
+            val inflat = layoutInflater
+            val dialogView = inflat.inflate(R.layout.progress, null)
 
-        mBuilder.setView(dialogView)
-        progress = mBuilder.create()
-        progress?.setCancelable(false)
-    }
-    progress?.let {
-        if (!it.isShowing) {
-            it.show()
+            mBuilder.setView(dialogView)
+            progress = mBuilder.create()
+            progress?.setCancelable(false)
+        }
+        progress?.let {
+            if (!it.isShowing) {
+                it.show()
+            }
         }
     }
 

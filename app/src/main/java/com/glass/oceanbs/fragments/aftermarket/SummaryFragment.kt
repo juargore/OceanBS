@@ -72,9 +72,10 @@ class SummaryFragment : Fragment() {
             for (i in 0 until arr.length()) {
                 val j = arr.getJSONObject(i)
                 val progress = j.getString(PROGRESS) // Avance
+                val isDone = progress == "100%" || progress == "Fase 5"
                 mList.add(
                     ItemSummary(
-                        isDone = progress == "100%",
+                        isDone = isDone,
                         title = j.getString(TITLE), // Titulo
                         subtitle = j.getString(CAPTION), // Leyenda
                         hexColor = j.getString(COLOR), // Color
@@ -100,10 +101,12 @@ class SummaryFragment : Fragment() {
             it.adapter = mAdapter
             mAdapter.onItemClicked = { item ->
                 if (item.title.contains("CONSTRUCCI")) {
-                    (parentFragment as MainTracingFragment).changeToConstructionTab()
+                    // todo: send history object here
+                    (parentFragment as MainTracingFragment).changeToConstructionTab(null)
                 }
                 if (item.title.contains("DOCUMENTACI")) {
-                    (parentFragment as MainTracingFragment).changeToDocumentationTab()
+                    // todo: send history object here
+                    (parentFragment as MainTracingFragment).changeToDocumentationTab(null)
                 }
             }
         }

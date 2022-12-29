@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/colorWhite"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="8dp">
+    android:backgroundTint="@color/colorWhite">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,9 +13,8 @@
         <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/imageViewPop"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="8dp"
-            android:layout_weight="1.7"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
             android:background="@color/colorLightGray" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
