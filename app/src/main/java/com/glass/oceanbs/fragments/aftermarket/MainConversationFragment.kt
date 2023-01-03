@@ -1,6 +1,11 @@
 package com.glass.oceanbs.fragments.aftermarket
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +14,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.GET_CHAT_ITEMS
@@ -19,7 +25,6 @@ import com.glass.oceanbs.Constants.URL_CHAT_ITEMS
 import com.glass.oceanbs.Constants.getUserId
 import com.glass.oceanbs.R
 import com.glass.oceanbs.extensions.*
-import com.glass.oceanbs.fragments.aftermarket.MainTracingFragment.Companion.desarrolloId
 import com.glass.oceanbs.fragments.aftermarket.adapters.ConversationItemAdapter
 import com.glass.oceanbs.models.Chat
 import com.glass.oceanbs.models.MessageType
@@ -27,6 +32,7 @@ import com.orangegangsters.github.swipyrefreshlayout.library.SwipyRefreshLayout
 
 class MainConversationFragment : Fragment() {
 
+    private var mBroadcastNotification: BroadcastReceiver? = null
     private var root: View? = null
     private lateinit var parent: ConstraintLayout
     private lateinit var etMessage: EditText
@@ -40,15 +46,9 @@ class MainConversationFragment : Fragment() {
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View? {
         if (root == null) {
             root = infl.inflate(R.layout.fragment_main_conversation, cont, false)
+            initValidation()
         }
         return root
-    }
-
-    @Suppress("DEPRECATION")
-    @Deprecated("Deprecated in Java")
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser) initValidation()
     }
 
     private fun initValidation() {
@@ -62,12 +62,26 @@ class MainConversationFragment : Fragment() {
             getItemsFromServer()
         }
 
-        if (desarrolloId != null) {
-            parent.show()
-            setupMessageViews()
-            getItemsFromServer()
-        } else {
-            parent.hide()
+        parent.show()
+        setupMessageViews()
+        getItemsFromServer()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mBroadcastNotification = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                getItemsFromServer()
+            }
+        }
+
+        // register receiver to update list automatically when notification reaches the App
+        try {
+            mBroadcastNotification?.let {
+                LocalBroadcastManager.getInstance(requireContext()).registerReceiver(it, IntentFilter("UPDATE"))
+            }
+        } catch (e: Exception) {
+            Log.e("--", "Error on Broadcast ONGOING: ${e.stackTrace}")
         }
     }
 

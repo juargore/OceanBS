@@ -74,7 +74,6 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    // todo: truena cuando data viene null o empty -> verificar
     private fun getDataFromServer(root: View, noticeInt: Int) {
         activity?.getDataFromServer(
             webService = GET_HISTORY_ITEMS,
@@ -85,35 +84,38 @@ class HistoryFragment : Fragment() {
                 Parameter(NOTICE_TYPE, noticeInt.toString())
             )
         ) { jsonRes ->
-            val arr = jsonRes.getJSONArray(NOTICES)
-            val mList = mutableListOf<History>()
-            for (i in 0 until arr.length()) {
-                val j = arr.getJSONObject(i)
-                mList.add(
-                    History(
-                        id = j.getInt("Id"),
-                        title = j.getString("Titulo"),
-                        subtitle = j.getString("LeyendaAvance"),
-                        hexColor = "#FFB264",
-                        unityCode = desarrolloCode.toString(),
-                        date = j.getString("FechaEstimada"),
-                        additionalInfo = j.getString("InformacionAdicional"),
-                        progress = j.getInt("Avance"),
-                        phase = j.getInt("Fase"),
-                        photo1 = j.getString("Fotografia1"),
-                        photo2 = j.getString("Fotografia2"),
-                        photo3 = j.getString("Fotografia3"),
+            if (jsonRes.length() > 0 && jsonRes.has(NOTICES)) {
+                val arr = jsonRes.getJSONArray(NOTICES)
+                val mList = mutableListOf<History>()
+                for (i in 0 until arr.length()) {
+                    val j = arr.getJSONObject(i)
+                    mList.add(
+                        History(
+                            id = j.getInt("Id"),
+                            title = j.getString("Titulo"),
+                            subtitle = j.getString("LeyendaAvance"),
+                            hexColor = "#FFB264",
+                            unityCode = desarrolloCode.toString(),
+                            creationDate = j.getString("FechaAlta"),
+                            estimatedDate = j.getString("FechaEstimada"),
+                            additionalInfo = j.getString("InformacionAdicional"),
+                            progress = j.getInt("Avance"),
+                            phase = j.getInt("Fase"),
+                            photo1 = j.getString("Fotografia1"),
+                            photo2 = j.getString("Fotografia2"),
+                            photo3 = j.getString("Fotografia3"),
+                        )
                     )
-                )
-            }
-
-            runOnUiThread {
-                if (mList.isEmpty()) {
-                    txtEmpty.show()
-                } else {
-                    txtEmpty.hide()
                 }
-                setUpRecycler(root, mList)
+
+                runOnUiThread {
+                    if (mList.isEmpty()) {
+                        txtEmpty.show()
+                    } else {
+                        txtEmpty.hide()
+                    }
+                    setUpRecycler(root, mList)
+                }
             }
         }
     }
@@ -142,7 +144,8 @@ class HistoryFragment : Fragment() {
             subtitle = "50% de avance",
             hexColor = "#FFB264",
             unityCode = "PS103",
-            date = "2020-04-03",
+            creationDate = "2020-04-03",
+            estimatedDate = "2022-01-01",
             additionalInfo = "no info",
             progress = 0,
             phase = 0,

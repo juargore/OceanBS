@@ -17,6 +17,7 @@ import com.glass.oceanbs.Constants.URL_MAIN_ITEMS_HOME
 import com.glass.oceanbs.Constants.getUserId
 import com.glass.oceanbs.R
 import com.glass.oceanbs.activities.AftermarketActivity
+import com.glass.oceanbs.activities.NotificationActivity
 import com.glass.oceanbs.extensions.Parameter
 import com.glass.oceanbs.extensions.getDataFromServer
 import com.glass.oceanbs.extensions.runOnUiThread
@@ -58,6 +59,20 @@ class MainTracingFragment : Fragment() {
         viewPager.adapter = SummaryPagerAdapter(requireContext(), childFragmentManager)
         viewPager.offscreenPageLimit = 4
         tabLayout.setupWithViewPager(viewPager)
+
+        // actionScreen == 1.0 -> MainActivity::class.java
+        // actionScreen == 2.0 -> AfterMarketActivity::class.java
+        // actionScreen == 2.1 -> AfterMarketActivity::class.java + ConstructionFragment
+        // actionScreen == 2.2 -> AfterMarketActivity::class.java + DocumentationFragment
+        // actionScreen == 3.0 -> AfterMarketActivity::class.java + MainConversationFragment
+        if (NotificationActivity.actionScreen == 2.1f) {
+            changeToConstructionTab(null)
+            NotificationActivity.actionScreen = 0.0f
+        }
+        if (NotificationActivity.actionScreen == 2.2f) {
+            changeToDocumentationTab(null)
+            NotificationActivity.actionScreen = 0.0f
+        }
     }
 
     fun changeToConstructionTab(item: History?) {

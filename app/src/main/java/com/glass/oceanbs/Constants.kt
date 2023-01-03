@@ -41,9 +41,9 @@ object Constants {
     const val URL_CHAT_ITEMS = URL_MAIN_ITEMS_HOME
     const val URL_ANSWER_SATISFACTION = URL_MAIN_ITEMS_HOME
 
+    //const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
+    //const val GET_DESARROLLOS_BY_OWNER_ID = "ConsultaDesarrollosIdPropietario"
     const val GET_CAROUSEL = "ConsultaCarruselApp"
-    const val GET_ALL_DESARROLLOS = "ConsultaDesarrollosTodos"
-    const val GET_DESARROLLOS_BY_OWNER_ID = "ConsultaDesarrollosIdPropietario"
     const val GET_MAIN_ITEMS_HOME = "ConsultaIntegralMenuPrincipal"
     const val GET_SUMMARY_ITEMS = "ConsultaIntegralSeguimientoResumen"
     const val GET_CHAT_ITEMS = "ConsultaIntegralConversacion"
@@ -76,7 +76,6 @@ object Constants {
     const val TITLE = "Titulo"
     const val CAPTION = "Leyenda"
     const val RESPONSE = "Respuesta"
-    const val CAPTION_SUMMARY = "LeyendaResumen"
     const val COLOR = "Color"
     const val LINK_TYPE = "TipoEnlace"
     const val LINK = "Enlace"
@@ -156,6 +155,7 @@ object Constants {
         return prefs.getBoolean("remember", false)
     }
 
+    @Suppress("unused")
     fun mustRefreshToken(context: Context): Boolean{
         val prefs = context.getSharedPreferences(DATABASE_SP, MODE_PRIVATE)
         return prefs.getBoolean("refreshToken", false)

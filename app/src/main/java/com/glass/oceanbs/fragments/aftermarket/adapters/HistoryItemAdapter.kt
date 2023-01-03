@@ -30,7 +30,7 @@ class HistoryItemAdapter(
             txtTitle.text = item.title
             txtSubTitle.text = item.subtitle
             txtUnidad.text = item.unityCode
-            txtDate.text = item.date
+            txtDate.text = item.creationDate
             viewColorBottom.setBackgroundColor(Color.parseColor(item.hexColor))
             txtUnidad.setBackgroundColor(Color.parseColor(item.hexColor))
             setOnClickListener { onItemClicked?.invoke(item) }

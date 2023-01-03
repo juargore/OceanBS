@@ -3,6 +3,9 @@ package com.glass.oceanbs.activities
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
+import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.CAPTION
 import com.glass.oceanbs.Constants.COLOR
 import com.glass.oceanbs.Constants.CURRENT_DATE
@@ -24,13 +27,18 @@ import com.glass.oceanbs.Constants.WELCOME_CAPTION
 import com.glass.oceanbs.Constants.getUserId
 import com.glass.oceanbs.R
 import com.glass.oceanbs.adapters.NewHomeItemAdapter
+import com.glass.oceanbs.database.TableUser
 import com.glass.oceanbs.extensions.Parameter
 import com.glass.oceanbs.extensions.getDataFromServer
 import com.glass.oceanbs.extensions.showExitDialog
 import com.glass.oceanbs.models.ItemNewHome
+import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
 import com.synnapps.carouselview.ImageListener
 import kotlinx.android.synthetic.main.activity_new_main.*
+import okhttp3.*
+import org.json.JSONObject
+import java.io.IOException
 
 class NewMainActivity: BaseActivity() {
 
@@ -45,9 +53,6 @@ class NewMainActivity: BaseActivity() {
         getTopImagesFromServer()
         getMainListFromServer()
         fabExit.setOnClickListener { showExitDialog() }
-
-        // todo: uncomment this if server not working
-        //setupViews("", "", "", "", emptyList())
     }
 
     private fun setUpRecycler(items: List<ItemNewHome>) {
@@ -80,6 +85,22 @@ class NewMainActivity: BaseActivity() {
             runOnUiThread {
                 carouselView.setImageListener(imageListener)
                 carouselView.pageCount = photosList.size
+
+                // actionScreen == 1.0 -> MainActivity::class.java
+                // actionScreen == 2.0 -> AfterMarketActivity::class.java
+                // actionScreen == 2.1 -> AfterMarketActivity::class.java + ConstructionFragment
+                // actionScreen == 2.2 -> AfterMarketActivity::class.java + DocumentationFragment
+                // actionScreen == 3.0 -> AfterMarketActivity::class.java + MainConversationFragment
+                if (NotificationActivity.actionScreen == 1.0f) {
+                    startActivity(Intent(this, MainActivity::class.java).apply {
+                        putExtra(PHOTOS, photosList)
+                    }); overridePendingTransition(0,0)
+                    NotificationActivity.actionScreen = 0.0f
+                } else if (NotificationActivity.actionScreen >= 2.0f) {
+                    startActivity(Intent(this, AftermarketActivity::class.java).apply {
+                        putExtra(PHOTOS, photosList)
+                    }); overridePendingTransition(0,0)
+                }
             }
         }
     }
@@ -151,4 +172,58 @@ class NewMainActivity: BaseActivity() {
             url = null
         )
     )
+
+    override fun onResume() {
+        super.onResume()
+        sendFirebaseToken()
+    }
+
+    private fun sendFirebaseToken() {
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    if (task.result != null && !TextUtils.isEmpty(task.result)) {
+                        val token: String = task.result!!
+                        storeFirebaseTokenOnServer(token)
+                    }
+                }
+            }
+    }
+
+    private fun storeFirebaseTokenOnServer(gcmToken: String) {
+        val tipoUsuario = Constants.getTipoUsuario(applicationContext)
+        val cUser = TableUser(applicationContext)
+            .getCurrentUserById(
+                getUserId(applicationContext),
+                Constants.getTipoUsuario(applicationContext)
+            )
+
+        val client = OkHttpClient()
+        val builder = FormBody.Builder()
+            .add("WebService","GuardaToken")
+            .add("TipoUsuario",tipoUsuario.toString())
+            .add("IdPropietario",cUser.idPropietario)
+            .add("IdColaborador",cUser.idColaborador)
+            .add("Token",gcmToken)
+            .build()
+
+        val request = Request.Builder().url(Constants.URL_USER).post(builder).build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    try {
+                        val jsonRes = JSONObject(response.body!!.string())
+                        println("Token: $jsonRes")
+                        if (jsonRes.getInt("Error") > 0) {
+                            Log.e("Error Token", jsonRes.getString("Mensaje"))
+                            Constants.updateRefreshToken(applicationContext, true)
+                        } else {
+                            Constants.updateRefreshToken(applicationContext, false)
+                        }
+                    } catch (_: Error) { }
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) { }
+        })
+    }
 }

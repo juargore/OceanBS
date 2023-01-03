@@ -181,7 +181,10 @@ class LoginActivity : BaseActivity()  {
     private fun storeFirebaseTokenOnServer(gcmToken: String) {
         val tipoUsuario = Constants.getTipoUsuario(applicationContext)
         val cUser = TableUser(applicationContext)
-            .getCurrentUserById(Constants.getUserId(applicationContext), Constants.getTipoUsuario(applicationContext))
+            .getCurrentUserById(
+                Constants.getUserId(applicationContext),
+                Constants.getTipoUsuario(applicationContext)
+            )
 
         val client = OkHttpClient()
         val builder = FormBody.Builder()
@@ -193,26 +196,21 @@ class LoginActivity : BaseActivity()  {
             .build()
 
         val request = Request.Builder().url(Constants.URL_USER).post(builder).build()
-
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     try {
                         val jsonRes = JSONObject(response.body!!.string())
-                        Log.e("RES token", jsonRes.toString())
-
+                        println("Token: $jsonRes")
                         if (jsonRes.getInt("Error") > 0) {
-                            Log.e("",jsonRes.getString("Mensaje"))
+                            Log.e("Error Token", jsonRes.getString("Mensaje"))
                             Constants.updateRefreshToken(applicationContext, true)
-                        }
-                        else{
+                        } else {
                             Constants.updateRefreshToken(applicationContext, false)
                         }
-
                     } catch (_: Error) { }
                 }
             }
-
             override fun onFailure(call: Call, e: IOException) { }
         })
     }

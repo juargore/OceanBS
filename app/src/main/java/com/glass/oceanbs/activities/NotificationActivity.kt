@@ -18,6 +18,15 @@ import kotlinx.android.synthetic.main.activity_notification.*
 @Suppress("DEPRECATION")
 class NotificationActivity : AppCompatActivity() {
 
+    companion object {
+        // actionScreen == 1.0 -> MainActivity::class.java
+        // actionScreen == 2.0 -> AfterMarketActivity::class.java
+        // actionScreen == 2.1 -> AfterMarketActivity::class.java + ConstructionFragment
+        // actionScreen == 2.2 -> AfterMarketActivity::class.java + DocumentationFragment
+        // actionScreen == 3.0 -> AfterMarketActivity::class.java + MainConversationFragment
+        var actionScreen = 0.0f
+    }
+
     private var title = ""
     private var image = ""
     private var solicitudId = ""
@@ -32,10 +41,12 @@ class NotificationActivity : AppCompatActivity() {
     private var t4 = ""
     private var t5 = ""
     private var t6 = ""
+    private var t7 = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
+        supportActionBar?.hide()
         intent.extras?.let{
             image = it.getString("image").toString()
             title = it.getString("title").toString()
@@ -51,6 +62,23 @@ class NotificationActivity : AppCompatActivity() {
             t4 = it.getString("t4").toString()
             t5 = it.getString("t5").toString()
             t6 = it.getString("t6").toString()
+            t7 = it.getString("t7").toString()
+
+            btnSecondary.text = when (t7) {
+                "1" -> "REVISAR MIS SOLICITUDES"
+                "2" -> "REVISAR MIS AVISOS"
+                "3" -> "REVISAR MIS AVISOS"
+                "4" -> "REVISAR MI CONVERSACIÓN"
+                else -> "N/A"
+            }
+
+            actionScreen = when (t7) {
+                "1" -> 1.0f
+                "2" -> 2.1f
+                "3" -> 2.2f
+                "4" -> 3.0f
+                else -> 0.0f
+            }
         }
         setListeners()
         setInformation()
@@ -73,14 +101,15 @@ class NotificationActivity : AppCompatActivity() {
     private fun setListeners(){
         btnEnteradoN.setOnClickListener {
             // close all activities and app
+            actionScreen = 0.0f
             finishAffinity()
         }
 
-        btnRevSolN.setOnClickListener {
+        btnSecondary.setOnClickListener {
             // open Main or Login Activity
             val remember = Constants.getKeepLogin(this)
             val intent: Intent = if(remember)
-                Intent(this@NotificationActivity, MainActivity::class.java)
+                Intent(this@NotificationActivity, NewMainActivity::class.java)
             else
                 Intent(this@NotificationActivity, LoginActivity::class.java)
 

@@ -21,10 +21,7 @@ class MainActivity : BaseActivity() {
     companion object {
         private lateinit var mTabsParent: TabLayout
         private lateinit var mViewPagerParent: ViewPager
-
-        fun goToFirstTab() {
-            mViewPagerParent.currentItem = 0
-        }
+        fun goToFirstTab() { mViewPagerParent.currentItem = 0 }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

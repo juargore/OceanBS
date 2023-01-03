@@ -6,7 +6,8 @@ data class History(
     val subtitle: String,
     val hexColor: String,
     val unityCode: String,
-    val date: String,
+    val creationDate: String,
+    val estimatedDate: String,
 
     val additionalInfo: String,
     val progress: Int,

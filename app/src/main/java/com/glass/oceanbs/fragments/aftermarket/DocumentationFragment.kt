@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.Constants.ADDITIONAL_INFO
@@ -27,6 +28,8 @@ class DocumentationFragment : Fragment() {
 
     private lateinit var root: View
     private lateinit var layParentDocumentation: LinearLayout
+    private lateinit var select: TextView
+    private lateinit var scroll: NestedScrollView
 
     companion object {
         fun newInstance() = DocumentationFragment()
@@ -35,6 +38,8 @@ class DocumentationFragment : Fragment() {
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View {
         root = infl.inflate(R.layout.fragment_documentation, cont, false)
         layParentDocumentation = root.findViewById(R.id.layParentDocumentation)
+        select = root.findViewById(R.id.txtSelectD)
+        scroll = root.findViewById(R.id.scrollD)
         return root
     }
 
@@ -44,7 +49,8 @@ class DocumentationFragment : Fragment() {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
             if (desarrolloId != null) {
-                layParentDocumentation.show()
+                scroll.show()
+                select.hide()
                 val item = MainTracingFragment.itemDocumentation
                 if (item != null) {
                     setupViews(
@@ -57,7 +63,8 @@ class DocumentationFragment : Fragment() {
                     getDataFromServer()
                 }
             } else {
-                layParentDocumentation.hide()
+                scroll.hide()
+                select.show()
             }
         }
     }

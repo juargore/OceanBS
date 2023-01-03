@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import com.github.chrisbanes.photoview.PhotoView
 import com.glass.oceanbs.Constants.ADDITIONAL_INFO
@@ -42,6 +43,8 @@ class ConstructionFragment : Fragment() {
 
     private lateinit var root: View
     private lateinit var layParentConstruction: LinearLayout
+    private lateinit var select: TextView
+    private lateinit var scroll: NestedScrollView
     private val photosList: ArrayList<PicassoImage> = ArrayList()
     private var imageListener: ImageListener = ImageListener { position, imageView ->
         photosList[position].url?.let {
@@ -59,6 +62,8 @@ class ConstructionFragment : Fragment() {
     override fun onCreateView(infl: LayoutInflater, cont: ViewGroup?, state: Bundle?): View {
         root = infl.inflate(R.layout.fragment_construction, cont, false)
         layParentConstruction = root.findViewById(R.id.layParentConstruction)
+        select = root.findViewById(R.id.txtSelectC)
+        scroll = root.findViewById(R.id.scrollC)
         return root
     }
 
@@ -68,7 +73,8 @@ class ConstructionFragment : Fragment() {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
             if (desarrolloId != null) {
-                layParentConstruction.show()
+                scroll.show()
+                select.hide()
                 val item = MainTracingFragment.itemConstruction
                 if (item != null) {
                     val photo1 = item.photo1
@@ -96,14 +102,15 @@ class ConstructionFragment : Fragment() {
                         title = item.title,
                         subtitle = item.subtitle,
                         progress = item.progress,
-                        estimatedDate = item.date,
+                        estimatedDate = item.estimatedDate,
                         additionalInfo = item.additionalInfo
                     )
                 } else {
                     getDataFromServer()
                 }
             } else {
-                layParentConstruction.hide()
+                scroll.hide()
+                select.show()
             }
         }
     }

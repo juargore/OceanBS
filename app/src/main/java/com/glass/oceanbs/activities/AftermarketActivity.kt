@@ -37,6 +37,16 @@ class AftermarketActivity : BaseActivity() {
         viewPager.adapter = AftermarketPagerAdapter(this, supportFragmentManager)
         viewPager.offscreenPageLimit = 2
         tabLayout.setupWithViewPager(viewPager)
+
+        // actionScreen == 1.0 -> MainActivity::class.java
+        // actionScreen == 2.0 -> AfterMarketActivity::class.java
+        // actionScreen == 2.1 -> AfterMarketActivity::class.java + ConstructionFragment
+        // actionScreen == 2.2 -> AfterMarketActivity::class.java + DocumentationFragment
+        // actionScreen == 3.0 -> AfterMarketActivity::class.java + MainConversationFragment
+        if (NotificationActivity.actionScreen == 3.0f) {
+            changeToConversationTab()
+            NotificationActivity.actionScreen = 0.0f
+        }
     }
 
     fun changeToConversationTab() {
@@ -46,5 +56,10 @@ class AftermarketActivity : BaseActivity() {
     private fun setImagesInCarousel() {
         carouselView.setImageListener(imageListener)
         carouselView.pageCount = photosList.size
+    }
+
+    override fun onStop() {
+        super.onStop()
+        NotificationActivity.actionScreen = 0.0f
     }
 }

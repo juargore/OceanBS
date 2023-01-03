@@ -28,7 +28,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         Handler().postDelayed({
             val remember = Constants.getKeepLogin(this)
-            val intent: Intent = if(remember)
+            val intent: Intent = if (remember)
                 Intent(this@SplashScreenActivity, NewMainActivity::class.java)
             else
                 Intent(this@SplashScreenActivity, LoginActivity::class.java)

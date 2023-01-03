@@ -101,11 +101,9 @@ class SummaryFragment : Fragment() {
             it.adapter = mAdapter
             mAdapter.onItemClicked = { item ->
                 if (item.title.contains("CONSTRUCCI")) {
-                    // todo: send history object here
                     (parentFragment as MainTracingFragment).changeToConstructionTab(null)
                 }
                 if (item.title.contains("DOCUMENTACI")) {
-                    // todo: send history object here
                     (parentFragment as MainTracingFragment).changeToDocumentationTab(null)
                 }
             }
