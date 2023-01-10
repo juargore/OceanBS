@@ -10,8 +10,11 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.glass.oceanbs.Constants
 import com.glass.oceanbs.R
+import com.glass.oceanbs.extensions.Parameter
+import com.glass.oceanbs.extensions.getDataFromServer
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_notification.*
 
@@ -68,7 +71,7 @@ class NotificationActivity : AppCompatActivity() {
                 "1" -> "REVISAR MIS SOLICITUDES"
                 "2" -> "REVISAR MIS AVISOS"
                 "3" -> "REVISAR MIS AVISOS"
-                "4" -> "REVISAR MI CONVERSACIÓN"
+                "4" -> "CONVERSACIÓN"
                 else -> "N/A"
             }
 
@@ -80,6 +83,10 @@ class NotificationActivity : AppCompatActivity() {
                 else -> 0.0f
             }
         }
+        btnExitN.isEnabled = false
+        btnExitN.setBackgroundColor(ContextCompat.getColor(this, R.color.colorLightGray))
+        btnSecondary.isEnabled = false
+        btnSecondary.setBackgroundColor(ContextCompat.getColor(this, R.color.colorLightGray))
         setListeners()
         setInformation()
         createNotificationCopy(applicationContext)
@@ -100,6 +107,18 @@ class NotificationActivity : AppCompatActivity() {
 
     private fun setListeners(){
         btnEnteradoN.setOnClickListener {
+            // enable exit and secondary buttons
+            sendReponseToServer()
+            btnEnteradoN.setBackgroundColor(ContextCompat.getColor(this, R.color.colorLightGray))
+            btnEnteradoN.isEnabled = false
+
+            btnExitN.isEnabled = true
+            btnExitN.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            btnSecondary.isEnabled = true
+            btnSecondary.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
+        }
+
+        btnExitN.setOnClickListener {
             // close all activities and app
             actionScreen = 0.0f
             finishAffinity()
@@ -117,6 +136,19 @@ class NotificationActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+
+    private fun sendReponseToServer() {
+        getDataFromServer(
+            showLoader = false,
+            webService = Constants.POST_ANSWER_SATISFACTION,
+            url = Constants.URL_ANSWER_SATISFACTION,
+            parent = layParentNotification,
+            parameters = listOf(
+                Parameter(Constants.OWNER_ID, Constants.getUserId(this)),
+                Parameter(Constants.RESPONSE, "2")
+            )
+        ) { }
     }
 
     @SuppressLint("ObsoleteSdkInt")

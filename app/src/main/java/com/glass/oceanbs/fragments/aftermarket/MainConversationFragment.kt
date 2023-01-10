@@ -1,9 +1,7 @@
 package com.glass.oceanbs.fragments.aftermarket
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -24,7 +23,10 @@ import com.glass.oceanbs.Constants.POST_CHAT_MESSAGE
 import com.glass.oceanbs.Constants.URL_CHAT_ITEMS
 import com.glass.oceanbs.Constants.getUserId
 import com.glass.oceanbs.R
-import com.glass.oceanbs.extensions.*
+import com.glass.oceanbs.extensions.Parameter
+import com.glass.oceanbs.extensions.getDataFromServer
+import com.glass.oceanbs.extensions.runOnUiThread
+import com.glass.oceanbs.extensions.show
 import com.glass.oceanbs.fragments.aftermarket.adapters.ConversationItemAdapter
 import com.glass.oceanbs.models.Chat
 import com.glass.oceanbs.models.MessageType
@@ -176,9 +178,17 @@ class MainConversationFragment : Fragment() {
 
     private fun setUpRecycler(list: List<Chat>) {
         with (ConversationItemAdapter(list)) {
-            root?.findViewById<RecyclerView>(R.id.rvConversation)?.let {
-                it.adapter = this
-                it.smoothScrollToPosition(list.size-1)
+            root?.findViewById<RecyclerView>(R.id.rvConversation)?.let { rv ->
+                rv.adapter = this
+                rv.smoothScrollToPosition(list.size-1)
+                onLongClicked = {
+                    val clipBoard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clipData = ClipData.newPlainText("message", it)
+                    clipBoard.setPrimaryClip(clipData)
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                        Toast.makeText(requireContext(), "Copiado en portapapeles.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }

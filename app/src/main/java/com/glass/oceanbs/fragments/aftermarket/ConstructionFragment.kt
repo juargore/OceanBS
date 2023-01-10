@@ -85,17 +85,17 @@ class ConstructionFragment : Fragment() {
                     if (photo1.isNotEmpty()) {
                         photosList.add(PicassoImage(url = photo1, resource = null))
                     } else {
-                        photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
+                        photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo_1))
                     }
                     if (photo2.isNotEmpty()) {
                         photosList.add(PicassoImage(url = photo2, resource = null))
                     } else {
-                        photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
+                        photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo_2))
                     }
                     if (photo3.isNotEmpty()) {
                         photosList.add(PicassoImage(url = photo3, resource = null))
                     } else {
-                        photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
+                        photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo_3))
                     }
 
                     setupViews(
@@ -152,17 +152,17 @@ class ConstructionFragment : Fragment() {
                 if (photo1.isNotEmpty()) {
                     photosList.add(PicassoImage(url = photo1, resource = null))
                 } else {
-                    photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
+                    photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo_1))
                 }
                 if (photo2.isNotEmpty()) {
                     photosList.add(PicassoImage(url = photo2, resource = null))
                 } else {
-                    photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
+                    photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo_2))
                 }
                 if (photo3.isNotEmpty()) {
                     photosList.add(PicassoImage(url = photo3, resource = null))
                 } else {
-                    photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo))
+                    photosList.add(PicassoImage(url = null, resource = R.drawable.img_no_photo_3))
                 }
             }
 

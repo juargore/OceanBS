@@ -1,5 +1,7 @@
 package com.glass.oceanbs.activities
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,6 +17,7 @@ import com.glass.oceanbs.Constants.GET_MAIN_ITEMS_HOME
 import com.glass.oceanbs.Constants.LINK
 import com.glass.oceanbs.Constants.LINK_TYPE
 import com.glass.oceanbs.Constants.MEMBER_SINCE
+import com.glass.oceanbs.Constants.MESSAGE_DISABLED
 import com.glass.oceanbs.Constants.OPTIONS
 import com.glass.oceanbs.Constants.OWNER_ID
 import com.glass.oceanbs.Constants.OWNER_NAME
@@ -32,6 +35,7 @@ import com.glass.oceanbs.extensions.Parameter
 import com.glass.oceanbs.extensions.getDataFromServer
 import com.glass.oceanbs.extensions.showExitDialog
 import com.glass.oceanbs.models.ItemNewHome
+import com.glass.oceanbs.models.OWNER
 import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
 import com.synnapps.carouselview.ImageListener
@@ -40,8 +44,12 @@ import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 
+
 class NewMainActivity: BaseActivity() {
 
+    companion object {
+        var hasPendingNotifications = false
+    }
     private val photosList: ArrayList<String> = ArrayList()
     private var imageListener = ImageListener { position, imageView ->
         Picasso.get().load(photosList[position]).fit().into(imageView)
@@ -51,7 +59,6 @@ class NewMainActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_main)
         getTopImagesFromServer()
-        getMainListFromServer()
         fabExit.setOnClickListener { showExitDialog() }
     }
 
@@ -63,6 +70,10 @@ class NewMainActivity: BaseActivity() {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
                 }
                 intent?.let {
+                    if (hasPendingNotifications) {
+                        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        notificationManager.cancelAll()
+                    }
                     it.putExtra(PHOTOS, photosList)
                     startActivity(it)
                     overridePendingTransition(0, 0)
@@ -128,13 +139,19 @@ class NewMainActivity: BaseActivity() {
                 for (i in 0 until options.length()) {
                     val j = options.getJSONObject(i)
                     val linkType = j.getInt(LINK_TYPE)
+                    val msgDisabled = if (j.has(MESSAGE_DISABLED)) {
+                        j.getString(MESSAGE_DISABLED)
+                    } else { "" }
                     mList.add(
                         ItemNewHome(
                             title = j.getString(TITLE),
                             subtitle = j.getString(CAPTION),
                             hexColor = j.getString(COLOR),
                             openScreen = linkType == 1,
-                            url = j.getString(LINK))
+                            url = j.getString(LINK),
+                            enabled = j.getInt("Habilitado") == 1,
+                            messageDisabled = msgDisabled
+                        )
                     )
                 }
                 setupViews(strWelcome, strDate, strMember, strOwner, mList)
@@ -152,29 +169,40 @@ class NewMainActivity: BaseActivity() {
         runOnUiThread {
             txtWelcome.text = strWelcome
             txtDate.text = strDate
-            txtMemberSince.text = strMember
             txtUserName.text = strOwner
-
-            if (items.isEmpty()) {
-                setUpRecycler(getTestlList())
+            if (Constants.getTipoUsuario(this) == OWNER) {
+                txtMemberSince.text = strMember
             } else {
-                setUpRecycler(items)
+                txtMemberSince.text = getString(R.string.crecento_partner)
             }
+            setUpRecycler(items)
         }
     }
 
+    @Suppress("unused")
     private fun getTestlList() = listOf(
         ItemNewHome(
             title = "SEGUIMIENTO DE SU PROPIEDAD",
             subtitle = "Conozca los avances actuales...",
             hexColor = "#FFB264",
             openScreen = true,
-            url = null
+            url = null,
+            enabled = true
         )
     )
 
     override fun onResume() {
         super.onResume()
+        hasPendingNotifications = false
+        val mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val notifications = mNotificationManager.activeNotifications
+        notifications.forEach {
+            if (it.notification.channelId == "fcm_fallback_notification_channel") {
+                hasPendingNotifications = true
+                return@forEach
+            }
+        }
+        getMainListFromServer()
         sendFirebaseToken()
     }
 

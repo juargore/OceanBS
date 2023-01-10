@@ -5,5 +5,7 @@ data class ItemNewHome(
     val subtitle: String,
     val hexColor: String,
     val openScreen: Boolean = false,
-    val url: String? = null
+    val url: String? = null,
+    var enabled: Boolean,
+    val messageDisabled: String? = null
 )

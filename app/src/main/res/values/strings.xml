@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Crecento App 2.0</string>
     <string name="crecento_group">Grupo Crecento</string>
-    <string name="confirm_exit_desc">¿Está seguro que desea salir de la aplicación?</string>
+    <string name="crecento_partner">Colaborador</string>
+    <string name="confirm_exit_desc">¿Está seguro de que desea terminar la sesión?\nAl entrar a la aplicación sus credenciales serán requeridas.</string>
 
     <!-- Date -->
     <string name="date_formatted">%s, %s de %s de %s</string>

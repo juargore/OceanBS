@@ -2,6 +2,8 @@ package com.glass.oceanbs.fragments.aftermarket
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -143,7 +145,6 @@ class DocumentationFragment : Fragment() {
             )
         ) {
             if (it.getInt("Error") == 0) {
-                //val res = it.getString("Mensaje")
                 runOnUiThread {
                     if (response == 1) {
                         Constants.snackbar(
@@ -153,14 +154,13 @@ class DocumentationFragment : Fragment() {
                             message = "Muchas gracias por su respuesta.\nEstamos para servirle."
                         )
                     } else {
-                        (parentFragment as MainTracingFragment).intermediateToUpdateConversationChat()
+                        val toast = Toast.makeText(requireContext(), "Espere un momento...", Toast.LENGTH_SHORT)
+                        toast.show()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            toast.cancel()
+                            (parentFragment as MainTracingFragment).intermediateToUpdateConversationChat()
+                        }, 2000)
                     }
-                    /*Constants.snackbar(
-                        view = layParentDocumentation,
-                        context = requireContext(),
-                        type = Constants.Types.SUCCESS,
-                        message = res
-                    )*/
                 }
             }
         }

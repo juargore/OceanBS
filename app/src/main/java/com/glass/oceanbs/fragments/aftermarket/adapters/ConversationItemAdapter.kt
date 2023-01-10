@@ -41,6 +41,8 @@ class ConversationItemAdapter(
 
     override fun getItemCount() = elements.size
 
+    var onLongClicked: ((String) -> Unit)? = null
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = elements[position]
         when (holder.itemViewType) {
@@ -48,6 +50,14 @@ class ConversationItemAdapter(
                 // customer card
                 holder.itemView.txtMessageCustomer.setText(item.message)
                 holder.itemView.txtDateCustomer.text = item.hour
+                holder.itemView.txtMessageCustomer.setOnLongClickListener {
+                    onLongClicked?.invoke(item.message)
+                    true
+                }
+                holder.itemView.setOnLongClickListener {
+                    onLongClicked?.invoke(item.message)
+                    true
+                }
             }
             noCustomerId -> {
                 // worker card
@@ -67,6 +77,14 @@ class ConversationItemAdapter(
                 if (item.type == MessageType.AUTOMATED) {
                     holder.itemView.txtWorkerNameService.setTextColor(Color.BLUE)
                     holder.itemView.viewColorBottomS.setBackgroundColor(Color.BLUE)
+                }
+                holder.itemView.txtMessageService.setOnLongClickListener {
+                    onLongClicked?.invoke(item.message)
+                    true
+                }
+                holder.itemView.setOnLongClickListener {
+                    onLongClicked?.invoke(item.message)
+                    true
                 }
             }
         }

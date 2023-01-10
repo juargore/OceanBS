@@ -26,7 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        tools:context=".fragments.aftermarket.DocumentationFragment">
+        tools:context=".fragments.aftermarket.DocumentationFragment"
+        tools:visibility="visible">
 
         <LinearLayout
             android:id="@+id/layParentDocumentation"
@@ -97,8 +98,7 @@
                         android:enabled="false"
                         android:gravity="start|top"
                         android:inputType="textMultiLine"
-                        android:lines="3"
-                        android:maxLines="3"
+                        android:minLines="3"
                         android:textSize="16sp"
                         tools:ignore="Autofill,LabelFor" />
                 </LinearLayout>

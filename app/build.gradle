@@ -6,10 +6,12 @@ android {
     compileSdkVersion 33
     buildToolsVersion "30.0.3"
     defaultConfig {
+        // KeystorePass = remeflcaz
+        // Alias = Key0
         applicationId "com.glass.oceanbs"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 17
+        versionCode 18
         versionName "2.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

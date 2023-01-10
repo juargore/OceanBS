@@ -79,6 +79,7 @@ object Constants {
     const val COLOR = "Color"
     const val LINK_TYPE = "TipoEnlace"
     const val LINK = "Enlace"
+    const val MESSAGE_DISABLED = "MensajeInhabilitado"
     const val PROGRESS = "Avance"
     const val PHASE = "Fase"
     const val IMAGE = "Imagen"
