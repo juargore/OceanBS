@@ -169,10 +169,16 @@ class NewMainActivity: BaseActivity() {
         runOnUiThread {
             txtWelcome.text = strWelcome
             txtDate.text = strDate
-            txtUserName.text = strOwner
             if (Constants.getTipoUsuario(this) == OWNER) {
                 txtMemberSince.text = strMember
+                txtUserName.text = strOwner
             } else {
+                val cUser = TableUser(applicationContext).getCurrentUserById(
+                    getUserId(applicationContext),
+                    Constants.getTipoUsuario(applicationContext)
+                )
+                val fullName = "${cUser.nombre} ${cUser.apellidoP} ${cUser.apellidoM}"
+                txtUserName.text = fullName.replace(".", "").trim()
                 txtMemberSince.text = getString(R.string.crecento_partner)
             }
             setUpRecycler(items)
