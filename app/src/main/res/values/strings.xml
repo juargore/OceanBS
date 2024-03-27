@@ -1,16 +1,39 @@
 <resources>
-    <string name="app_name">Crecento POSTVenta</string>
+    <string name="app_name">Crecento App 2.0</string>
     <string name="crecento_group">Grupo Crecento</string>
+    <string name="crecento_partner">Colaborador</string>
+    <string name="confirm_exit_desc">¿Está seguro de que desea terminar la sesión?\n\nAl entrar a la aplicación sus credenciales serán requeridas.</string>
+
+    <!-- Date -->
+    <string name="date_formatted">%s, %s de %s de %s</string>
+    <string name="date_monday">lunes</string>
+    <string name="date_tuesday">martes</string>
+    <string name="date_wednesday">miércoles</string>
+    <string name="date_thursday">jueves</string>
+    <string name="date_friday">viernes</string>
+    <string name="date_saturday">sábado</string>
+    <string name="date_sunday">domingo</string>
+
+    <string name="month_january">enero</string>
+    <string name="month_february">febrero</string>
+    <string name="month_march">marzo</string>
+    <string name="month_april">abril</string>
+    <string name="month_may">mayo</string>
+    <string name="month_june">junio</string>
+    <string name="month_july">julio</string>
+    <string name="month_august">agosto</string>
+    <string name="month_september">septiembre</string>
+    <string name="month_october">octubre</string>
+    <string name="month_november">noviembre</string>
+    <string name="month_december">diciembre</string>
 
     <!-- Strings for Login Activity -->
-    <string name="welcome">Grupo Crecento\nPOSTVenta App\nBienvenido</string>
+    <string name="welcome">Crecento App 2.0\nBienvenido</string>
     <string name="user_code">Código del Propietario / Colaborador</string>
     <string name="phone_number">Teléfono Móvil</string>
     <string name="remember_credentials">Recordar credenciales</string>
     <string name="log_in">Iniciar sesión</string>
-    <string name="ocean_software">Desarrollada por \nOcean Business Software | México</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ocean_software">Desarrollada por \nOB Software | México</string>
 
     <string name="msg_confirm_deletion">¿Está seguro que desea eliminar el registro seleccionado?</string>
     <string name="msg_confirm_creation">¿Confirma que desea guardar el registo actual?</string>
@@ -25,5 +48,40 @@
     <string name="fotografia1"><u>Fotografía1</u></string>
     <string name="fotografia2"><u>Fotografía2</u></string>
     <string name="fotografia3"><u>Fotografía3</u></string>
+    <string name="title_activity_new_main">NewMainActivity</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- New Main Activity -->
+    <string name="title_activity_aftermarket">AftermarketActivity</string>
+    <string name="new_welcome_crecento">Bienvenido a Grupo Crecento</string>
+    <string name="new_aftermarket_tracing">Seguimiento</string>
+    <string name="new_aftermarket_conversation">Conversación</string>
+    <string name="new_aftermarket_summary">Resumen</string>
+    <string name="new_aftermarket_construction">Construcción</string>
+    <string name="new_aftermarket_documentation">Documentos</string>
+    <string name="new_aftermarket_history">Historia</string>
+    <string name="new_aftermarket_owner">Propietario</string>
+    <string name="new_aftermarket_collaborator">Colaborador</string>
+    <string name="new_aftermarket_select">Seleccionar</string>
+    <string name="new_construction_extra_info">Información Adicional</string>
+    <string name="new_construction_changes">* Sujeta a cambios de fuerza mayor.</string>
+    <string name="new_construction_deadline">Fecha Estimada de Término</string>
+    <string name="new_construction_progress">AVANCE DE CONSTRUCCIÓN</string>
+    <string name="new_documentation_progress">AVANCE DE DOCUMENTACIÓN</string>
+    <string name="new_documentation_inform">INFÓRMENOS SOBRE SU SEGUIMIENTO</string>
+    <string name="new_documentation_yes">Si</string>
+    <string name="new_documentation_no">No</string>
+    <string name="new_documentation_subtitle">¿Hasta el momento ha sido informado y atendido con oportunidad y puntualidad?</string>
+
+    <string name="new_chat_empty">Le damos la bienvenida a este espacio de conversación directa con nuestros asesores. Háganos saber sus inquietudes. Estamos para servirse.</string>
+    <string name="new_chat_empty_message">El mensaje no puede estar vacío.</string>
 
 </resources>

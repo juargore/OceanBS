@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layProgress"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -29,7 +30,8 @@
             android:text="Obteniendo información"
             android:textAlignment="center"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="RtlCompat" />
 
         <TextView
             android:id="@+id/loading_msg"
@@ -38,7 +40,8 @@
             android:layout_gravity="center_vertical"
             android:text="Espere un momento..."
             android:textAlignment="center"
-            android:textAppearance="?android:textAppearanceSmall" />
+            android:textAppearance="?android:textAppearanceSmall"
+            tools:ignore="RtlCompat" />
     </LinearLayout>
 
 

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    android:id="@+id/layParentNotification"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -56,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="TextView"
+                    android:text="---"
                     android:textAlignment="center"
                     android:textColor="@color/colorDarkGray"
                     android:textSize="16sp"
@@ -145,7 +147,7 @@
                     android:id="@+id/txtTag6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Crecento POSTVenta"
+                    android:text="@string/app_name"
                     android:textColor="@color/colorBlack"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -171,12 +173,30 @@
             android:text="ENTERADO"
             android:textColor="@android:color/white" />
 
-        <Button
-            android:id="@+id/btnRevSolN"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/rectangle_blue_button"
-            android:text="REVISAR MIS SOLICITUDES"
-            android:textColor="@android:color/white" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnExitN"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="3dp"
+                android:layout_weight="0.8"
+                android:background="@drawable/rectangle_blue_button"
+                android:text="SALIR"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnSecondary"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="3dp"
+                android:layout_weight="1.2"
+                android:background="@drawable/rectangle_blue_button"
+                android:text="---"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -23,16 +23,16 @@
         android:layout_marginBottom="8dp"
         android:text="@string/crecento_group"
         android:textAlignment="center"
-        android:textColor="@color/colorBlack"
+        android:textColor="#636363"
         android:textSize="22sp" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ocean Business Software | México"
+        android:text="OB Sofware | México"
         android:textAlignment="center"
-        android:textColor="@color/colorBlack"
+        android:textColor="#C5C4C2"
         android:textSize="14sp" />
 
 </LinearLayout>

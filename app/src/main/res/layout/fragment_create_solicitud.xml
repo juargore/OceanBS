@@ -110,7 +110,7 @@
                             android:layout_centerVertical="true"
                             android:layout_marginRight="10dp"
                             android:src="@android:drawable/arrow_down_float"
-                            android:tint="@color/colorDarkGray" />
+                            app:tint="@color/colorDarkGray" />
                     </RelativeLayout>
 
                 </LinearLayout>
@@ -157,7 +157,7 @@
                             android:layout_centerVertical="true"
                             android:layout_marginRight="8dp"
                             android:src="@android:drawable/arrow_down_float"
-                            android:tint="@color/colorDarkGray" />
+                            app:tint="@color/colorDarkGray" />
                     </RelativeLayout>
 
                 </LinearLayout>
@@ -265,7 +265,7 @@
                             android:layout_centerVertical="true"
                             android:layout_marginRight="10dp"
                             android:src="@android:drawable/arrow_down_float"
-                            android:tint="@color/colorDarkGray" />
+                            app:tint="@color/colorDarkGray" />
                     </RelativeLayout>
 
                 </LinearLayout>
