@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.glass.oceanbs">
+    package="com.ocean.oceanbs">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -21,7 +26,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
-            android:name=".activities.AftermarketActivity"
+            android:name="com.ocean.oceanbs.activities.AftermarketActivity"
             android:exported="true"
             android:label="@string/title_activity_aftermarket"
             android:theme="@style/AppTheme.NoActionBar"
@@ -29,7 +34,7 @@
             tools:ignore="LockedOrientationActivity">
         </activity>
         <activity
-            android:name=".activities.NewMainActivity"
+            android:name="com.ocean.oceanbs.activities.NewMainActivity"
             android:exported="true"
             android:label="@string/title_activity_new_main"
             android:theme="@style/AppTheme.NoActionBar"
@@ -37,18 +42,18 @@
             tools:ignore="LockedOrientationActivity">
         </activity>
         <activity
-            android:name=".activities.NotificationActivity"
+            android:name="com.ocean.oceanbs.activities.NotificationActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
-                <action android:name="com.glass.oceanbs.activities.NotificationActivity" />
+                <action android:name="com.ocean.oceanbs.activities.NotificationActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.SplashScreenActivity"
+            android:name="com.ocean.oceanbs.activities.SplashScreenActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -59,7 +64,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.LoginActivity"
+            android:name="com.ocean.oceanbs.activities.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -70,7 +75,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.ocean.oceanbs.activities.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -81,7 +86,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.EditSolicitudActivity"
+            android:name="com.ocean.oceanbs.activities.EditSolicitudActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -92,7 +97,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ListIncidenciasActivity"
+            android:name="com.ocean.oceanbs.activities.ListIncidenciasActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -103,7 +108,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.CreateIncidenciaActivity"
+            android:name="com.ocean.oceanbs.activities.CreateIncidenciaActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -114,7 +119,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.CreateStatusActivity"
+            android:name="com.ocean.oceanbs.activities.CreateStatusActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -125,7 +130,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.EditIncidenciaActivity"
+            android:name="com.ocean.oceanbs.activities.EditIncidenciaActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -136,7 +141,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.EditStatusActivity"
+            android:name="com.ocean.oceanbs.activities.EditStatusActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
@@ -149,7 +154,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.glass.oceanbs.provider"
+            android:authorities="com.ocean.oceanbs.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -158,10 +163,8 @@
         </provider>
 
         <service
-            android:name=".services.ServiceFirebaseMessaging"
-            android:exported="true"
-            android:permission=""
-            tools:ignore="ExportedService">
+            android:name="com.ocean.oceanbs.services.ServiceFirebaseMessaging"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

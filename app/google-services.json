@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:765638791851:android:1640ad26cc0953f6fb1dee",
+        "mobilesdk_app_id": "1:765638791851:android:6f2ca5e38bcdf4c2fb1dee",
         "android_client_info": {
-          "package_name": "com.glass.oceanbs"
+          "package_name": "com.ocean.oceanbs"
         }
       },
       "oauth_client": [
@@ -30,6 +30,13 @@
             {
               "client_id": "765638791851-56b1p1a6093fqf3aoe5bmulfta4rcch6.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "765638791851-29v4k422k2a7c7527brs0il7sqlnvko2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.redlab.glassproject.La-Huertita"
+              }
             }
           ]
         }

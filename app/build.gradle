@@ -1,85 +1,70 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion "30.0.3"
+    namespace 'com.ocean.oceanbs'
+    compileSdkVersion = 34
+
+    // KeystorePass = OceanBS2024
+    // Alias = Key0
+
     defaultConfig {
-        // KeystorePass = remeflcaz
-        // Alias = Key0
-        applicationId "com.glass.oceanbs"
+        applicationId "com.ocean.oceanbs"
         minSdkVersion 26
-        targetSdkVersion 33
-        versionCode 19
-        versionName "2.0.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0.1"
     }
+
+    kotlinOptions {
+        jvmTarget = 17
+        kotlinOptions.allWarningsAsErrors = false
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
-            useProguard true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources false
+            debuggable false
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-    buildFeatures {
-        viewBinding true
-    }
-    androidExtensions {
-        experimental = true
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    //noinspection GradleDependency
-    //noinspection GradleDependency, DifferentStdlibGradleVersion
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.fragment:fragment-ktx:1.6.2'
+    implementation 'androidx.activity:activity-ktx:1.8.2'
 
-    //Third party libaries
     implementation 'com.synnapps:carouselview:0.1.6'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
-    implementation ('com.google.firebase:firebase-core:21.1.1') {
-        exclude module: "play-services-ads-identifier"
-        exclude module: "play-services-measurement"
-        exclude module: "play-services-measurement-sdk"
-        exclude module: "play-services-measurement-api"
-    }
-    implementation ('com.google.firebase:firebase-analytics:21.2.0') {
-        exclude module: "play-services-ads-identifier"
-        exclude module: "play-services-measurement"
-        exclude module: "play-services-measurement-sdk"
-        exclude module: "play-services-measurement-api"
-    }
-    //noinspection GradleDependency
-    implementation ('com.google.firebase:firebase-messaging:23.1.0') {
-            exclude module: "play-services-ads-identifier"
-            exclude module: "play-services-measurement"
-            exclude module: "play-services-measurement-sdk"
-            exclude module: "play-services-measurement-api"
-    }
-
-    implementation 'com.github.orangegangsters:swipy:1.2.3@aar'
+    implementation platform("com.google.firebase:firebase-bom:30.3.1")
+    //implementation 'com.google.firebase:firebase-core:21.1.1'
+    implementation 'com.google.firebase:firebase-analytics:21.5.1'
+    //implementation 'com.google.firebase:firebase-messaging:23.4.1'
+    implementation "com.google.firebase:firebase-messaging-ktx:23.3.1"
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.5.0'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    //noinspection GradleDependency
-    implementation 'com.google.android.material:material:1.6.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
+    implementation 'com.google.android.material:material:1.11.0'
+
+    implementation 'com.github.orangegangsters:swipy:1.2.3@aar'
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
